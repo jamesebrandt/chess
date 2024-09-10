@@ -412,7 +412,7 @@ public class StandardAPITests {
         loginResult = serverFacade.login(user);
         assertHttpUnauthorized(loginResult);
 
-        //try to use old auth token to list games
+        //try to use old auth Personal Access Token to list games
         TestListResult listResult = serverFacade.listGames(existingAuth);
         assertHttpUnauthorized(listResult);
 
