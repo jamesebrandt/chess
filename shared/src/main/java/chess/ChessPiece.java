@@ -1,6 +1,8 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 
 /**
  * Represents a single chess piece
@@ -36,6 +38,26 @@ public class ChessPiece {
      * @return which type of chess piece this piece is
      */
     public PieceType getPieceType() {
+        switch(getPieceType()) {
+            case PAWN:
+                // Add pawn move logic here
+                break;
+            case ROOK:
+                // Add rook move logic here
+                break;
+            case KNIGHT:
+                // Add knight move logic here
+                break;
+            case BISHOP:
+                // Add bishop move logic here
+                break;
+            case QUEEN:
+                // Add queen move logic here
+                break;
+            case KING:
+                // Add king move logic here
+                break;
+        }
         throw new RuntimeException("Not implemented");
     }
 
@@ -46,10 +68,52 @@ public class ChessPiece {
      *
      * @return Collection of valid moves
      */
-    public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        PeiceMovesCalculator()
-//        return ;
-    }
 
-    public PeiceMovesCalculator()
+    public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
+        PieceMovesCalculator calculator = new PieceMovesCalculator(board, myPosition);
+        ChessPiece piece = board.getPiece(myPosition);
+
+        if (piece == null) {return Collections.emptyList();}
+
+        return calculator.calculateMoves(piece, myPosition);
+    }
+    public class PieceMovesCalculator {
+
+        private ChessBoard board;
+        private ChessPosition myPosition;
+
+        public PieceMovesCalculator(ChessBoard board, ChessPosition myPosition) {
+            this.board = board;
+            this.myPosition = myPosition;
+        }
+
+        public Collection<ChessMove> calculateMoves(ChessPiece piece, ChessPosition position) {
+            Collection<ChessMove> moves = new ArrayList<>();
+//
+//            // Logic to determine moves based on piece type
+//            switch () {
+//                case PAWN:
+//                    // Add pawn move logic here
+//                    break;
+//                case ROOK:
+//                    // Add rook move logic here
+//                    break;
+//                case KNIGHT:
+//                    // Add knight move logic here
+//                    break;
+//                case BISHOP:
+//                    // Add bishop move logic here
+//                    break;
+//                case QUEEN:
+//                    // Add queen move logic here
+//                    break;
+//                case KING:
+//                    // Add king move logic here
+//                    break;
+//            }
+//
+            return moves;
+        }
+    }
 }
+

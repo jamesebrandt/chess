@@ -7,10 +7,26 @@ package chess;
  * signature of the existing methods.
  */
 public class ChessMove {
+    private ChessPosition StartPos;
+    private ChessPosition EndPos;
+    private ChessPiece.PieceType promotionPieceType;
 
-    public ChessMove(ChessPosition startPosition, ChessPosition endPosition,
-                     ChessPiece.PieceType promotionPiece) {
+    @Override
+    public String toString() {
+        return "ChessMove{" +
+                "[" + StartPos +
+                "],[" + EndPos + "]" +
+                ", promotionPieceType=" + promotionPieceType +
+                '}';
     }
+
+    public ChessMove(ChessPosition startPosition, ChessPosition endPosition, ChessPiece.PieceType promotionPiece) {
+        StartPos = startPosition;
+        EndPos = endPosition;
+        this.promotionPieceType = promotionPiece;
+    }
+
+
 
     /**
      * @return ChessPosition of starting location
