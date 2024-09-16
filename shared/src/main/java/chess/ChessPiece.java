@@ -13,6 +13,8 @@ import java.util.Collections;
 public class ChessPiece {
 
     public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
+        this.pieceType = type;
+        this.pieceColor = pieceColor;
     }
 
     /**
@@ -27,38 +29,21 @@ public class ChessPiece {
         PAWN
     }
 
+    private PieceType pieceType;
+    private ChessGame.TeamColor pieceColor;
+
     /**
      * @return Which team this chess piece belongs to
      */
     public ChessGame.TeamColor getTeamColor() {
-        throw new RuntimeException("Not implemented");
+        return pieceColor;
     }
 
     /**
      * @return which type of chess piece this piece is
      */
     public PieceType getPieceType() {
-        switch(getPieceType()) {
-            case PAWN:
-                // Add pawn move logic here
-                break;
-            case ROOK:
-                // Add rook move logic here
-                break;
-            case KNIGHT:
-                // Add knight move logic here
-                break;
-            case BISHOP:
-                // Add bishop move logic here
-                break;
-            case QUEEN:
-                // Add queen move logic here
-                break;
-            case KING:
-                // Add king move logic here
-                break;
-        }
-        throw new RuntimeException("Not implemented");
+        return pieceType;
     }
 
     /**
@@ -77,6 +62,9 @@ public class ChessPiece {
 
         return calculator.calculateMoves(piece, myPosition);
     }
+
+
+
     public class PieceMovesCalculator {
 
         private ChessBoard board;
@@ -87,31 +75,62 @@ public class ChessPiece {
             this.myPosition = myPosition;
         }
 
+        private boolean IsValidPosition(ChessPosition position) {
+            return position.getRow() >= 1 && position.getRow() <= 8 && position.getColumn() >= 1 && position.getColumn() <= 8;
+        }
+
+        private void ValidatePositionAndAddMove(Collection<ChessMove> moves, ChessPosition start, ChessPosition end, PieceType type){
+           if (IsValidPosition(end)) {
+               moves.add(new ChessMove(start, end, type));
+           }
+        }
+
+        private void ValidatePositionAndAddMove(Collection<ChessMove> moves, ChessPosition start, ChessPosition end){// sets null as default value
+            ValidatePositionAndAddMove(moves, start, end, null);
+        }
+
+
         public Collection<ChessMove> calculateMoves(ChessPiece piece, ChessPosition position) {
             Collection<ChessMove> moves = new ArrayList<>();
-//
-//            // Logic to determine moves based on piece type
-//            switch () {
-//                case PAWN:
-//                    // Add pawn move logic here
-//                    break;
-//                case ROOK:
-//                    // Add rook move logic here
-//                    break;
-//                case KNIGHT:
-//                    // Add knight move logic here
-//                    break;
-//                case BISHOP:
-//                    // Add bishop move logic here
-//                    break;
-//                case QUEEN:
-//                    // Add queen move logic here
-//                    break;
-//                case KING:
-//                    // Add king move logic here
-//                    break;
-//            }
-//
+
+
+            switch (piece.getPieceType()) {
+                case PAWN:
+                    // Add pawn move logic here
+                    break;
+                case ROOK:
+                    //while (IsValidPosition(new ChessPosition(position.getRow()+8) )
+
+                    break;
+                case KNIGHT:
+                    ValidatePositionAndAddMove(moves, position, new ChessPosition(position.getRow()+2, position.getColumn()+1));
+                    ValidatePositionAndAddMove(moves, position, new ChessPosition(position.getRow()+2, position.getColumn()-1));
+                    ValidatePositionAndAddMove(moves, position, new ChessPosition(position.getRow()+1, position.getColumn()+2));
+                    ValidatePositionAndAddMove(moves, position, new ChessPosition(position.getRow()-1, position.getColumn()+2));
+                    ValidatePositionAndAddMove(moves, position, new ChessPosition(position.getRow()-2, position.getColumn()-1));
+                    ValidatePositionAndAddMove(moves, position, new ChessPosition(position.getRow()-2, position.getColumn()+1));
+                    ValidatePositionAndAddMove(moves, position, new ChessPosition(position.getRow()-1, position.getColumn()-2));
+                    ValidatePositionAndAddMove(moves, position, new ChessPosition(position.getRow()+1, position.getColumn()-2));
+                    break;
+                case BISHOP:
+                    // Add bishop move logic here
+                    break;
+                case QUEEN:
+                    // Add queen move logic here
+                    break;
+                case KING:
+                    ValidatePositionAndAddMove(moves, position, new ChessPosition(position.getRow()+1, position.getColumn()+1));
+                    ValidatePositionAndAddMove(moves, position, new ChessPosition(position.getRow()-1, position.getColumn()));
+                    ValidatePositionAndAddMove(moves, position, new ChessPosition(position.getRow()+1, position.getColumn()));
+                    ValidatePositionAndAddMove(moves, position, new ChessPosition(position.getRow(), position.getColumn()+1));
+                    ValidatePositionAndAddMove(moves, position, new ChessPosition(position.getRow()+1, position.getColumn()-1));
+                    ValidatePositionAndAddMove(moves, position, new ChessPosition(position.getRow(), position.getColumn()-1));
+                    ValidatePositionAndAddMove(moves, position, new ChessPosition(position.getRow()-1, position.getColumn()-1));
+                    ValidatePositionAndAddMove(moves, position, new ChessPosition(position.getRow()-1, position.getColumn()+1));
+
+                    break;
+            }
+
             return moves;
         }
     }

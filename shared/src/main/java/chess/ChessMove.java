@@ -8,17 +8,16 @@ package chess;
  */
 public class ChessMove {
     private ChessPosition StartPos;
-    private ChessPosition EndPos;
-    private ChessPiece.PieceType promotionPieceType;
 
     @Override
     public String toString() {
-        return "ChessMove{" +
-                "[" + StartPos +
-                "],[" + EndPos + "]" +
-                ", promotionPieceType=" + promotionPieceType +
-                '}';
+        return
+                "(" + EndPos.getRow() + "," + EndPos.getColumn() + ")" + ", P:" + promotionPieceType;
     }
+
+    private ChessPosition EndPos;
+    private ChessPiece.PieceType promotionPieceType;
+
 
     public ChessMove(ChessPosition startPosition, ChessPosition endPosition, ChessPiece.PieceType promotionPiece) {
         StartPos = startPosition;
