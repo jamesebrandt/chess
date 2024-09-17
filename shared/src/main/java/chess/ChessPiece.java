@@ -1,5 +1,6 @@
 package chess;
 
+import java.lang.foreign.ValueLayout;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -100,11 +101,87 @@ public class ChessPiece {
             return "Same";
         }
 
+        private void ValidateMoveinDiagonal(Collection<ChessMove> moves, ChessPosition start){
+            int row = start.getRow();
+            int column = start.getColumn();
+
+            while(column < 8 && row < 8) { // up and right
+                column++;
+                row++;
+                ChessPosition end = new ChessPosition(row, column);
+
+                if (OtherTeam(end).equals("Open")) {
+                    ValidatePositionAndAddMove(moves, start, end);
+                } else if (OtherTeam(end).equals("Capture")) {
+                    ValidatePositionAndAddMove(moves, start, end);
+                    break;
+                } else {
+                    break;
+                }
+            }
+
+            row = start.getRow();
+            column = start.getColumn();
+
+            while(column > 1 && row < 8) { // up and left
+                column --;
+                row ++;
+
+                ChessPosition end = new ChessPosition(row, column);
+
+                if (OtherTeam(end).equals("Open")) {
+                    ValidatePositionAndAddMove(moves, start, end);
+                }
+                else if (OtherTeam(end).equals("Capture")) {
+                    ValidatePositionAndAddMove(moves, start, end);
+                    break;
+                }
+                else{break;}
+            }
+            row = start.getRow();
+            column = start.getColumn();
+
+            while(column > 1 && row > 1) { // down and left
+                column --;
+                row --;
+
+                ChessPosition end = new ChessPosition(row, column);
+
+                if (OtherTeam(end).equals("Open")) {
+                    ValidatePositionAndAddMove(moves, start, end);
+                }
+                else if (OtherTeam(end).equals("Capture")) {
+                    ValidatePositionAndAddMove(moves, start, end);
+                    break;
+                }
+                else{break;}
+            }
+            row = start.getRow();
+            column = start.getColumn();
+
+            while(column < 8 && row > 1) { // down and right
+                column ++;
+                row --;
+
+                ChessPosition end = new ChessPosition(row, column);
+
+                if (OtherTeam(end).equals("Open")) {
+                    ValidatePositionAndAddMove(moves, start, end);
+                }
+                else if (OtherTeam(end).equals("Capture")) {
+                    ValidatePositionAndAddMove(moves, start, end);
+                    break;
+                }
+                else{break;}
+            }
+
+        }
+
         private void ValidateMoveInPlus(Collection<ChessMove> moves, ChessPosition start) {
             int row = start.getRow();
             int column = start.getColumn();
 
-            while(column < 8) {
+            while(column < 8) { //right
                 column++;
                 ChessPosition end = new ChessPosition(row, column);
 
@@ -121,7 +198,7 @@ public class ChessPiece {
             }
             row = start.getRow();
             column = start.getColumn();
-            while (column >1){
+            while (column >1){ // left
 
                 column--;
                 ChessPosition end = new ChessPosition(row, column);
@@ -138,7 +215,7 @@ public class ChessPiece {
             }
             row = start.getRow();
             column = start.getColumn();
-            while (row <8) {
+            while (row <8) { //up
                 row++;
                 ChessPosition end = new ChessPosition(row, column);
                 if (OtherTeam(end).equals("Open")) {
@@ -154,7 +231,7 @@ public class ChessPiece {
             }
             row = start.getRow();
             column = start.getColumn();
-            while (row > 1) {
+            while (row > 1) { //down
                 row --;
                 ChessPosition end = new ChessPosition(row, column);
                 if (OtherTeam(end).equals("Open")) {
@@ -204,11 +281,11 @@ public class ChessPiece {
                     ValidatePositionAndAddMove(moves, position, new ChessPosition(position.getRow()+1, position.getColumn()-2));
                     break;
                 case BISHOP:
-                    // Add bishop move logic here
+                    ValidateMoveinDiagonal(moves, position);
                     break;
                 case QUEEN:
                     ValidateMoveInPlus(moves, position);
-
+                    ValidateMoveinDiagonal(moves, position);
                     break;
                 case KING:
                     ValidatePositionAndAddMove(moves, position, new ChessPosition(position.getRow()+1, position.getColumn()+1));
