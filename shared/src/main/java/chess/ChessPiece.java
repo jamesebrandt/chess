@@ -100,7 +100,7 @@ public class ChessPiece {
             return "Same";
         }
 
-        private void ValidateMoveRight(Collection<ChessMove> moves, ChessPosition start) {
+        private void ValidateMoveInPlus(Collection<ChessMove> moves, ChessPosition start) {
             int row = start.getRow();
             int column = start.getColumn();
 
@@ -119,9 +119,43 @@ public class ChessPiece {
                     break;
                 }
             }
+            row = start.getRow();
+            column = start.getColumn();
             while (column >1){
 
                 column--;
+                ChessPosition end = new ChessPosition(row, column);
+                if (OtherTeam(end).equals("Open")) {
+                    ValidatePositionAndAddMove(moves, start, end);
+                }
+                else if (OtherTeam(end).equals("Capture")) {
+                    ValidatePositionAndAddMove(moves, start, end);
+                    break;
+                }
+                else {
+                    break;
+                }
+            }
+            row = start.getRow();
+            column = start.getColumn();
+            while (row <8) {
+                row++;
+                ChessPosition end = new ChessPosition(row, column);
+                if (OtherTeam(end).equals("Open")) {
+                    ValidatePositionAndAddMove(moves, start, end);
+                }
+                else if (OtherTeam(end).equals("Capture")) {
+                    ValidatePositionAndAddMove(moves, start, end);
+                    break;
+                }
+                else {
+                    break;
+                }
+            }
+            row = start.getRow();
+            column = start.getColumn();
+            while (row > 1) {
+                row --;
                 ChessPosition end = new ChessPosition(row, column);
                 if (OtherTeam(end).equals("Open")) {
                     ValidatePositionAndAddMove(moves, start, end);
@@ -156,7 +190,7 @@ public class ChessPiece {
                     // Add pawn move logic here
                     break;
                 case ROOK:
-
+                    ValidateMoveInPlus(moves, position);
 
                     break;
                 case KNIGHT:
@@ -173,7 +207,8 @@ public class ChessPiece {
                     // Add bishop move logic here
                     break;
                 case QUEEN:
-                    // Add queen move logic here
+                    ValidateMoveInPlus(moves, position);
+
                     break;
                 case KING:
                     ValidatePositionAndAddMove(moves, position, new ChessPosition(position.getRow()+1, position.getColumn()+1));
