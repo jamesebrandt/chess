@@ -1,5 +1,6 @@
 package chess;
 
+import javax.print.attribute.standard.MediaSize;
 import java.lang.foreign.ValueLayout;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -247,17 +248,51 @@ public class ChessPiece {
             }
         }
 
-        private void Pawn(Collection<ChessMove> moves, ChessPosition start){
+        private void Pawn(Collection<ChessMove> moves, ChessPosition start) {
             int row = start.getRow();
             int column = start.getColumn();
 
-            if (pieceColor == ChessGame.TeamColor.WHITE && row == 2){
-                ValidatePositionAndAddMove(moves, start, new ChessPosition(start.getRow()+1, start.getColumn()));
-                ValidatePositionAndAddMove(moves, start, new ChessPosition(start.getRow()+2, start.getColumn()));
+
+
+            if (pieceColor == ChessGame.TeamColor.WHITE){ //white pawns
+                ChessPosition attackLeft = new ChessPosition(row +1, column-1);
+                ChessPosition attackRight = new ChessPosition(row+1, column + 1);
+                if (row == 2) {
+                    ValidatePositionAndAddMove(moves, start, new ChessPosition(start.getRow() + 1, start.getColumn()));
+                    ValidatePositionAndAddMove(moves, start, new ChessPosition(start.getRow() + 2, start.getColumn()));
+                }
+                else if (OtherTeam(attackRight).equals("Capture")) {
+                    ValidatePositionAndAddMove(moves, start, attackRight);
+                }
+                else if (OtherTeam(attackLeft).equals("Capture")) {
+                    ValidatePositionAndAddMove(moves,start, attackLeft);
+                }
+                else if (OtherTeam(new ChessPosition(row+1, column)).equals("Capture")) {
+
+                }
+                else {
+                    ValidatePositionAndAddMove(moves, start, new ChessPosition(row+1, column));
+                }
             }
-            else if (pieceColor == ChessGame.TeamColor.BLACK && row == 7){
-                ValidatePositionAndAddMove(moves, start, new ChessPosition(start.getRow()-1, start.getColumn()));
-                ValidatePositionAndAddMove(moves, start, new ChessPosition(start.getRow()-2, start.getColumn()));
+            else{ //black pawns
+                ChessPosition attackLeft = new ChessPosition(row -1, column-1);
+                ChessPosition attackRight = new ChessPosition(row - 1, column + 1);
+                if (row == 7) {
+                    ValidatePositionAndAddMove(moves, start, new ChessPosition(start.getRow() - 1, start.getColumn()));
+                    ValidatePositionAndAddMove(moves, start, new ChessPosition(start.getRow() - 2, start.getColumn()));
+                }
+                else if (OtherTeam(attackRight).equals("Capture")) {
+                    ValidatePositionAndAddMove(moves, start, attackRight);
+                }
+                else if (OtherTeam(attackLeft).equals("Capture")) {
+                    ValidatePositionAndAddMove(moves,start, attackLeft);
+                }
+                else if (OtherTeam(new ChessPosition(row-1, column)).equals("Capture")) {
+
+                }
+                else {
+                    ValidatePositionAndAddMove(moves, start, new ChessPosition(row-1, column));
+                }
             }
 
         }
