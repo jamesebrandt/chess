@@ -101,7 +101,7 @@ public class ChessPiece {
             return "Same";
         }
 
-        private void ValidateMoveinDiagonal(Collection<ChessMove> moves, ChessPosition start){
+        private void ValidateMoveInDiagonal(Collection<ChessMove> moves, ChessPosition start){
             int row = start.getRow();
             int column = start.getColumn();
 
@@ -247,6 +247,21 @@ public class ChessPiece {
             }
         }
 
+        private void Pawn(Collection<ChessMove> moves, ChessPosition start){
+            int row = start.getRow();
+            int column = start.getColumn();
+
+            if (pieceColor == ChessGame.TeamColor.WHITE && row == 2){
+                ValidatePositionAndAddMove(moves, start, new ChessPosition(start.getRow()+1, start.getColumn()));
+                ValidatePositionAndAddMove(moves, start, new ChessPosition(start.getRow()+2, start.getColumn()));
+            }
+            else if (pieceColor == ChessGame.TeamColor.BLACK && row == 7){
+                ValidatePositionAndAddMove(moves, start, new ChessPosition(start.getRow()-1, start.getColumn()));
+                ValidatePositionAndAddMove(moves, start, new ChessPosition(start.getRow()-2, start.getColumn()));
+            }
+
+        }
+
         private void ValidatePositionAndAddMove(Collection<ChessMove> moves, ChessPosition start, ChessPosition end, PieceType type){
            if (IsValidPosition(end) && OtherTeam(end) == "Capture" || OtherTeam(end) == "Open") {
                moves.add(new ChessMove(start, end, type));
@@ -265,6 +280,8 @@ public class ChessPiece {
             switch (piece.getPieceType()) {
                 case PAWN:
                     // Add pawn move logic here
+                    Pawn(moves, position);
+
                     break;
                 case ROOK:
                     ValidateMoveInPlus(moves, position);
@@ -281,11 +298,11 @@ public class ChessPiece {
                     ValidatePositionAndAddMove(moves, position, new ChessPosition(position.getRow()+1, position.getColumn()-2));
                     break;
                 case BISHOP:
-                    ValidateMoveinDiagonal(moves, position);
+                    ValidateMoveInDiagonal(moves, position);
                     break;
                 case QUEEN:
                     ValidateMoveInPlus(moves, position);
-                    ValidateMoveinDiagonal(moves, position);
+                    ValidateMoveInDiagonal(moves, position);
                     break;
                 case KING:
                     ValidatePositionAndAddMove(moves, position, new ChessPosition(position.getRow()+1, position.getColumn()+1));
