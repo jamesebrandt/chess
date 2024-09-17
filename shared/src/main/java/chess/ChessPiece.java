@@ -79,7 +79,7 @@ public class ChessPiece {
 
 
 
-    public class PieceMovesCalculator {
+    public class PieceMovesCalculator{
 
         private ChessBoard board;
         private ChessPosition myPosition;
@@ -93,9 +93,51 @@ public class ChessPiece {
             return position.getRow() >= 1 && position.getRow() <= 8 && position.getColumn() >= 1 && position.getColumn() <= 8;
         }
 
-        private void ValidatePositionAndAddMove(Collection<ChessMove> moves, ChessPosition start, ChessPosition end, PieceType type){
-           if (IsValidPosition(end)) {
+        private String OtherTeam(ChessPosition end) {
+            ChessPiece PieceAtEnd = board.getPiece(end);
+            if (PieceAtEnd == null) {return "Open";}
+            if (PieceAtEnd.getTeamColor() != pieceColor) {return "Capture";}
+            return "Same";
+        }
 
+        private void ValidateMoveRight(Collection<ChessMove> moves, ChessPosition start) {
+            int row = start.getRow();
+            int column = start.getColumn();
+
+            while(column < 8) {
+                column++;
+                ChessPosition end = new ChessPosition(row, column);
+
+                if (OtherTeam(end).equals("Open")) {
+                    ValidatePositionAndAddMove(moves, start, end);
+                }
+                else if (OtherTeam(end).equals("Capture")) {
+                    ValidatePositionAndAddMove(moves, start, end);
+                    break;
+                }
+                else {
+                    break;
+                }
+            }
+            while (column >1){
+
+                column--;
+                ChessPosition end = new ChessPosition(row, column);
+                if (OtherTeam(end).equals("Open")) {
+                    ValidatePositionAndAddMove(moves, start, end);
+                }
+                else if (OtherTeam(end).equals("Capture")) {
+                    ValidatePositionAndAddMove(moves, start, end);
+                    break;
+                }
+                else {
+                    break;
+                }
+            }
+        }
+
+        private void ValidatePositionAndAddMove(Collection<ChessMove> moves, ChessPosition start, ChessPosition end, PieceType type){
+           if (IsValidPosition(end) && OtherTeam(end) == "Capture" || OtherTeam(end) == "Open") {
                moves.add(new ChessMove(start, end, type));
            }
         }
@@ -114,7 +156,7 @@ public class ChessPiece {
                     // Add pawn move logic here
                     break;
                 case ROOK:
-                    //while (IsValidPosition(new ChessPosition(position.getRow()+8) )
+
 
                     break;
                 case KNIGHT:
