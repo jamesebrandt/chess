@@ -1,7 +1,5 @@
 package chess;
 
-import javax.print.attribute.standard.MediaSize;
-import java.lang.foreign.ValueLayout;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
