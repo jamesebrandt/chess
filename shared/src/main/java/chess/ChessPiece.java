@@ -310,7 +310,10 @@ public class ChessPiece {
         }
 
         private boolean isCapture(ChessPosition pos) {
-            return CheckSpace(pos).equals("Capture");
+            if (IsValidPosition(pos)){
+                return CheckSpace(pos).equals("Capture");
+            }
+            return false;
         }
 
         private boolean isOpen(ChessPosition pos) {
@@ -319,7 +322,7 @@ public class ChessPiece {
 
 
         private void ValidatePositionAndAddMove(Collection<ChessMove> moves, ChessPosition start, ChessPosition end, PieceType type){
-           if (IsValidPosition(end) && CheckSpace(end) == "Capture" || CheckSpace(end) == "Open") {
+           if (IsValidPosition(end) && (CheckSpace(end) == "Capture" || CheckSpace(end) == "Open")) {
                moves.add(new ChessMove(start, end, type));
            }
         }
