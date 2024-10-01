@@ -68,314 +68,185 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
 
-    public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        PieceMovesCalculator calculator = new PieceMovesCalculator(board, myPosition);
-        ChessPiece piece = board.getPiece(myPosition);
+    public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition position) {
+        PieceMovesCalculator calculator = new PieceMovesCalculator(board, position);
+        ChessPiece piece = board.getPiece(position);
 
-        if (piece == null) {return Collections.emptyList();}
-
-        return calculator.calculateMoves(piece, myPosition);
-    }
-
-
-
-    public class PieceMovesCalculator{
-
-        private ChessBoard board;
-        private ChessPosition myPosition;
-
-        public PieceMovesCalculator(ChessBoard board, ChessPosition myPosition) {
-            this.board = board;
-            this.myPosition = myPosition;
+        if (piece == null) {
+            return Collections.emptyList();
         }
 
-        private boolean IsValidPosition(ChessPosition position) {
+        return calculator.calculateMoves(piece, position);
+    }
+
+    public class PieceMovesCalculator {
+
+        private ChessBoard board;
+        private ChessPosition position;
+        private Collection<ChessMove> moves;
+        private ChessGame.TeamColor teamColor;
+
+        public PieceMovesCalculator(ChessBoard board, ChessPosition position) {
+            this.board = board;
+            this.position = position;
+            this.moves = new ArrayList<>();
+            this.teamColor = board.getPiece(position).getTeamColor();
+        }
+
+        public Collection<ChessMove> calculateMoves(ChessPiece piece, ChessPosition position) {
+            switch (piece.getPieceType()) {
+                case KING:
+                    addKingMoves(position);
+                    break;
+                case QUEEN:
+                    moveInDirections(position, 1, 1);
+                    moveInDirections(position, -1, 1);
+                    moveInDirections(position, -1, -1);
+                    moveInDirections(position, 1, -1);
+                    moveInDirections(position, 1, 0);
+                    moveInDirections(position, 0, 1);
+                    moveInDirections(position, -1, 0);
+                    moveInDirections(position, 0, -1);
+                    break;
+                case BISHOP:
+                    moveInDirections(position, 1, 1);
+                    moveInDirections(position, -1, 1);
+                    moveInDirections(position, -1, -1);
+                    moveInDirections(position, 1, -1);
+                    break;
+                case KNIGHT:
+                    addKnightMoves(position);
+                    break;
+                case ROOK:
+                    moveInDirections(position, 1, 0);
+                    moveInDirections(position, 0, 1);
+                    moveInDirections(position, -1, 0);
+                    moveInDirections(position, 0, -1);
+                    break;
+                case PAWN:
+                    addPawnMoves(position);
+                    break;
+            }
+            return moves;
+        }
+
+        private void addKingMoves(ChessPosition position) {
+            validateAndAddMoves(position, new ChessPosition(position.getRow() + 1, position.getColumn() + 1));
+            validateAndAddMoves(position, new ChessPosition(position.getRow() + 1, position.getColumn() - 1));
+            validateAndAddMoves(position, new ChessPosition(position.getRow() + 1, position.getColumn()));
+            validateAndAddMoves(position, new ChessPosition(position.getRow() - 1, position.getColumn() + 1));
+            validateAndAddMoves(position, new ChessPosition(position.getRow() - 1, position.getColumn() - 1));
+            validateAndAddMoves(position, new ChessPosition(position.getRow() - 1, position.getColumn()));
+            validateAndAddMoves(position, new ChessPosition(position.getRow(), position.getColumn() + 1));
+            validateAndAddMoves(position, new ChessPosition(position.getRow(), position.getColumn() - 1));
+        }
+
+        private void addKnightMoves(ChessPosition position) {
+            validateAndAddMoves(position, new ChessPosition(position.getRow() + 2, position.getColumn() + 1));
+            validateAndAddMoves(position, new ChessPosition(position.getRow() + 2, position.getColumn() - 1));
+            validateAndAddMoves(position, new ChessPosition(position.getRow() + 1, position.getColumn() + 2));
+            validateAndAddMoves(position, new ChessPosition(position.getRow() - 1, position.getColumn() + 2));
+            validateAndAddMoves(position, new ChessPosition(position.getRow() - 2, position.getColumn() - 1));
+            validateAndAddMoves(position, new ChessPosition(position.getRow() - 2, position.getColumn() + 1));
+            validateAndAddMoves(position, new ChessPosition(position.getRow() + 1, position.getColumn() - 2));
+            validateAndAddMoves(position, new ChessPosition(position.getRow() - 1, position.getColumn() - 2));
+        }
+
+        private void addPawnMoves(ChessPosition position) {
+            if (teamColor == ChessGame.TeamColor.WHITE) {
+                handlePawnMoves(position, 1);
+            } else {
+                handlePawnMoves(position, -1);
+            }
+        }
+
+        private void handlePawnMoves(ChessPosition position, int direction) {
+            ChessPosition oneStep = new ChessPosition(position.getRow() + direction, position.getColumn());
+            ChessPosition twoStep = new ChessPosition(position.getRow() + 2 * direction, position.getColumn());
+            ChessPosition attackRight = new ChessPosition(position.getRow() + direction, position.getColumn() + 1);
+            ChessPosition attackLeft = new ChessPosition(position.getRow() + direction, position.getColumn() - 1);
+
+            if (checkSpace(oneStep) == Space.OPEN) {
+                pawnAddAndPromote(position, oneStep);
+                if ((direction == 1 && position.getRow() == 2) || (direction == -1 && position.getRow() == 7)) {
+                    if (checkSpace(twoStep) == Space.OPEN) {
+                        pawnAddAndPromote(position, twoStep);
+                    }
+                }
+            }
+
+            if (isOnBoard(attackRight) && checkSpace(attackRight) == Space.CAPTURE) {
+                pawnAddAndPromote(position, attackRight);
+            }
+
+            if (isOnBoard(attackLeft) && checkSpace(attackLeft) == Space.CAPTURE) {
+                pawnAddAndPromote(position, attackLeft);
+            }
+        }
+
+        private void pawnAddAndPromote(ChessPosition start, ChessPosition end) {
+            if (isOnBoard(end)) {
+                if (teamColor == ChessGame.TeamColor.WHITE && end.getRow() == 8) {
+                    addPromotionMoves(start, end);
+                } else if (teamColor == ChessGame.TeamColor.BLACK && end.getRow() == 1) {
+                    addPromotionMoves(start, end);
+                } else {
+                    moves.add(new ChessMove(start, end, null));
+                }
+            }
+        }
+
+        private void addPromotionMoves(ChessPosition start, ChessPosition end) {
+            moves.add(new ChessMove(start, end, PieceType.QUEEN));
+            moves.add(new ChessMove(start, end, PieceType.KNIGHT));
+            moves.add(new ChessMove(start, end, PieceType.ROOK));
+            moves.add(new ChessMove(start, end, PieceType.BISHOP));
+        }
+
+
+        private void validateAndAddMoves(ChessPosition position, ChessPosition endPosition) {
+            if (isOnBoard(endPosition) && (checkSpace(endPosition) == Space.OPEN || checkSpace(endPosition) == Space.CAPTURE)) {
+                moves.add(new ChessMove(position, endPosition, null));
+            }
+        }
+
+
+        private boolean isOnBoard(ChessPosition position) {
             return position.getRow() >= 1 && position.getRow() <= 8 && position.getColumn() >= 1 && position.getColumn() <= 8;
         }
 
-        private String CheckSpace(ChessPosition end) {
-            ChessPiece PieceAtEnd = board.getPiece(end);
-            if (PieceAtEnd == null) {return "Open";}
-            if (PieceAtEnd.getTeamColor() != pieceColor) {return "Capture";}
-            return "Same";
+        private enum Space {
+            OPEN,
+            CAPTURE,
+            SAME_TEAM
         }
 
-        private void ValidateMoveInDiagonal(Collection<ChessMove> moves, ChessPosition start){
-            int row = start.getRow();
-            int column = start.getColumn();
 
-            while(column < 8 && row < 8) { // up and right
-                column++;
-                row++;
-                ChessPosition end = new ChessPosition(row, column);
+        private Space checkSpace(ChessPosition endPosition) {
+            ChessPiece piece = board.getPiece(endPosition);
+            if (piece == null) {
+                return Space.OPEN;
+            } else if (piece.getTeamColor() != teamColor) {
+                return Space.CAPTURE;
+            } else {
+                return Space.SAME_TEAM;
+            }
+        }
 
-                if (CheckSpace(end).equals("Open")) {
-                    ValidatePositionAndAddMove(moves, start, end);
-                } else if (CheckSpace(end).equals("Capture")) {
-                    ValidatePositionAndAddMove(moves, start, end);
+        private void moveInDirections(ChessPosition start, int rowDirection, int columnDirection) {
+            ChessPosition nextStep = new ChessPosition(start.getRow() + rowDirection, start.getColumn() + columnDirection);
+            while (isOnBoard(nextStep)) {
+                Space space = checkSpace(nextStep);
+                if (space == Space.OPEN) {
+                    moves.add(new ChessMove(start, nextStep, null));
+                } else if (space == Space.CAPTURE) {
+                    moves.add(new ChessMove(start, nextStep, null));
                     break;
                 } else {
                     break;
                 }
+                nextStep = new ChessPosition(nextStep.getRow() + rowDirection, nextStep.getColumn() + columnDirection);
             }
-
-            row = start.getRow();
-            column = start.getColumn();
-
-            while(column > 1 && row < 8) { // up and left
-                column --;
-                row ++;
-
-                ChessPosition end = new ChessPosition(row, column);
-
-                if (CheckSpace(end).equals("Open")) {
-                    ValidatePositionAndAddMove(moves, start, end);
-                }
-                else if (CheckSpace(end).equals("Capture")) {
-                    ValidatePositionAndAddMove(moves, start, end);
-                    break;
-                }
-                else{break;}
-            }
-            row = start.getRow();
-            column = start.getColumn();
-
-            while(column > 1 && row > 1) { // down and left
-                column --;
-                row --;
-
-                ChessPosition end = new ChessPosition(row, column);
-
-                if (CheckSpace(end).equals("Open")) {
-                    ValidatePositionAndAddMove(moves, start, end);
-                }
-                else if (CheckSpace(end).equals("Capture")) {
-                    ValidatePositionAndAddMove(moves, start, end);
-                    break;
-                }
-                else{break;}
-            }
-            row = start.getRow();
-            column = start.getColumn();
-
-            while(column < 8 && row > 1) { // down and right
-                column ++;
-                row --;
-
-                ChessPosition end = new ChessPosition(row, column);
-
-                if (CheckSpace(end).equals("Open")) {
-                    ValidatePositionAndAddMove(moves, start, end);
-                }
-                else if (CheckSpace(end).equals("Capture")) {
-                    ValidatePositionAndAddMove(moves, start, end);
-                    break;
-                }
-                else{break;}
-            }
-
-        }
-
-        private void ValidateMoveInPlus(Collection<ChessMove> moves, ChessPosition start) {
-            int row = start.getRow();
-            int column = start.getColumn();
-
-            while(column < 8) { //right
-                column++;
-                ChessPosition end = new ChessPosition(row, column);
-
-                if (CheckSpace(end).equals("Open")) {
-                    ValidatePositionAndAddMove(moves, start, end);
-                }
-                else if (CheckSpace(end).equals("Capture")) {
-                    ValidatePositionAndAddMove(moves, start, end);
-                    break;
-                }
-                else {
-                    break;
-                }
-            }
-            row = start.getRow();
-            column = start.getColumn();
-            while (column >1){ // left
-
-                column--;
-                ChessPosition end = new ChessPosition(row, column);
-                if (CheckSpace(end).equals("Open")) {
-                    ValidatePositionAndAddMove(moves, start, end);
-                }
-                else if (CheckSpace(end).equals("Capture")) {
-                    ValidatePositionAndAddMove(moves, start, end);
-                    break;
-                }
-                else {
-                    break;
-                }
-            }
-            row = start.getRow();
-            column = start.getColumn();
-            while (row <8) { //up
-                row++;
-                ChessPosition end = new ChessPosition(row, column);
-                if (CheckSpace(end).equals("Open")) {
-                    ValidatePositionAndAddMove(moves, start, end);
-                }
-                else if (CheckSpace(end).equals("Capture")) {
-                    ValidatePositionAndAddMove(moves, start, end);
-                    break;
-                }
-                else {
-                    break;
-                }
-            }
-            row = start.getRow();
-            column = start.getColumn();
-            while (row > 1) { //down
-                row --;
-                ChessPosition end = new ChessPosition(row, column);
-                if (CheckSpace(end).equals("Open")) {
-                    ValidatePositionAndAddMove(moves, start, end);
-                }
-                else if (CheckSpace(end).equals("Capture")) {
-                    ValidatePositionAndAddMove(moves, start, end);
-                    break;
-                }
-                else {
-                    break;
-                }
-            }
-        }
-
-        private void Pawn(Collection<ChessMove> moves, ChessPosition start) {
-            int row = start.getRow();
-            int column = start.getColumn();
-
-            ChessPosition oneStep;
-            ChessPosition twoSteps;
-            ChessPosition attackLeft;
-            ChessPosition attackRight;
-            boolean isPromotionRow;
-
-            if (pieceColor == ChessGame.TeamColor.WHITE) {
-                oneStep = new ChessPosition(row + 1, column);
-                twoSteps = new ChessPosition(row + 2, column);
-                attackLeft = new ChessPosition(row + 1, column - 1);
-                attackRight = new ChessPosition(row + 1, column + 1);
-                isPromotionRow = row == 7;
-            } else {
-                oneStep = new ChessPosition(row - 1, column);
-                twoSteps = new ChessPosition(row - 2, column);
-                attackLeft = new ChessPosition(row - 1, column - 1);
-                attackRight = new ChessPosition(row - 1, column + 1);
-                isPromotionRow = row == 2;
-            }
-
-            // Handle two-step move at start
-            if ((pieceColor == ChessGame.TeamColor.WHITE && row == 2) ||
-                    (pieceColor == ChessGame.TeamColor.BLACK && row == 7)) {
-                if (isOpen(oneStep) && isOpen(twoSteps)) {
-                    ValidatePositionAndAddMove(moves, start, twoSteps);
-                }
-            }
-
-            // Handle capturing moves
-            if (isCapture(attackLeft)) {
-                handleMoveOrPromotion(moves, start, attackLeft, isPromotionRow);
-            }
-            if (isCapture(attackRight)) {
-                handleMoveOrPromotion(moves, start, attackRight, isPromotionRow);
-            }
-
-            // Handle forward move
-            if (isOpen(oneStep)) {
-                handleMoveOrPromotion(moves, start, oneStep, isPromotionRow);
-            }
-        }
-
-        private void handleMoveOrPromotion(Collection<ChessMove> moves, ChessPosition start, ChessPosition target, boolean isPromotionRow) {
-            if (isPromotionRow) {
-                promote(moves, start, target);
-            } else {
-                ValidatePositionAndAddMove(moves, start, target);
-            }
-        }
-
-        private void promote(Collection<ChessMove> moves, ChessPosition start, ChessPosition target) {
-            ValidatePositionAndAddMove(moves, start, target, pieceType.QUEEN);
-            ValidatePositionAndAddMove(moves, start, target, pieceType.KNIGHT);
-            ValidatePositionAndAddMove(moves, start, target, pieceType.BISHOP);
-            ValidatePositionAndAddMove(moves, start, target, pieceType.ROOK);
-        }
-
-        private boolean isCapture(ChessPosition pos) {
-            if (IsValidPosition(pos)){
-                return CheckSpace(pos).equals("Capture");
-            }
-            return false;
-        }
-
-        private boolean isOpen(ChessPosition pos) {
-            return CheckSpace(pos).equals("Open");
-        }
-
-
-        private void ValidatePositionAndAddMove(Collection<ChessMove> moves, ChessPosition start, ChessPosition end, PieceType type){
-           if (IsValidPosition(end) && (CheckSpace(end) == "Capture" || CheckSpace(end) == "Open")) {
-               moves.add(new ChessMove(start, end, type));
-           }
-        }
-
-        private void ValidatePositionAndAddMove(Collection<ChessMove> moves, ChessPosition start, ChessPosition end){// sets null as default value
-            ValidatePositionAndAddMove(moves, start, end, null);
-        }
-
-
-        public Collection<ChessMove> calculateMoves(ChessPiece piece, ChessPosition position) {
-            Collection<ChessMove> moves = new ArrayList<>();
-
-
-            switch (piece.getPieceType()) {
-                case PAWN:
-                    // Add pawn move logic here
-                    Pawn(moves, position);
-
-                    break;
-                case ROOK:
-                    ValidateMoveInPlus(moves, position);
-
-                    break;
-                case KNIGHT:
-                    ValidatePositionAndAddMove(moves, position, new ChessPosition(position.getRow()+2, position.getColumn()+1));
-                    ValidatePositionAndAddMove(moves, position, new ChessPosition(position.getRow()+2, position.getColumn()-1));
-                    ValidatePositionAndAddMove(moves, position, new ChessPosition(position.getRow()+1, position.getColumn()+2));
-                    ValidatePositionAndAddMove(moves, position, new ChessPosition(position.getRow()-1, position.getColumn()+2));
-                    ValidatePositionAndAddMove(moves, position, new ChessPosition(position.getRow()-2, position.getColumn()-1));
-                    ValidatePositionAndAddMove(moves, position, new ChessPosition(position.getRow()-2, position.getColumn()+1));
-                    ValidatePositionAndAddMove(moves, position, new ChessPosition(position.getRow()-1, position.getColumn()-2));
-                    ValidatePositionAndAddMove(moves, position, new ChessPosition(position.getRow()+1, position.getColumn()-2));
-                    break;
-                case BISHOP:
-                    ValidateMoveInDiagonal(moves, position);
-                    break;
-                case QUEEN:
-                    ValidateMoveInPlus(moves, position);
-                    ValidateMoveInDiagonal(moves, position);
-                    break;
-                case KING:
-                    ValidatePositionAndAddMove(moves, position, new ChessPosition(position.getRow()+1, position.getColumn()+1));
-                    ValidatePositionAndAddMove(moves, position, new ChessPosition(position.getRow()-1, position.getColumn()));
-                    ValidatePositionAndAddMove(moves, position, new ChessPosition(position.getRow()+1, position.getColumn()));
-                    ValidatePositionAndAddMove(moves, position, new ChessPosition(position.getRow(), position.getColumn()+1));
-                    ValidatePositionAndAddMove(moves, position, new ChessPosition(position.getRow()+1, position.getColumn()-1));
-                    ValidatePositionAndAddMove(moves, position, new ChessPosition(position.getRow(), position.getColumn()-1));
-                    ValidatePositionAndAddMove(moves, position, new ChessPosition(position.getRow()-1, position.getColumn()-1));
-                    ValidatePositionAndAddMove(moves, position, new ChessPosition(position.getRow()-1, position.getColumn()+1));
-
-                    break;
-            }
-
-            return moves;
         }
     }
 }
-
