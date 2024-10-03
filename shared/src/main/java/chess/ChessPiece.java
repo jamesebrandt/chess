@@ -31,6 +31,7 @@ public class ChessPiece {
         return Objects.hash(pieceType, pieceColor);
     }
 
+
     /**
      * The various different chess piece options
      */
