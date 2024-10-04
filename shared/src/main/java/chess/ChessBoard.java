@@ -34,6 +34,10 @@ public class ChessBoard {
         return board[position.getRow()-1][position.getColumn()-1];
     }
 
+    public ChessPiece[][] getBoard() {
+        return board;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
