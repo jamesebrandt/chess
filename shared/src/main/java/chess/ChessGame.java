@@ -239,7 +239,12 @@ public class ChessGame {
 
 
     private void undoTempMove(ChessPiece piece, ChessPosition position, ChessPosition end){
+        if (!tempMoveHistory.isEmpty()){
+            MoveHistory lastMove = tempMoveHistory.pop();
 
+            board.addPiece(lastMove.getStartPosition(), lastMove.getMovedPiece());
+            board.addPiece(lastMove.getEndPosition(), lastMove.capturedPiece);
+        }
     }
 
 
