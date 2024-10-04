@@ -96,22 +96,6 @@ public class ChessGame {
         }
         return false;
     }
-    private boolean CheckForCheck(ChessMove move, ChessBoard board, TeamColor teamColor) {
-        ChessPosition start = move.getStartPosition();
-
-        for (int i = 0; i < 9; i++){
-            for (int j = 0; j < 9; j++){
-                ChessPosition CheckingPosition = new ChessPosition(i, j);
-                ChessPiece piece = getBoard().getPiece(CheckingPosition);
-                if (piece == null) {
-                    //skip
-                } else if (teamColor != piece.getTeamColor() && piece.pieceMoves(board, CheckingPosition) == start) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
 
     private ChessPosition FindKing(TeamColor team){
         ChessPiece King = new ChessPiece(team, ChessPiece.PieceType.KING);
@@ -149,9 +133,19 @@ public class ChessGame {
      */
     public boolean isInCheck(TeamColor teamColor) {
         ChessPosition KingIsAt = FindKing(teamColor);
-        if (teamColor == TeamColor.BLACK) {
+        for (int i = 0; i < 9; i++){
+            for (int j = 0; j < 9; j++){
+                ChessPosition CheckingPosition = new ChessPosition(i, j);
+                ChessPiece piece = getBoard().getPiece(CheckingPosition);
 
+                if (piece == null) {
+                    //skip
+                } else if (teamColor != piece.getTeamColor() && piece.pieceMoves(board, CheckingPosition) == KingIsAt) {
+                    return true;
+                }
+            }
         }
+        return false;
     }
 
     /**
