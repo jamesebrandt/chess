@@ -21,7 +21,6 @@ public class ChessGame {
     public ChessGame() {
         this.board = new ChessBoard();
         board.resetBoard();
-        teamColor = TeamColor.WHITE;
         this.tempMoveHistory = new Stack<>();
     }
 
@@ -39,7 +38,7 @@ public class ChessGame {
      * @param team the team whose turn it is
      */
     public void setTeamTurn(TeamColor team) {
-        teamColor = (teamColor == TeamColor.WHITE) ? TeamColor.BLACK : TeamColor.WHITE;
+        this.teamColor = team;
     }
 
     /**
