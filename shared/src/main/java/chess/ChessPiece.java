@@ -36,6 +36,7 @@ public class ChessPiece {
                 .toString();
     }
 
+
     /**
      * The various different chess piece options
      */
