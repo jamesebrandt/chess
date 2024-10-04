@@ -13,6 +13,7 @@ public class ChessBoard {
     private ChessPiece[][] board = new ChessPiece[8][8];
 
 
+
     /**
      * Adds a chess piece to the chessboard
      *
@@ -21,6 +22,16 @@ public class ChessBoard {
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
         board[position.getRow()-1][position.getColumn()-1] = piece;
+    }
+
+    public ChessBoard CopyBoard(){
+        ChessBoard boardCopy = new ChessBoard();
+        for (int i = 0; i < 8;i++){
+            for (int j = 0; j < 8; j++){
+                boardCopy.addPiece(new ChessPosition(i,j), getPiece(new ChessPosition(i,j)));
+            }
+        }
+        return boardCopy;
     }
 
     /**
@@ -34,9 +45,6 @@ public class ChessBoard {
         return board[position.getRow()-1][position.getColumn()-1];
     }
 
-    public ChessPiece[][] getBoard() {
-        return board;
-    }
 
     @Override
     public String toString() {
@@ -99,4 +107,5 @@ public class ChessBoard {
     public int hashCode() {
         return Arrays.deepHashCode(board);
     }
+
 }

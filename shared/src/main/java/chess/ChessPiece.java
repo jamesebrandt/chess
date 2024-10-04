@@ -1,9 +1,6 @@
 package chess;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * Represents a single chess piece
@@ -31,6 +28,13 @@ public class ChessPiece {
         return Objects.hash(pieceType, pieceColor);
     }
 
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", ChessPiece.class.getSimpleName() + "[", "]")
+                .add("" + pieceType)
+                .add("" + pieceColor)
+                .toString();
+    }
 
     /**
      * The various different chess piece options

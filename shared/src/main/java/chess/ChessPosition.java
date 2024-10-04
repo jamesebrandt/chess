@@ -1,6 +1,7 @@
 package chess;
 
 import java.util.Objects;
+import java.util.StringJoiner;
 
 /**
  * Represents a single square position on a chess board
@@ -24,6 +25,14 @@ public class ChessPosition {
     @Override
     public int hashCode() {
         return Objects.hash(row, col);
+    }
+
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", "" + "[", "]")
+                .add("row: " + row)
+                .add("col: " + col)
+                .toString();
     }
 
     public ChessPosition(int row, int col) {
