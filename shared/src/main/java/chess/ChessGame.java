@@ -3,7 +3,7 @@ package chess;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
-import java.util.StringJoiner;
+import java.util.Stack;
 
 
 /**
@@ -16,11 +16,13 @@ public class ChessGame {
 
     private ChessBoard board;
     private TeamColor teamColor;
+    private Stack<MoveHistory> tempMoveHistory;
 
     public ChessGame() {
         this.board = new ChessBoard();
         board.resetBoard();
         teamColor = TeamColor.WHITE;
+        this.tempMoveHistory = new Stack<>();
     }
 
 
@@ -117,11 +119,6 @@ public class ChessGame {
         if (!validMoves.contains(move) && putsInCheck(move.getStartPosition())){
             throw new InvalidMoveException("Invalid Move: That was not a valid move");
         }
-
-       // ChessBoard testBoard = new ChessBoard();
-
-        //puts king in check
-
     }
 
     /**
@@ -204,9 +201,49 @@ public class ChessGame {
                     return false;
                 }
             }
+
+            for (int row = 1; row <= 8; row++) {
+                for (int col = 1; col <= 8; col++) {
+                    ChessPosition position = new ChessPosition(row, col);
+                    ChessPiece piece = board.getPiece(position);
+
+                    if (piece != null && piece.getTeamColor() == teamColor) {
+                        Collection<ChessMove> pieceMoves = piece.pieceMoves(board, position);
+                        for (ChessMove move : pieceMoves) {
+                            ChessPosition endPosition = move.getEndPosition();
+
+                            makeTempMove(piece, position, endPosition);
+
+                            if (!putsInCheck(endPosition)) {
+                                return false;
+                            }
+
+                            undoTempMove(piece, position, endPosition);
+                        }
+                    }
+                }
+            }
+            return true;
         }
-        return true;
+        return false;
     }
+
+    private void makeTempMove(ChessPiece piece, ChessPosition startPosition, ChessPosition end){
+        ChessPiece capturedPiece = board.getPiece(end);
+
+        board.addPiece(end, piece);
+        board.addPiece(startPosition, null);
+
+        tempMoveHistory.push(new MoveHistory(startPosition, end, piece, capturedPiece));
+    }
+
+
+    private void undoTempMove(ChessPiece piece, ChessPosition position, ChessPosition end){
+
+    }
+
+
+
 
     /**
      * Determines if the given team is in stalemate, which here is defined as having
@@ -235,6 +272,37 @@ public class ChessGame {
      */
     public ChessBoard getBoard(){
         return board;
+    }
+
+
+    public class MoveHistory {
+        private ChessPosition startPosition;
+        private ChessPosition endPosition;
+        private ChessPiece movedPiece;
+        private ChessPiece capturedPiece;
+
+        public MoveHistory(ChessPosition startPosition, ChessPosition endPosition, ChessPiece movedPiece, ChessPiece capturedPiece) {
+            this.startPosition = startPosition;
+            this.endPosition = endPosition;
+            this.movedPiece = movedPiece;
+            this.capturedPiece = capturedPiece;
+        }
+
+        public ChessPosition getStartPosition() {
+            return startPosition;
+        }
+
+        public ChessPosition getEndPosition() {
+            return endPosition;
+        }
+
+        public ChessPiece getMovedPiece() {
+            return movedPiece;
+        }
+
+        public ChessPiece getCapturedPiece() {
+            return capturedPiece;
+        }
     }
 
     @Override
