@@ -171,6 +171,12 @@ public class ChessGame {
 
 
     private boolean putsInCheck(ChessPosition kingPosition){
+        ChessPosition kingIsAt = findKing(teamColor);
+
+        if (kingIsAt == null){
+            return false;
+        }
+
         for (int row = 1; row < 9; row++){
             for (int col = 1; col < 9; col++){
                 ChessPosition CheckingPosition = new ChessPosition(row, col);
@@ -202,6 +208,7 @@ public class ChessGame {
     public boolean isInCheckmate(TeamColor teamColor) {
         if (isInCheck(teamColor)){
             ChessPosition kingIsAt = findKing(teamColor);
+
             if (kingIsAt == null){
                 return false;
             }
