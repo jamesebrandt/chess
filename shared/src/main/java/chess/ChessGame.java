@@ -65,26 +65,6 @@ public class ChessGame {
         }
     }
 
-    private boolean IsMovingIntoCheck(ChessMove move, ChessBoard board) {
-        ChessPosition end = move.getEndPosition();
-
-        for (int row = 1; row < 9; row++){
-            for (int col = 1; col < 9; col++){
-                ChessPosition CheckingPosition = new ChessPosition(row, col);
-                ChessPiece piece = board.getPiece(CheckingPosition);
-                if (piece != null) {
-                    Collection<ChessMove> moves = piece.pieceMoves(board, CheckingPosition);
-                    for (ChessMove pieceMove : moves) {
-                        if (pieceMove.getEndPosition().equals(end)) {
-                            return true;
-                        }
-                    }
-                }
-            }
-        }
-        return false;
-    }
-
     private ChessPosition findKing(TeamColor team){
         for (int row = 1; row < 9; row++){
             for (int col = 1; col < 9; col++){
