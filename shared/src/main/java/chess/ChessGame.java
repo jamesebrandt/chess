@@ -64,18 +64,19 @@ public class ChessGame {
         }
         Collection<ChessMove> testMoves = piece.pieceMoves(board, startPosition);
         Collection<ChessMove> movesToRemove = new ArrayList<>();
-        teamColor = piece.getTeamColor();
+        TeamColor color = piece.getTeamColor();
 
         for (ChessMove move : testMoves) {
             makeTempMove(piece, move.getStartPosition(), move.getEndPosition());
-            if (isInCheck(teamColor)) {
+
+            if (isInCheck(color)) {
                 movesToRemove.add(move);
             }
+
             undoTempMove(piece, move.getStartPosition(), move.getEndPosition());
         }
         testMoves.removeAll(movesToRemove);
         return testMoves;
-
     }
 
     private ChessPosition findKing(TeamColor team){
@@ -102,7 +103,7 @@ public class ChessGame {
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
         ChessPiece piece = board.getPiece(move.getStartPosition());
-        ChessPiece.PieceType promote = move.getPromotionPiece();
+
 
         if (piece == null || piece.getTeamColor() != teamColor){
             throw new InvalidMoveException("Invalid Move: There is no piece at that start position");
@@ -113,19 +114,27 @@ public class ChessGame {
             throw new InvalidMoveException("Invalid Move: That was not a valid move");
         }
 
-        if (piece.getPieceType() == ChessPiece.PieceType.PAWN && promote != null && (move.getEndPosition().getRow() == 1 || move.getEndPosition().getRow() == 8)) {
+        ChessPosition endPosition = move.getEndPosition();
+        ChessPiece.PieceType promote = move.getPromotionPiece();
+
+        if (piece.getPieceType() == ChessPiece.PieceType.PAWN && promote != null && (endPosition.getRow() == 1 || endPosition.getRow() == 8)) {
 
             ChessPiece promotedPiece = new ChessPiece(teamColor, promote);
             board.addPiece(move.getEndPosition(), promotedPiece);
         } else {
             board.addPiece(move.getEndPosition(), piece);
         }
+
         board.addPiece(move.getStartPosition(), null);
 
-        if (teamColor == TeamColor.WHITE) {
-            setTeamTurn(TeamColor.BLACK);
+        if (isInCheck(teamColor == TeamColor.WHITE ? TeamColor.BLACK : TeamColor.WHITE)) {
+            setTeamTurn(teamColor == TeamColor.WHITE ? TeamColor.BLACK : TeamColor.WHITE);
         } else {
-            setTeamTurn(TeamColor.WHITE);
+            if (isInCheck(teamColor)) {
+                throw new InvalidMoveException("Invalid Move: You must move to get out of check.");
+            } else {
+                setTeamTurn(teamColor == TeamColor.WHITE ? TeamColor.BLACK : TeamColor.WHITE);
+            }
         }
     }
 
