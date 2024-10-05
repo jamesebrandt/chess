@@ -25,20 +25,6 @@ public class ChessBoard {
     }
 
 
-//    public ChessBoard CopyBoard(){
-//        ChessBoard boardCopy = new ChessBoard();
-//        for (int i = 0; i < 8;i++){
-//            for (int j = 0; j < 8; j++){
-//                ChessPiece piece = getPiece(new ChessPosition(i,j));
-//                if (piece != null) {
-//                    boardCopy.addPiece(new ChessPosition(i,j), piece.copy());
-//                }
-//            }
-//        }
-//        return boardCopy;
-//    }
-
-
     /**
      * Gets a chess piece on the chessboard
      *

@@ -118,6 +118,9 @@ public class ChessGame {
         if (!validMoves.contains(move) && putsInCheck(move.getStartPosition())){
             throw new InvalidMoveException("Invalid Move: That was not a valid move");
         }
+
+        board.addPiece(move.getEndPosition(),piece);
+        board.addPiece(move.getStartPosition(),null);
     }
 
     /**
