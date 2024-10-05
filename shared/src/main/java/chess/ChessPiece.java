@@ -172,7 +172,7 @@ public class ChessPiece {
             ChessPosition attackRight = new ChessPosition(position.getRow() + direction, position.getColumn() + 1);
             ChessPosition attackLeft = new ChessPosition(position.getRow() + direction, position.getColumn() - 1);
 
-            if (checkSpace(oneStep) == Space.OPEN) {
+            if (isOnBoard(oneStep) && checkSpace(oneStep) == Space.OPEN) {
                 pawnAddAndPromote(position, oneStep);
                 if ((direction == 1 && position.getRow() == 2) || (direction == -1 && position.getRow() == 7)) {
                     if (checkSpace(twoStep) == Space.OPEN) {

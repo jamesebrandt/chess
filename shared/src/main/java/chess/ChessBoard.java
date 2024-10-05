@@ -41,8 +41,8 @@ public class ChessBoard {
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
-        for (int row = board.length - 1; row >= 0; row--) {  // Start from the bottom row (index 7)
-            sb.append(row + 1).append(" ");  // Row labels (1 to 8)
+        for (int row = board.length - 1; row >= 0; row--) {
+            sb.append(row + 1).append(" ");
 
             for (int col = 0; col < board[row].length; col++) {
                 ChessPiece piece = board[row][col];
@@ -55,10 +55,10 @@ public class ChessBoard {
                 }
             }
 
-            sb.append("\n");  // Newline after each row
+            sb.append("\n");
         }
 
-        sb.append("  1 2 3 4 5 6 7 8\n");  // Column labels (1 to 8)
+        sb.append("  1 2 3 4 5 6 7 8\n");
         return sb.toString();
     }
 
@@ -67,14 +67,13 @@ public class ChessBoard {
         switch (piece.getPieceType()) {
             case PAWN:   symbol = 'P'; break;
             case ROOK:   symbol = 'R'; break;
-            case KNIGHT: symbol = 'N'; break; // 'N' for knight
+            case KNIGHT: symbol = 'N'; break;
             case BISHOP: symbol = 'B'; break;
             case QUEEN:  symbol = 'Q'; break;
             case KING:   symbol = 'K'; break;
-            default:     symbol = '?'; break; // Shouldn't reach here
+            default:     symbol = '?'; break;
         }
 
-        // Lowercase for black pieces, uppercase for white pieces
         return piece.getTeamColor() == ChessGame.TeamColor.BLACK ? Character.toLowerCase(symbol) : symbol;
     }
 
@@ -85,7 +84,6 @@ public class ChessBoard {
      */
     public void resetBoard() {
         board = new ChessPiece[8][8];
-        // Set white pieces
         board[0][0] = new ChessPiece(ChessGame.TeamColor.WHITE,ChessPiece.PieceType.ROOK);
         board[0][1] = new ChessPiece(ChessGame.TeamColor.WHITE,ChessPiece.PieceType.KNIGHT);
         board[0][2] = new ChessPiece(ChessGame.TeamColor.WHITE,ChessPiece.PieceType.BISHOP);
@@ -98,7 +96,6 @@ public class ChessBoard {
         for (int i = 0; i < 8; i++) {
             board[1][i] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
         }
-// set black peices
         board[7][0] = new ChessPiece(ChessGame.TeamColor.BLACK,ChessPiece.PieceType.ROOK);
         board[7][1] = new ChessPiece(ChessGame.TeamColor.BLACK,ChessPiece.PieceType.KNIGHT);
         board[7][2] = new ChessPiece(ChessGame.TeamColor.BLACK,ChessPiece.PieceType.BISHOP);
@@ -111,8 +108,6 @@ public class ChessBoard {
         for (int i = 0; i < 8; i++) {
             board[6][i] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN);
         }
-
-
     }
 
     @Override

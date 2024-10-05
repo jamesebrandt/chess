@@ -60,8 +60,19 @@ public class ChessGame {
         if (piece == null) {
             return new ArrayList<>();
         } else {
-            Collection<ChessMove> TestMoves = piece.pieceMoves(board, startPosition);
-            return TestMoves;
+            Collection<ChessMove> testMoves = piece.pieceMoves(board, startPosition);
+            Collection<ChessMove> movesToRemove = new ArrayList<>();
+            teamColor = piece.getTeamColor();
+
+            for (ChessMove move : testMoves) {
+                makeTempMove(piece, move.getStartPosition(), move.getEndPosition());
+                if (isInCheck(teamColor)) {
+                    movesToRemove.add(move);
+                }
+                undoTempMove(piece, move.getStartPosition(), move.getEndPosition());
+            }
+            testMoves.removeAll(movesToRemove);
+            return testMoves;
         }
     }
 
@@ -258,17 +269,18 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        // If the team is in check, it's not a stalemate
         if (isInCheck(teamColor)) {
             return false;
         }
 
+        boolean hasPeices = false;
         for (int row = 1; row <= 8; row++) {
             for (int col = 1; col <= 8; col++) {
                 ChessPosition position = new ChessPosition(row, col);
                 ChessPiece piece = board.getPiece(position);
 
                 if (piece != null && piece.getTeamColor() == teamColor) {
+                    hasPeices = true;
                     Collection<ChessMove> pieceMoves = piece.pieceMoves(board, position);
 
                     for (ChessMove move : pieceMoves) {
@@ -283,6 +295,7 @@ public class ChessGame {
                 }
             }
         }
+        if (!hasPeices){return false;}
         return true;
     }
 
@@ -301,7 +314,10 @@ public class ChessGame {
      *
      * @return the chessboard
      */
-    public ChessBoard getBoard(){
+    public ChessBoard getBoard() {
+        if (board == null) {
+            board.resetBoard();
+        }
         return board;
     }
 
