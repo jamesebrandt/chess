@@ -20,7 +20,6 @@ public class ChessGame {
 
     public ChessGame() {
         this.board = new ChessBoard();
-        board.resetBoard();
         this.tempMoveHistory = new Stack<>();
     }
 
@@ -111,7 +110,7 @@ public class ChessGame {
     public void makeMove(ChessMove move) throws InvalidMoveException {
         ChessPiece piece = board.getPiece(move.getStartPosition());
 
-        if (piece == null && piece.getTeamColor() != teamColor){
+        if (piece == null || piece.getTeamColor() != teamColor){
             throw new InvalidMoveException("Invalid Move: There is no piece at that start position");
         }
         Collection<ChessMove> validMoves = piece.pieceMoves(board, move.getStartPosition());
@@ -250,14 +249,40 @@ public class ChessGame {
 
     /**
      * Determines if the given team is in stalemate, which here is defined as having
-     * no valid moves
+     * no valid moves and not being in check.
      *
      * @param teamColor which team to check for stalemate
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        // If the team is in check, it's not a stalemate
+        if (isInCheck(teamColor)) {
+            return false;
+        }
+
+        for (int row = 1; row <= 8; row++) {
+            for (int col = 1; col <= 8; col++) {
+                ChessPosition position = new ChessPosition(row, col);
+                ChessPiece piece = board.getPiece(position);
+
+                if (piece != null && piece.getTeamColor() == teamColor) {
+                    Collection<ChessMove> pieceMoves = piece.pieceMoves(board, position);
+
+                    for (ChessMove move : pieceMoves) {
+                        makeTempMove(piece, move.getStartPosition(), move.getEndPosition());
+                        boolean inCheck = isInCheck(teamColor);
+                        undoTempMove(piece, move.getStartPosition(), move.getEndPosition());
+
+                        if (!inCheck) {
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+        return true;
     }
+
 
     /**
      * Sets this game's chessboard with a given board
