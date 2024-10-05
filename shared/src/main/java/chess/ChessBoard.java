@@ -40,15 +40,44 @@ public class ChessBoard {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        for (int row = 0; row < board.length; row++) {
+
+        for (int row = board.length - 1; row >= 0; row--) {  // Start from the bottom row (index 7)
+            sb.append(row + 1).append(" ");  // Row labels (1 to 8)
+
             for (int col = 0; col < board[row].length; col++) {
-                sb.append(board[row][col] == null ? "." : board[row][col].toString());
-                sb.append(" ");
+                ChessPiece piece = board[row][col];
+
+                if (piece == null) {
+                    sb.append(". ");  // Empty square
+                } else {
+                    char symbol = getPieceSymbol(piece);
+                    sb.append(symbol).append(" ");
+                }
             }
-            sb.append("\n");
+
+            sb.append("\n");  // Newline after each row
         }
+
+        sb.append("  1 2 3 4 5 6 7 8\n");  // Column labels (1 to 8)
         return sb.toString();
     }
+
+    private char getPieceSymbol(ChessPiece piece) {
+        char symbol;
+        switch (piece.getPieceType()) {
+            case PAWN:   symbol = 'P'; break;
+            case ROOK:   symbol = 'R'; break;
+            case KNIGHT: symbol = 'N'; break; // 'N' for knight
+            case BISHOP: symbol = 'B'; break;
+            case QUEEN:  symbol = 'Q'; break;
+            case KING:   symbol = 'K'; break;
+            default:     symbol = '?'; break; // Shouldn't reach here
+        }
+
+        // Lowercase for black pieces, uppercase for white pieces
+        return piece.getTeamColor() == ChessGame.TeamColor.BLACK ? Character.toLowerCase(symbol) : symbol;
+    }
+
 
     /**
      * Sets the board to the default starting board
