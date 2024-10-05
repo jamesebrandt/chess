@@ -20,7 +20,9 @@ public class ChessGame {
 
     public ChessGame() {
         this.board = new ChessBoard();
+        board.resetBoard();
         this.tempMoveHistory = new Stack<>();
+        this.teamColor = TeamColor.WHITE;
     }
 
 
@@ -59,21 +61,21 @@ public class ChessGame {
         ChessPiece piece = board.getPiece(startPosition);
         if (piece == null) {
             return new ArrayList<>();
-        } else {
-            Collection<ChessMove> testMoves = piece.pieceMoves(board, startPosition);
-            Collection<ChessMove> movesToRemove = new ArrayList<>();
-            teamColor = piece.getTeamColor();
-
-            for (ChessMove move : testMoves) {
-                makeTempMove(piece, move.getStartPosition(), move.getEndPosition());
-                if (isInCheck(teamColor)) {
-                    movesToRemove.add(move);
-                }
-                undoTempMove(piece, move.getStartPosition(), move.getEndPosition());
-            }
-            testMoves.removeAll(movesToRemove);
-            return testMoves;
         }
+        Collection<ChessMove> testMoves = piece.pieceMoves(board, startPosition);
+        Collection<ChessMove> movesToRemove = new ArrayList<>();
+        teamColor = piece.getTeamColor();
+
+        for (ChessMove move : testMoves) {
+            makeTempMove(piece, move.getStartPosition(), move.getEndPosition());
+            if (isInCheck(teamColor)) {
+                movesToRemove.add(move);
+            }
+            undoTempMove(piece, move.getStartPosition(), move.getEndPosition());
+        }
+        testMoves.removeAll(movesToRemove);
+        return testMoves;
+
     }
 
     private ChessPosition findKing(TeamColor team){
@@ -161,10 +163,15 @@ public class ChessGame {
     }
 
 
-    private boolean putsInCheck(ChessPosition kingPosition){
+    private boolean putsInCheck(ChessPosition position){
         ChessPosition kingIsAt = findKing(teamColor);
 
         if (kingIsAt == null){
+            return false;
+        }
+
+        if (!kingIsAt.equals(position)){
+            //someone else put the king in check
             return false;
         }
 
@@ -180,7 +187,7 @@ public class ChessGame {
                         endMoves.add(move.getEndPosition());
                     }
 
-                    if (teamColor != piece.getTeamColor() && endMoves.contains(kingPosition)) {
+                    if (teamColor != piece.getTeamColor() && endMoves.contains(position)) {
                         return true;
                     }
                 }
@@ -315,9 +322,6 @@ public class ChessGame {
      * @return the chessboard
      */
     public ChessBoard getBoard() {
-        if (board == null) {
-            board.resetBoard();
-        }
         return board;
     }
 
