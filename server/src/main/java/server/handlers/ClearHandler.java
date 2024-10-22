@@ -11,10 +11,10 @@ public class ClearHandler {
         boolean success = clearService.clearAll();
 
         if (success) {
-            res.status(200);  // HTTP 200 OK
+            res.status(200);
             return "All data cleared successfully!";
         } else {
-            res.status(500);  // HTTP 500 Internal Server Error
+            res.status(500);
             return "Failed to clear data.";
         }
     }

@@ -2,6 +2,8 @@ package server;
 import spark.*;
 import java.util.UUID;
 
+import server.handlers.ClearHandler;
+
 
 public class Server {
 
