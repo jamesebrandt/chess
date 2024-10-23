@@ -8,23 +8,31 @@ public class RegisterHandler {
 
     public record RegisterResponse(Boolean success, String message) {
     }
+    private final RegisterService regService = new RegisterService();
 
     public String handle (Request req, Response res) {
-        RegisterService regService = new RegisterService();
-        boolean success = regService.register(req);
+        String message = regService.register(req);
+
 
         RegisterHandler.RegisterResponse response;
-        if (success) {
-            res.status(200);
+        if (message.startsWith("Successful Registration! Token:")) {
+            res.status(201);
             response = new RegisterHandler.RegisterResponse(true, "Successful Registration");
-        } else {
-            res.status(500);
-            response = new RegisterHandler.RegisterResponse(false, "Failed to Register.");
+        } else if(message.equals("Username is Taken")) {
+            res.status(403);
+            response = new RegisterHandler.RegisterResponse(false, "Username Taken");
         }
+        else if (message.equals("Error")){
+            res.status(500);
+            response = new RegisterHandler.RegisterResponse(false, "ERROR with Registration");
+        }
+        else if (message.equals("Bad Request")){
+            res.status(400);
+            response = new RegisterHandler.RegisterResponse(false, "Bad Request");
+        }
+        else { response = new RegisterResponse(false, "Failed at Handler");}
 
         Gson gson = new Gson();
         return gson.toJson(response);
-
-
     }
 }
