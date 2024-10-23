@@ -20,13 +20,13 @@ public class UserDAO {
 
     public boolean checkPassword(String username, String password) {
         User user = usersDb.get(username);
-        if (user.getPassword() == password){
+        if (user != null && user.password().equals(password)) {
             return true;
         }
         return false;
     }
 
-    public boolean deleteUSer(String username){
+    public boolean deleteUser(String username) {
         return usersDb.remove(username) != null;
     }
 

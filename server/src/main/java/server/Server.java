@@ -1,5 +1,6 @@
 package server;
 import server.handlers.RegisterHandler;
+import server.handlers.LoginHandler;
 import spark.Spark;
 import static spark.Spark.*;
 
@@ -29,7 +30,7 @@ public class Server {
 
         post("/session", (req, res) ->{
             LoginHandler loginHandler = new LoginHandler();
-            return LoginHandler.handle(req, res);
+            return loginHandler.handle(req, res);
         });
 
 

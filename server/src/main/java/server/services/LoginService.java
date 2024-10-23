@@ -19,12 +19,11 @@ public class LoginService {
             if(userDAO.getUser(username) == null) {
                 return "Account does not exist";
             } else if (userDAO.checkPassword(username, password)) {
-
+                return "Logged in! Token : " + authDAO.generateToken(username);
             }
-
-
-
-
+            else{
+                return "Incorrect Password";
+            }
 
 
         }catch (Exception e) {
