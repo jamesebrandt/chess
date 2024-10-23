@@ -15,6 +15,7 @@ public class LoginService {
             String username = req.queryParams("username");
             String password = req.queryParams("password");
 
+
             if(userDAO.getUser(username) == null) {
                 return "Account does not exist";
             } else if (userDAO.checkPassword(username, password)) {

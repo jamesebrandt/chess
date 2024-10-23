@@ -20,7 +20,10 @@ public class UserDAO {
 
     public boolean checkPassword(String username, String password) {
         User user = usersDb.get(username);
-        return user != null && user.getPassword().equals(password);
+        if (user.getPassword() == password){
+            return true;
+        }
+        return false;
     }
 
     public boolean deleteUSer(String username){
@@ -29,6 +32,7 @@ public class UserDAO {
 
     public void deleteAll(){
         String sql = "DELETE FROM Users";
+        usersDb.clear();
     }
 
 
