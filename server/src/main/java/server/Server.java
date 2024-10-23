@@ -2,7 +2,6 @@ package server;
 import server.handlers.RegisterHandler;
 import spark.Spark;
 import static spark.Spark.*;
-import java.util.UUID;
 
 import server.handlers.ClearHandler;
 
@@ -42,10 +41,6 @@ public class Server {
     public void stop() {
         Spark.stop();
         Spark.awaitStop();
-    }
-
-    public static String generateToken() {
-        return UUID.randomUUID().toString();
     }
 }
 

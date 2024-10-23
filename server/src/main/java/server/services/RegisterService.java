@@ -8,6 +8,7 @@ import java.util.UUID;
 public class RegisterService {
 
     private UserDAO userDAO = new UserDAO();
+    private AuthDAO AuthDAO = new AuthDAO();
 
 
     public String register(Request req) {
