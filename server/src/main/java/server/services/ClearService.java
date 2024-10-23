@@ -13,8 +13,8 @@ public class ClearService {
             GameDAO gameDAO = new GameDAO();
 
             authDAO.deleteAll();
-            userDAO.deleteAll();
-            gameDAO.deleteAll();
+           // userDAO.deleteAll();
+           // gameDAO.deleteAll();
 
             return true;
         } catch (Exception e) {

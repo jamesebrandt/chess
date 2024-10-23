@@ -1,7 +1,7 @@
 package server.dao;
 
 public class GameDAO {
-    public void DeleteAll(){
+    public void deleteAll(){
         String sql = "DELETE FROM Games";
     }
 }
