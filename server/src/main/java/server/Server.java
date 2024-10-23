@@ -27,6 +27,11 @@ public class Server {
             return registerHandler.handle(req, res);
         });
 
+        post("/session", (req, res) ->{
+            LoginHandler loginHandler = new LoginHandler();
+            return LoginHandler.handle(req, res);
+        });
+
 
 
 

@@ -13,7 +13,6 @@ public class RegisterService {
 
     public String register(Request req) {
         try {
-
             String username = req.queryParams("username");
             String password = req.queryParams("password");
             String email = req.queryParams("email");

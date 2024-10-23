@@ -6,17 +6,15 @@ import server.services.RegisterService;
 
 public class RegisterHandler {
 
-    public record RegisterResponse(Boolean success, String message) {
-    }
+    public record RegisterResponse(boolean success, String message) {}
     private final RegisterService regService = new RegisterService();
 
     public String handle (Request req, Response res) {
         String message = regService.register(req);
 
-
         RegisterHandler.RegisterResponse response;
         if (message.startsWith("Successful Registration! Token:")) {
-            res.status(201);
+            res.status(200);
             response = new RegisterHandler.RegisterResponse(true, "Successful Registration");
         } else if(message.equals("Username is Taken")) {
             res.status(403);

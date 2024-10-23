@@ -18,6 +18,11 @@ public class UserDAO {
         return usersDb.get(username);
     }
 
+    public boolean checkPassword(String username, String password) {
+        User user = usersDb.get(username);
+        return user != null && user.getPassword().equals(password);
+    }
+
     public boolean deleteUSer(String username){
         return usersDb.remove(username) != null;
     }
