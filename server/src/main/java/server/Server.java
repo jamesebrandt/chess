@@ -1,5 +1,6 @@
 package server;
 import spark.*;
+import static spark.Spark.post;
 import java.util.UUID;
 
 import server.handlers.ClearHandler;

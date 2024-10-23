@@ -12,11 +12,11 @@ public class ClearService {
             UserDAO userDAO = new UserDAO();
             GameDAO gameDAO = new GameDAO();
 
-            authDAO.deleteAll();  // Clear all auth tokens
-            userDAO.deleteAll();  // Clear all users
-            gameDAO.deleteAll();  // Clear all games
+            authDAO.deleteAll();
+            userDAO.deleteAll();
+            gameDAO.deleteAll();
 
-            return true;  // If successful, return true
+            return true;
         } catch (Exception e) {
             e.printStackTrace();
             return false;  // If something goes wrong, return false
