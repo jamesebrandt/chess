@@ -1,4 +1,5 @@
 package server;
+import server.handlers.RegisterHandler;
 import spark.*;
 import static spark.Spark.*;
 import java.util.UUID;
@@ -23,7 +24,8 @@ public class Server {
         //register
 
         post("/user", (req, res) ->{
-            RegisterHandler registerHandler = new RegisterHandler;
+            RegisterHandler registerHandler = new RegisterHandler();
+            return RegisterHandler.handle(req, res);
 
         });
 
