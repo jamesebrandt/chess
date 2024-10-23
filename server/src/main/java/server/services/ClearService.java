@@ -1,8 +1,8 @@
 package server.services;
 
-import server.dao.AuthDAO;
-import server.dao.UserDAO;
-import server.dao.GameDAO;
+import dataaccess.AuthDAO;
+import dataaccess.UserDAO;
+import dataaccess.GameDAO;
 
 public class ClearService {
 
@@ -13,13 +13,13 @@ public class ClearService {
             GameDAO gameDAO = new GameDAO();
 
             authDAO.deleteAll();
-           // userDAO.deleteAll();
-           // gameDAO.deleteAll();
+            userDAO.deleteAll();
+            gameDAO.deleteAll();
 
             return true;
         } catch (Exception e) {
             e.printStackTrace();
-            return false;  // If something goes wrong, return false
+            return false;
         }
     }
 }

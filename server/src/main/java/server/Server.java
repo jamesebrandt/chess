@@ -1,6 +1,6 @@
 package server;
 import spark.*;
-import static spark.Spark.post;
+import static spark.Spark.*;
 import java.util.UUID;
 
 import server.handlers.ClearHandler;
@@ -14,10 +14,11 @@ public class Server {
         Spark.staticFiles.location("web");
 
         // Register your endpoints and handle exceptions here.
-        post("/clear", (req, res) -> {
+        delete("/db", (req, res) -> {
             ClearHandler clearHandler = new ClearHandler();
             return clearHandler.handle(req, res);
         });
+
 
 
         //This line initializes the server and can be removed once you have a functioning endpoint 
