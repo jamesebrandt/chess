@@ -17,6 +17,15 @@ public class LoginHandler {
 
         LoginResponse response = loginService.login(loginRequest);
 
+        if (response.success() ){
+            res.status(200);
+        }
+        else if (response.message().equals("Bad Request")){
+            res.status(500);
+        }
+        else if (response.message().equals("Incorrect Password")){
+            res.status(401);
+        }
         return gson.toJson(response);
     }
 }

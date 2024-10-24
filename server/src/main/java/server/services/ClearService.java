@@ -8,7 +8,7 @@ public class ClearService {
 
     public boolean clearAll() {
         try {
-            AuthDAO authDAO = new AuthDAO();
+            AuthDAO authDAO = AuthDAO.getInstance();
             UserDAO userDAO = UserDAO.getInstance();
             GameDAO gameDAO = new GameDAO();
 

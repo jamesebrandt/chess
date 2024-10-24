@@ -10,7 +10,7 @@ import model.User;
 public class RegisterService {
 
     private UserDAO userDAO = UserDAO.getInstance();
-    private AuthDAO AuthDAO = new AuthDAO();
+    private AuthDAO authDAO = AuthDAO.getInstance();
 
     public RegisterResponse register(RegisterRequest req) {
         try {
@@ -23,7 +23,7 @@ public class RegisterService {
             boolean success = userDAO.registerUser(newUser);
 
             if (success){
-                String token = AuthDAO.generateToken(req.username());
+                String token = authDAO.generateToken(req.username());
                 return new RegisterResponse(true, "Successful Registration", req.username(), token);
             } else {
                 return new RegisterResponse(false, "Bad Request", req.username(), null);
