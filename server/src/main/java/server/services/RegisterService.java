@@ -1,33 +1,28 @@
 package server.services;
-import com.google.gson.Gson;
+
 import dataaccess.AuthDAO;
-import model.LoginRequest;
-import spark.Request;
 import dataaccess.UserDAO;
+import model.RegisterRequest;
 import model.User;
-import java.util.UUID;
+
 
 public class RegisterService {
 
     private UserDAO userDAO = new UserDAO();
     private AuthDAO AuthDAO = new AuthDAO();
 
-
-    public String register(Request req) {
+    public String register(RegisterRequest req) {
         try {
-            Gson gson = new Gson();
 
-            Register = gson.fromJson(req.body(), LoginRequest.class);
-
-            if(userDAO.getUser(username) != null) {
+            if(userDAO.getUser(req.username()) != null) {
                 return "Username is Taken";
             }
 
-            User newUser = new User(username, password, email);
+            User newUser = new User(req.username(), req.password(), req.email());
             boolean success = userDAO.RegisterUser(newUser);
 
             if (success){
-                String token = AuthDAO.generateToken(username);
+                String token = AuthDAO.generateToken(req.username());
                 return "Successful Registration! Token: " + token;
             } else {
                 return "Bad Request";

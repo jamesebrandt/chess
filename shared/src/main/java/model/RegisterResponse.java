@@ -1,4 +1,4 @@
 package model;
 
-public record RegisterResponse() {
+public record RegisterResponse(boolean success, String message) {
 }

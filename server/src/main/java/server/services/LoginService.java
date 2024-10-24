@@ -12,7 +12,6 @@ public class LoginService {
     public String login(LoginRequest req){
         try {
 
-
             if(userDAO.getUser(req.username()) == null) {
                 return "Account does not exist";
             } else if (userDAO.checkPassword(req.username(), req.password())) {
