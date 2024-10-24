@@ -18,6 +18,19 @@ public class RegisterHandler {
 
         RegisterResponse response = registerService.register(registerRequest);
 
+
+        if (response.success() ){
+            res.status(200);
+        }
+        else if (response.message().equals("Error: bad request")){
+            res.status(400);
+        }
+        else if (response.message().equals("Error: already taken")){
+            res.status(403);
+        }
+        else if (response.message().equals("Error")){
+            res.status(500);
+        }
         return gson.toJson(response);
     }
 }

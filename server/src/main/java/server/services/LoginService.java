@@ -12,19 +12,20 @@ public class LoginService {
 
     public LoginResponse login(LoginRequest req){
         try {
-
-
             if (userDAO.checkPassword(req.username(), req.password())) {
-                return new LoginResponse(true, "Incorrect Password" , req.username(),  authDAO.generateToken(req.username()));
+                return new LoginResponse(true, "Correct Login" , req.username(),  authDAO.generateToken(req.username()));
+            }
+            else if (!userDAO.checkPassword(req.username(), req.password())) {
+                return new LoginResponse(false, "Error: unauthorized" , null,  null);
             }
             else{
-                return new LoginResponse(false, "Bad Request" , req.username(),  null);
+                return new LoginResponse(false, "Error: Bad Request" , null,  null);
             }
 
 
         }catch (Exception e) {
             e.printStackTrace();
-            return new LoginResponse(false, "Error" , req.username(),  null);
+            return new LoginResponse(false, "Error" , null,  null);
         }
 
     }

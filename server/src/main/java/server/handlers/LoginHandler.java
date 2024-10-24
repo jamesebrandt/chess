@@ -20,10 +20,10 @@ public class LoginHandler {
         if (response.success() ){
             res.status(200);
         }
-        else if (response.message().equals("Bad Request")){
+        else if (response.message().equals("Error: Bad Request")){
             res.status(500);
         }
-        else if (response.message().equals("Incorrect Password")){
+        else if (response.message().equals("Error: unauthorized")){
             res.status(401);
         }
         return gson.toJson(response);

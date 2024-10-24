@@ -16,22 +16,21 @@ public class RegisterService {
         try {
 
             if(userDAO.getUser(req.username()) != null) {
-                return new RegisterResponse(false, "Error: already taken", req.username(), null);
+                return new RegisterResponse(false, "Error: already taken", null, null);
             }
 
             User newUser = new User(req.username(), req.password(), req.email());
             boolean success = userDAO.registerUser(newUser);
 
             if (success){
-                String token = authDAO.generateToken(req.username());
-                return new RegisterResponse(true, "Successful Registration", req.username(), token);
+                return new RegisterResponse(true, "Successful Registration", req.username(), authDAO.generateToken(req.username()));
             } else {
-                return new RegisterResponse(false, "Bad Request", req.username(), null);
+                return new RegisterResponse(false, "Error: bad request", null, null);
             }
 
         } catch (Exception e) {
             e.printStackTrace();
-            return new RegisterResponse(false, "Error", req.username(), null);
+            return new RegisterResponse(false, "Error", null, null);
         }
     }
 }
