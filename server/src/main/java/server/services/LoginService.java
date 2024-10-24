@@ -2,24 +2,21 @@ package server.services;
 
 import dataaccess.AuthDAO;
 import dataaccess.UserDAO;
-import spark.Request;
-import spark.Response;
+import model.LoginRequest;
 
 public class LoginService {
 
     private UserDAO userDAO = new UserDAO();
     private AuthDAO authDAO = new AuthDAO();
 
-    public String login(Request req){
+    public String login(LoginRequest req){
         try {
-            String username = req.queryParams("username");
-            String password = req.queryParams("password");
 
 
-            if(userDAO.getUser(username) == null) {
+            if(userDAO.getUser(req.username()) == null) {
                 return "Account does not exist";
-            } else if (userDAO.checkPassword(username, password)) {
-                return "Logged in! Token : " + authDAO.generateToken(username);
+            } else if (userDAO.checkPassword(req.username(), req.password())) {
+                return "Logged in! Token: " + authDAO.generateToken(req.username());
             }
             else{
                 return "Incorrect Password";

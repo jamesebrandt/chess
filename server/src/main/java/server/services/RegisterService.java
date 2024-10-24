@@ -1,5 +1,7 @@
 package server.services;
+import com.google.gson.Gson;
 import dataaccess.AuthDAO;
+import model.LoginRequest;
 import spark.Request;
 import dataaccess.UserDAO;
 import model.User;
@@ -13,9 +15,9 @@ public class RegisterService {
 
     public String register(Request req) {
         try {
-            String username = req.queryParams("username");
-            String password = req.queryParams("password");
-            String email = req.queryParams("email");
+            Gson gson = new Gson();
+
+            Register = gson.fromJson(req.body(), LoginRequest.class);
 
             if(userDAO.getUser(username) != null) {
                 return "Username is Taken";
