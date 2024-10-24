@@ -9,7 +9,7 @@ public class ClearService {
     public boolean clearAll() {
         try {
             AuthDAO authDAO = new AuthDAO();
-            UserDAO userDAO = new UserDAO();
+            UserDAO userDAO = UserDAO.getInstance();
             GameDAO gameDAO = new GameDAO();
 
             authDAO.deleteAll();

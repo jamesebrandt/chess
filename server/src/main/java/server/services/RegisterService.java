@@ -9,18 +9,18 @@ import model.User;
 
 public class RegisterService {
 
-    private UserDAO userDAO = new UserDAO();
+    private UserDAO userDAO = UserDAO.getInstance();
     private AuthDAO AuthDAO = new AuthDAO();
 
     public RegisterResponse register(RegisterRequest req) {
         try {
 
             if(userDAO.getUser(req.username()) != null) {
-                return new RegisterResponse(false, "Username Taken", req.username(), null);
+                return new RegisterResponse(false, "Error: already taken", req.username(), null);
             }
 
             User newUser = new User(req.username(), req.password(), req.email());
-            boolean success = userDAO.RegisterUser(newUser);
+            boolean success = userDAO.registerUser(newUser);
 
             if (success){
                 String token = AuthDAO.generateToken(req.username());

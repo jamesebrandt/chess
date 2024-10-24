@@ -3,28 +3,28 @@ package server.services;
 import dataaccess.AuthDAO;
 import dataaccess.UserDAO;
 import model.LoginRequest;
+import model.LoginResponse;
 
 public class LoginService {
 
-    private UserDAO userDAO = new UserDAO();
+    private UserDAO userDAO = UserDAO.getInstance();
     private AuthDAO authDAO = new AuthDAO();
 
-    public String login(LoginRequest req){
+    public LoginResponse login(LoginRequest req){
         try {
 
-            if(userDAO.getUser(req.username()) == null) {
-                return "Account does not exist";
-            } else if (userDAO.checkPassword(req.username(), req.password())) {
-                return "Logged in! Token: " + authDAO.generateToken(req.username());
+
+            if (userDAO.checkPassword(req.username(), req.password())) {
+                return new LoginResponse(true, null , req.username(),  authDAO.generateToken(req.username()));
             }
             else{
-                return "Incorrect Password";
+                return new LoginResponse(false, "Bad Request" , req.username(),  null);
             }
 
 
         }catch (Exception e) {
             e.printStackTrace();
-            return "Error";
+            return new LoginResponse(false, "Error" , req.username(),  null);
         }
 
     }

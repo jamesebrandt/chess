@@ -15,24 +15,7 @@ public class LoginHandler {
 
         LoginRequest loginRequest = gson.fromJson(req.body(), LoginRequest.class);
 
-        String message = loginService.login(loginRequest);
-
-        LoginResponse response;
-        if (message.startsWith("Logged in! Token:")){
-            res.status(200);
-            response = new LoginResponse(true, "Successful Login");
-        } else if (message.equals("Incorrect Password")) {
-            res.status(401);
-            response = new LoginResponse(false, "Error: unauthorized");
-        } else if (message.equals("Account does not exist")) {
-            res.status(401);
-            response = new LoginResponse(false, "Error: Account does not exist");
-        } else if (message.equals("Error")) {
-            res.status(500);
-            response = new LoginResponse(false, "Error");
-        }
-        else {response = new LoginResponse(false, "Failed in Handler");
-        }
+        LoginResponse response = loginService.login(loginRequest);
 
         return gson.toJson(response);
     }
