@@ -3,6 +3,7 @@ package server.services;
 import dataaccess.AuthDAO;
 import dataaccess.UserDAO;
 import model.RegisterRequest;
+import model.RegisterResponse;
 import model.User;
 
 
@@ -11,11 +12,11 @@ public class RegisterService {
     private UserDAO userDAO = new UserDAO();
     private AuthDAO AuthDAO = new AuthDAO();
 
-    public String register(RegisterRequest req) {
+    public RegisterResponse register(RegisterRequest req) {
         try {
 
             if(userDAO.getUser(req.username()) != null) {
-                return "Username is Taken";
+                return new RegisterResponse(false, "Username Taken", req.username(), null);
             }
 
             User newUser = new User(req.username(), req.password(), req.email());
@@ -23,14 +24,14 @@ public class RegisterService {
 
             if (success){
                 String token = AuthDAO.generateToken(req.username());
-                return "Successful Registration! Token: " + token;
+                return new RegisterResponse(true, "Successful Registration", req.username(), token);
             } else {
-                return "Bad Request";
+                return new RegisterResponse(false, "Bad Request", req.username(), null);
             }
 
         } catch (Exception e) {
             e.printStackTrace();
-            return "Error";
+            return new RegisterResponse(false, "Error", req.username(), null);
         }
     }
 }

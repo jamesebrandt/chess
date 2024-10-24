@@ -17,7 +17,6 @@ public class LoginHandler {
 
         String message = loginService.login(loginRequest);
 
-
         LoginResponse response;
         if (message.startsWith("Logged in! Token:")){
             res.status(200);
