@@ -1,4 +1,5 @@
 package server;
+import server.handlers.LogoutHandler;
 import server.handlers.RegisterHandler;
 import server.handlers.LoginHandler;
 import spark.Spark;
@@ -21,17 +22,25 @@ public class Server {
             ClearHandler clearHandler = new ClearHandler();
             return clearHandler.handle(req, res);
         });
-        //register
 
+        //register
         post("/user", (req, res) ->{
             RegisterHandler registerHandler = new RegisterHandler();
             return registerHandler.handle(req, res);
         });
 
+        //login
         post("/session", (req, res) ->{
             LoginHandler loginHandler = new LoginHandler();
             return loginHandler.handle(req, res);
         });
+
+        // logout
+        path("/session", () -> {
+            delete("", new LogoutHandler()::handle);
+        });
+
+
 
 
 

@@ -15,9 +15,7 @@ public class RegisterHandler {
         Gson gson = new Gson();
 
         RegisterRequest registerRequest = gson.fromJson(req.body(), RegisterRequest.class);
-
         RegisterResponse response = registerService.register(registerRequest);
-
 
         if (response.success() ){
             res.status(200);

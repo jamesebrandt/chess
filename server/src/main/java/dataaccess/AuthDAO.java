@@ -18,8 +18,12 @@ public class AuthDAO {
         return instance;
     }
 
+    public boolean isValidToken(String token) {
+        return authTokens.containsValue(token);
+    }
+
     public void deleteAll() {
-        String sql = "DELETE FROM auth_tokens";
+        // String sql = "DELETE FROM auth_tokens";
         authTokens.clear();
     }
 
@@ -29,7 +33,17 @@ public class AuthDAO {
         authTokens.put(username, token);
         return token;
     }
+
     public String getToken(String username) {
-        return authTokens.get(username);
+        for (Map.Entry<String, String> entry : authTokens.entrySet()) {
+            if (entry.getValue().equals(username)) {
+                return entry.getKey();
+            }
+        }
+        return null;
+    }
+
+    public void  deleteAuth(String authToken){
+        authTokens.remove(authToken);
     }
 }
