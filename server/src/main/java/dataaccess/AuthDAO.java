@@ -19,7 +19,7 @@ public class AuthDAO {
     }
 
     public boolean isValidToken(String token) {
-        return authTokens.containsValue(token);
+        return authTokens.containsKey(token);
     }
 
     public void deleteAll() {
@@ -30,7 +30,7 @@ public class AuthDAO {
 
     public String generateToken(String username) {
         String token = UUID.randomUUID().toString();
-        authTokens.put(username, token);
+        authTokens.put(token, username);
         return token;
     }
 
