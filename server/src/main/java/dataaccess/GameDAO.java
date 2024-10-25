@@ -9,7 +9,7 @@ public class GameDAO {
     private final Map<Integer, Game> gameDb = new HashMap<>();
     private static GameDAO instance = null;
 
-    private int CreatedGameID;
+    private int createdGameID = 10;
 
     private GameDAO() {}
     public static GameDAO getInstance() {
@@ -34,10 +34,10 @@ public class GameDAO {
 
 
     public int createGame(String gameName, String authToken) {
-        gameDb.put(CreatedGameID, new Game(CreatedGameID, gameName, authToken));
-        int ID = CreatedGameID;
-        CreatedGameID ++;
-        return ID;
+        int id = createdGameID;
+        gameDb.put(id, new Game(id, gameName, authToken));
+        createdGameID++;
+        return id;
     }
 
 
