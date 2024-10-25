@@ -1,11 +1,7 @@
 package server;
-import server.handlers.LogoutHandler;
-import server.handlers.RegisterHandler;
-import server.handlers.LoginHandler;
+import server.handlers.*;
 import spark.Spark;
 import static spark.Spark.*;
-
-import server.handlers.ClearHandler;
 
 
 public class Server {
@@ -38,6 +34,12 @@ public class Server {
         // logout
         path("/session", () -> {
             delete("", new LogoutHandler()::handle);
+        });
+
+        //game
+        post("/game", (req, res) -> {
+            CreateGameHandler createGameHandler = new CreateGameHandler();
+            return createGameHandler.handle(req, res);
         });
 
 

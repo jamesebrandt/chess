@@ -7,7 +7,6 @@ import model.User;
 public class UserDAO {
 
     private final Map<String, User> usersDb = new HashMap<>();
-
     private static UserDAO instance = null;
 
     private UserDAO() {}

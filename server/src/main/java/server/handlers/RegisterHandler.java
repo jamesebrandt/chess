@@ -17,7 +17,7 @@ public class RegisterHandler {
         RegisterRequest registerRequest = gson.fromJson(req.body(), RegisterRequest.class);
         RegisterResponse response = registerService.register(registerRequest);
 
-        if (response.success() ){
+        if (response.success()){
             res.status(200);
         }
         else if (response.message().equals("Error: bad request")){

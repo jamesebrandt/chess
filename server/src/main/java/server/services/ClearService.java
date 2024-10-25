@@ -10,7 +10,7 @@ public class ClearService {
         try {
             AuthDAO authDAO = AuthDAO.getInstance();
             UserDAO userDAO = UserDAO.getInstance();
-            GameDAO gameDAO = new GameDAO();
+            GameDAO gameDAO = GameDAO.getInstance();
 
             authDAO.deleteAll();
             userDAO.deleteAll();
