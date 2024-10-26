@@ -42,6 +42,12 @@ public class Server {
             return createGameHandler.handle(req, res);
         });
 
+        get("/game", (req, res) -> {
+            GameListHandler gameListHandler = new GameListHandler();
+            return gameListHandler.handle(req, res);
+        });
+
+
 
 
 

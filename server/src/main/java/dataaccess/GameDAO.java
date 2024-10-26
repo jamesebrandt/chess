@@ -3,6 +3,8 @@ package dataaccess;
 import model.Game;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
+import java.util.ArrayList;
 
 public class GameDAO {
 
@@ -19,11 +21,11 @@ public class GameDAO {
         return instance;
     }
 
-    public void deleteAll(){
-        //String sql = "DELETE FROM Games";
+    public void deleteAll() {
+        gameDb.clear();
     }
 
-    public Game getGame(String gameID){
+    public Game getGame(int gameID) {
         return gameDb.get(gameID);
     }
 
@@ -32,13 +34,26 @@ public class GameDAO {
                 .anyMatch(game -> game.gameName().equals(gameName));
     }
 
-
     public int createGame(String gameName, String authToken) {
         int id = createdGameID;
-        gameDb.put(id, new Game(id, gameName, authToken));
+        gameDb.put(id, new Game(id, gameName, "", "", authToken));
         createdGameID++;
         return id;
     }
 
+    public Map<String, List<Map<String, Object>>> listGames() {
+        List<Map<String, Object>> gamesList = new ArrayList<>();
+        for (Game game : gameDb.values()) {
+            Map<String, Object> gameInfo = new HashMap<>();
+            gameInfo.put("gameID", game.gameID());
+            gameInfo.put("whiteUsername", game.whiteUsername());
+            gameInfo.put("blackUsername", game.blackUsername());
+            gameInfo.put("gameName", game.gameName());
+            gamesList.add(gameInfo);
+        }
 
+        Map<String, List<Map<String, Object>>> result = new HashMap<>();
+        result.put("games", gamesList);
+        return result;
+    }
 }
