@@ -1,14 +1,12 @@
 package server.services;
 
 import dataaccess.AuthDAO;
-import dataaccess.UserDAO;
 import dataaccess.GameDAO;
 import model.JoinGameRequest;
 import model.JoinGameResponse;
 
 public class JoinGameService {
 
-    private UserDAO userDAO = UserDAO.getInstance();
     private AuthDAO authDAO = AuthDAO.getInstance();
     private GameDAO gameDAO = GameDAO.getInstance();
 
@@ -19,12 +17,15 @@ public class JoinGameService {
             if(!authDAO.isValidToken(auth)){
                 return new JoinGameResponse(false, "Error: unauthorized");
             }
-            else if (gameDAO.canJoinGameDb(request)){
-                gameDAO.addUsername(request, AuthDAO.getInstance().getUser(auth));
-                return new JoinGameResponse(true, "Added!");
+            else if (!gameDAO.isValidGameID(request.gameID())){
+                return new JoinGameResponse(false, "Error: bad request");
+            }
+            else if (!gameDAO.isStealingTeamColor(request)){
+                return new JoinGameResponse(false, "Error: Forbidden");
             }
             else{
-                return new JoinGameResponse(false, "Error");
+                gameDAO.addUsername(request, AuthDAO.getInstance().getUser(auth));
+                return new JoinGameResponse(true, "Added!");
             }
 
 

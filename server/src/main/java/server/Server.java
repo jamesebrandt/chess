@@ -36,28 +36,23 @@ public class Server {
             delete("", new LogoutHandler()::handle);
         });
 
-        //game
+        //create game
         post("/game", (req, res) -> {
             CreateGameHandler createGameHandler = new CreateGameHandler();
             return createGameHandler.handle(req, res);
         });
 
+        // get game list
         get("/game", (req, res) -> {
             GameListHandler gameListHandler = new GameListHandler();
             return gameListHandler.handle(req, res);
         });
 
+        //join game
         put("/game", (req, res) -> {
            JoinGameHandler joinGameHandler = new JoinGameHandler();
            return joinGameHandler.handle(req, res);
         });
-
-
-
-
-
-
-
 
         Spark.awaitInitialization();
         return Spark.port();

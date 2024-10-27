@@ -2,7 +2,6 @@ package dataaccess;
 
 import model.Game;
 import model.JoinGameRequest;
-import model.PlayerColor;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -48,27 +47,33 @@ public class GameDAO {
     }
 
     public boolean isValidGameID(int gameID){
-        return gameDb.containsKey(gameID);
-    }
-
-    public boolean canJoinGameDb(JoinGameRequest req){
-        if (!isValidGameID(req.gameID())){
-            return false;
-        }
-        if (req.color() == PlayerColor.BLACK && gameDb.get(req.gameID()).blackUsername() == null){
+        if (gameDb.containsKey(gameID)){
             return true;
         }
-        else return req.color() == PlayerColor.WHITE && gameDb.get(req.gameID()).whiteUsername() == null;
+        return false;
     }
+
+
+    public boolean isStealingTeamColor(JoinGameRequest req){
+        String playerColor = req.color();
+        if (playerColor == null) {
+            return false;
+        }
+        if ("BLACK".equals(playerColor) && gameDb.get(req.gameID()).blackUsername() == null){
+            return true;
+        }
+        else return "WHITE".equals(playerColor) & gameDb.get(req.gameID()).whiteUsername() == null;
+    }
+
 
     public void addUsername(JoinGameRequest req, String name) {
         Game gameData = gameDb.get(req.gameID());
         if (gameData != null) {
             Game updatedGame;
-            if (req.color().equals(PlayerColor.WHITE)) {
-                updatedGame = new Game(gameData.gameID(), gameData.gameName(), name, gameData.blackUsername(), gameData.authToken());
+            if (req.color().equals("WHITE")) {
+                updatedGame = new Game(gameData.gameID(), gameData.gameName(), name, gameData.whiteUsername(), gameData.authToken());
             } else {
-                updatedGame = new Game(gameData.gameID(), gameData.gameName(), gameData.whiteUsername(), name, gameData.authToken());
+                updatedGame = new Game(gameData.gameID(), gameData.gameName(), gameData.blackUsername(), name, gameData.authToken());
             }
             gameDb.put(req.gameID(), updatedGame);
         }

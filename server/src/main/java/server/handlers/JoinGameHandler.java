@@ -27,6 +27,10 @@ public class JoinGameHandler {
             res.status(200);
         } else if(response.message().equals("Error: unauthorized")) {
             res.status(401);
+        } else if(response.message().equals("Error: bad request")) {
+            res.status(400);
+        } else if(response.message().equals("Error: Forbidden")) {
+        res.status(403);
         }else{
             res.status(500);
         }
