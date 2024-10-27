@@ -29,6 +29,7 @@ public class UserDAO {
         return usersDb.get(username);
     }
 
+
     public boolean checkPassword(String username, String password) {
         User user = usersDb.get(username);
         if (user != null && user.password().equals(password)) {

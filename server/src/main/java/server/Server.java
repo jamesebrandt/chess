@@ -47,6 +47,10 @@ public class Server {
             return gameListHandler.handle(req, res);
         });
 
+        put("/game", (req, res) -> {
+           JoinGameHandler joinGameHandler = new JoinGameHandler();
+           return joinGameHandler.handle(req, res);
+        });
 
 
 

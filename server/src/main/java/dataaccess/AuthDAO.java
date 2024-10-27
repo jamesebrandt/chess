@@ -43,6 +43,10 @@ public class AuthDAO {
         return null;
     }
 
+    public String getUser(String auth){
+        return authTokens.get(auth);
+    }
+
     public void  deleteAuth(String authToken){
         authTokens.remove(authToken);
     }
