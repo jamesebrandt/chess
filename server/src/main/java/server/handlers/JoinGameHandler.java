@@ -21,7 +21,7 @@ public class JoinGameHandler {
             return gson.toJson(new JoinGameResponse(false, "Error: unauthorized"));
         }
 
-        JoinGameResponse response = joinGameService.joinGame(new JoinGameRequest(joinGameRequest.color(), joinGameRequest.gameID()), authToken);
+        JoinGameResponse response = joinGameService.joinGame(new JoinGameRequest(joinGameRequest.playerColor(), joinGameRequest.gameID()), authToken);
 
         if (response.success()){
             res.status(200);

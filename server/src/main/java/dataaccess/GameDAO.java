@@ -3,10 +3,7 @@ package dataaccess;
 import model.Game;
 import model.JoinGameRequest;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.List;
-import java.util.ArrayList;
+import java.util.*;
 
 public class GameDAO {
 
@@ -41,7 +38,7 @@ public class GameDAO {
 
     public int createGame(String gameName, String authToken) {
         int id = createdGameID;
-        gameDb.put(id, new Game(id, gameName, "", "", authToken));
+        gameDb.put(id, new Game(id, gameName, null, null, authToken));
         createdGameID++;
         return id;
     }
@@ -55,14 +52,14 @@ public class GameDAO {
 
 
     public boolean isStealingTeamColor(JoinGameRequest req){
-        String playerColor = req.color();
+        String playerColor = req.playerColor();
         if (playerColor == null) {
             return false;
         }
-        if ("BLACK".equals(playerColor) && gameDb.get(req.gameID()).blackUsername() == null){
+        if ("BLACK".equals(playerColor) && Objects.equals(gameDb.get(req.gameID()).blackUsername(), null)){
             return true;
         }
-        else return "WHITE".equals(playerColor) & gameDb.get(req.gameID()).whiteUsername() == null;
+        else return playerColor.equals("WHITE") && Objects.equals(gameDb.get(req.gameID()).whiteUsername(), null);
     }
 
 
@@ -70,7 +67,7 @@ public class GameDAO {
         Game gameData = gameDb.get(req.gameID());
         if (gameData != null) {
             Game updatedGame;
-            if (req.color().equals("WHITE")) {
+            if (req.playerColor().equals("WHITE")) {
                 updatedGame = new Game(gameData.gameID(), gameData.gameName(), name, gameData.whiteUsername(), gameData.authToken());
             } else {
                 updatedGame = new Game(gameData.gameID(), gameData.gameName(), gameData.blackUsername(), name, gameData.authToken());
@@ -84,8 +81,8 @@ public class GameDAO {
         for (Game game : gameDb.values()) {
             Map<String, Object> gameInfo = Map.of(
                     "gameID", game.gameID(),
-                    "whiteUsername", game.whiteUsername(),
-                    "blackUsername", game.blackUsername(),
+                    "whiteUsername", game.whiteUsername()== null ? "null": game.whiteUsername(),
+                    "blackUsername", game.blackUsername()== null ? "null": game.blackUsername(),
                     "gameName", game.gameName()
             );
             gamesList.add(gameInfo);

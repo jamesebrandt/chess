@@ -13,7 +13,6 @@ public class JoinGameService {
     public JoinGameResponse joinGame(JoinGameRequest request, String auth){
         try{
 
-            //check for another user playing as that team
             if(!authDAO.isValidToken(auth)){
                 return new JoinGameResponse(false, "Error: unauthorized");
             }
