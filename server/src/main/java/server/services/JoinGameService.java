@@ -16,11 +16,11 @@ public class JoinGameService {
             if(!authDAO.isValidToken(auth)){
                 return new JoinGameResponse(false, "Error: unauthorized");
             }
-            else if (!gameDAO.isValidGameID(request.gameID())){
+            else if (!gameDAO.isValidGameID(request.gameID()) || !gameDAO.isValidColor(request.playerColor())){
                 return new JoinGameResponse(false, "Error: bad request");
             }
             else if (!gameDAO.isStealingTeamColor(request)){
-                return new JoinGameResponse(false, "Error: Forbidden");
+                return new JoinGameResponse(false, "Error: already taken");
             }
             else{
                 gameDAO.addUsername(request, AuthDAO.getInstance().getUser(auth));

@@ -1,7 +1,6 @@
 package model;
 
-import java.util.List;
-import java.util.Map;
+import java.util.ArrayList;
 
-public record GameListResponse(boolean success, String message, List<Map<String, Object>> games) {
+public record GameListResponse(boolean success, String message, ArrayList<Game> games) {
 }

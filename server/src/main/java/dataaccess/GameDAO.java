@@ -1,5 +1,6 @@
 package dataaccess;
 
+import chess.ChessGame;
 import model.Game;
 import model.JoinGameRequest;
 
@@ -32,30 +33,31 @@ public class GameDAO {
     }
 
     public boolean isDuplicateGameName(String gameName) {
-        return gameDb.values().stream()
-                .anyMatch(game -> game.gameName().equals(gameName));
+        return gameDb.containsValue(gameName);
     }
 
     public int createGame(String gameName, String authToken) {
         int id = createdGameID;
-        gameDb.put(id, new Game(id, gameName, null, null, authToken));
+        gameDb.put(id, new Game(id, gameName, null, null, new ChessGame()));
         createdGameID++;
         return id;
     }
 
-    public boolean isValidGameID(int gameID){
-        if (gameDb.containsKey(gameID)){
-            return true;
+    public boolean isValidGameID(Integer gameID){
+        if (gameID == null){
+            return false;
         }
-        return false;
+        return gameDb.containsKey(gameID);
+    }
+
+    public boolean isValidColor(String playerColor){
+        return playerColor != null;
     }
 
 
     public boolean isStealingTeamColor(JoinGameRequest req){
         String playerColor = req.playerColor();
-        if (playerColor == null) {
-            return false;
-        }
+
         if ("BLACK".equals(playerColor) && Objects.equals(gameDb.get(req.gameID()).blackUsername(), null)){
             return true;
         }
@@ -68,25 +70,21 @@ public class GameDAO {
         if (gameData != null) {
             Game updatedGame;
             if (req.playerColor().equals("WHITE")) {
-                updatedGame = new Game(gameData.gameID(), gameData.gameName(), name, gameData.whiteUsername(), gameData.authToken());
+                updatedGame = new Game(gameData.gameID(),gameData.gameName(), name, gameData.blackUsername() ,gameData.game());
             } else {
-                updatedGame = new Game(gameData.gameID(), gameData.gameName(), gameData.blackUsername(), name, gameData.authToken());
+                updatedGame = new Game(gameData.gameID(),gameData.gameName(), gameData.whiteUsername(), name, gameData.game());
             }
             gameDb.put(req.gameID(), updatedGame);
         }
     }
 
-    public Map<String, List<Map<String, Object>>> listGames() {
-        List<Map<String, Object>> gamesList = new ArrayList<>();
+
+    public ArrayList<Game> listGames() {
+        ArrayList<Game> gamesList = new ArrayList<>();
+
         for (Game game : gameDb.values()) {
-            Map<String, Object> gameInfo = Map.of(
-                    "gameID", game.gameID(),
-                    "whiteUsername", game.whiteUsername()== null ? "null": game.whiteUsername(),
-                    "blackUsername", game.blackUsername()== null ? "null": game.blackUsername(),
-                    "gameName", game.gameName()
-            );
-            gamesList.add(gameInfo);
+            gamesList.add(new Game(game.gameID(), game.gameName(), game.whiteUsername(), game.blackUsername(),null));
         }
-        return Map.of("games", gamesList);
+        return gamesList;
     }
 }
