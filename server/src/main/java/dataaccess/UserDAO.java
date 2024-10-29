@@ -37,9 +37,6 @@ public class UserDAO {
         return false;
     }
 
-    public boolean deleteUser(String username) {
-        return usersDb.remove(username) != null;
-    }
 
     public void deleteAll() {
         usersDb.clear();

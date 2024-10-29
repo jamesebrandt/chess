@@ -82,11 +82,11 @@ public class ChessGame {
     private ChessPosition findKing(TeamColor team){
         for (int row = 1; row < 9; row++){
             for (int col = 1; col < 9; col++){
-                ChessPosition CheckingPosition = new ChessPosition(row, col);
-                if (board.getPiece(CheckingPosition) != null){
-                ChessPiece piece = board.getPiece(CheckingPosition);
+                ChessPosition checkingPosition = new ChessPosition(row, col);
+                if (board.getPiece(checkingPosition) != null){
+                    ChessPiece piece = board.getPiece(checkingPosition);
                     if (piece.getPieceType().equals(ChessPiece.PieceType.KING) && piece.getTeamColor().equals(team)) {
-                        return CheckingPosition;
+                        return checkingPosition;
                     }
                 }
             }
@@ -145,24 +145,24 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        ChessPosition KingIsAt = findKing(teamColor);
-        if (KingIsAt == null){
+        ChessPosition kingIsAt = findKing(teamColor);
+        if (kingIsAt == null){
             return false;
         }
 
         for (int row = 1; row < 9; row++){
             for (int col = 1; col < 9; col++){
-                ChessPosition CheckingPosition = new ChessPosition(row, col);
-                ChessPiece piece = board.getPiece(CheckingPosition);
+                ChessPosition checkingPosition = new ChessPosition(row, col);
+                ChessPiece piece = board.getPiece(checkingPosition);
 
                 if (piece != null){
-                    Collection<ChessMove> moves = piece.pieceMoves(board, CheckingPosition);
+                    Collection<ChessMove> moves = piece.pieceMoves(board, checkingPosition);
                     Collection<ChessPosition> endMoves = new ArrayList<>();
                     for (ChessMove move : moves) {
                         endMoves.add(move.getEndPosition());
                     }
 
-                    if (teamColor != piece.getTeamColor() && endMoves.contains(KingIsAt)) {
+                    if (teamColor != piece.getTeamColor() && endMoves.contains(kingIsAt)) {
                         return true;
                     }
                 }
@@ -186,11 +186,11 @@ public class ChessGame {
 
         for (int row = 1; row < 9; row++){
             for (int col = 1; col < 9; col++){
-                ChessPosition CheckingPosition = new ChessPosition(row, col);
-                ChessPiece piece = board.getPiece(CheckingPosition);
+                ChessPosition checkingPosition = new ChessPosition(row, col);
+                ChessPiece piece = board.getPiece(checkingPosition);
 
                 if (piece != null){
-                    Collection<ChessMove> moves = piece.pieceMoves(board, CheckingPosition);
+                    Collection<ChessMove> moves = piece.pieceMoves(board, checkingPosition);
                     Collection<ChessPosition> endMoves = new ArrayList<>();
                     for (ChessMove move : moves) {
                         endMoves.add(move.getEndPosition());
@@ -367,8 +367,8 @@ public class ChessGame {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {return true;}
+        if (o == null || getClass() != o.getClass()) {return false;}
         ChessGame chessGame = (ChessGame) o;
         return Objects.equals(getBoard(), chessGame.getBoard()) && teamColor == chessGame.teamColor;
     }

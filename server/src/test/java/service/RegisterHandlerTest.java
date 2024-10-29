@@ -22,7 +22,7 @@ class RegisterHandlerTest {
     }
 
     @Test
-    public void testHandle_BadRequest() {
+    public void testHandleBadRequest() {
         Request req = new MockRequest(new RegisterRequest(null, "password", "email"));
         Response res = new MockResponse();
 
@@ -33,7 +33,7 @@ class RegisterHandlerTest {
     }
 
     @Test
-    public void test_Success() {
+    public void testSuccess() {
 
         Request req = new MockRequest(new RegisterRequest("testUser", "password", "email@test.com"));
         Response res = new MockResponse();

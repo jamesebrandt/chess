@@ -8,21 +8,21 @@ import java.util.Objects;
  * signature of the existing methods.
  */
 public class ChessMove {
-    private ChessPosition StartPos;
+    private ChessPosition startPos;
 
     @Override
     public String toString() {
         return
-                "(" + EndPos.getRow() + "," + EndPos.getColumn() + ")" + ", P:" + promotionPieceType;
+                "(" + endPos.getRow() + "," + endPos.getColumn() + ")" + ", P:" + promotionPieceType;
     }
 
-    private ChessPosition EndPos;
+    private ChessPosition endPos;
     private ChessPiece.PieceType promotionPieceType;
 
 
     public ChessMove(ChessPosition startPosition, ChessPosition endPosition, ChessPiece.PieceType promotionPiece) {
-        StartPos = startPosition;
-        EndPos = endPosition;
+        startPos = startPosition;
+        endPos = endPosition;
         this.promotionPieceType = promotionPiece;
     }
 
@@ -30,14 +30,14 @@ public class ChessMove {
      * @return ChessPosition of starting location
      */
     public ChessPosition getStartPosition() {
-        return StartPos;
+        return startPos;
     }
 
     /**
      * @return ChessPosition of ending location
      */
     public ChessPosition getEndPosition() {
-        return EndPos;
+        return endPos;
     }
 
     /**
@@ -52,15 +52,15 @@ public class ChessMove {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {return true;}
+        if (o == null || getClass() != o.getClass()) {return false;}
         ChessMove chessMove = (ChessMove) o;
-        return Objects.equals(StartPos, chessMove.StartPos) && Objects.equals(EndPos, chessMove.EndPos) && promotionPieceType == chessMove.promotionPieceType;
+        return Objects.equals(startPos, chessMove.startPos) && Objects.equals(endPos, chessMove.endPos) && promotionPieceType == chessMove.promotionPieceType;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(StartPos, EndPos, promotionPieceType);
+        return Objects.hash(startPos, endPos, promotionPieceType);
     }
 
 }

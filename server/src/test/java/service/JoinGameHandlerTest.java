@@ -25,7 +25,7 @@ class JoinGameHandlerTest {
     }
 
     @Test
-    void testHandle_Success() {
+    void testHandleSuccess() {
         String authToken = AuthDAO.getInstance().generateToken("TestUser");
         GameDAO.getInstance().createGame("TestUser", authToken);
 
@@ -40,7 +40,7 @@ class JoinGameHandlerTest {
     }
 
     @Test
-    void testHandle_BadRequest() {
+    void testHandleBadRequest() {
         String authToken = AuthDAO.getInstance().generateToken("TestUser");
 
         Request req = new MockRequest(authToken, new JoinGameRequest(null, 10));

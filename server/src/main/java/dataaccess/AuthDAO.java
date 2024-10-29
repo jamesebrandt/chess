@@ -34,14 +34,6 @@ public class AuthDAO {
         return token;
     }
 
-    public String getToken(String username) {
-        for (Map.Entry<String, String> entry : authTokens.entrySet()) {
-            if (entry.getValue().equals(username)) {
-                return entry.getKey();
-            }
-        }
-        return null;
-    }
 
     public String getUser(String auth){
         return authTokens.get(auth);

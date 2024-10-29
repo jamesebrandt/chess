@@ -22,7 +22,7 @@ class LogoutHandlerTest {
     }
 
     @Test
-    public void testHandle_NullAuth() {
+    public void testHandleNullAuth() {
         Request req = new MockRequest(null);
         Response res = new MockResponse();
 

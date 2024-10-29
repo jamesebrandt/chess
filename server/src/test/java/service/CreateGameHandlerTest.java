@@ -25,7 +25,7 @@ class CreateGameHandlerTest {
     }
 
     @Test
-    public void testHandle_NullAuth() {
+    public void testHandleNullAuth() {
         Request req = new MockRequest(null, new CreateGameRequest(null,"TestGame"));
         Response res = new MockResponse();
 
@@ -37,7 +37,7 @@ class CreateGameHandlerTest {
     }
 
     @Test
-    public void testHandle_Success() {
+    public void testHandleSuccess() {
 
         String authToken = AuthDAO.getInstance().generateToken("Test");
 

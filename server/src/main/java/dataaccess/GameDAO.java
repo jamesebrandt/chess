@@ -25,13 +25,6 @@ public class GameDAO {
         gameDb.clear();
     }
 
-    public Game getGame(int gameID) {
-        if (!gameDb.containsKey(gameID)) {
-            throw new IllegalArgumentException("Game ID not found: " + gameID);
-        }
-        return gameDb.get(gameID);
-    }
-
     public boolean isDuplicateGameName(String gameName) {
         return gameDb.containsValue(gameName);
     }
