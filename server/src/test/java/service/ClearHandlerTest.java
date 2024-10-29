@@ -9,6 +9,7 @@ class ClearHandlerTest {
 
     @Test
     void handle() {
-        assertEquals(new ClearHandler.ClearResponse(true, "All data cleared successfully!"), new ClearHandler.ClearResponse(true, "All data cleared successfully!"));
+        assertEquals(new ClearHandler.ClearResponse(true, "All data cleared successfully!"),
+                new ClearHandler.ClearResponse(true, "All data cleared successfully!"));
     }
 }
