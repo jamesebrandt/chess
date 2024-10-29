@@ -18,7 +18,7 @@ public class RegisterService {
             if(userDAO.getUser(req.username()) != null) {
                 return new RegisterResponse(false, "Error: already taken", null, null);
             }
-            if(req.password() == null){
+            if(req.password() == null || req.username() == null){
                 return new RegisterResponse(false, "Error: bad request", null, null);
             }
 
