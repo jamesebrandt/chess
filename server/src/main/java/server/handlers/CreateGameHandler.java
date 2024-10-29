@@ -2,7 +2,6 @@ package server.handlers;
 
 import com.google.gson.Gson;
 import model.CreateGameRequest;
-import model.RegisterRequest;
 import server.services.CreateGameService;
 import spark.Request;
 import spark.Response;
@@ -39,5 +38,6 @@ public class CreateGameHandler {
             res.status(500);
         }
         return gson.toJson(response);
+
     }
 }
