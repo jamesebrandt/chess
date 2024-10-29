@@ -12,9 +12,7 @@ import spark.Response;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class CreateGameHandlerTest {
-    private CreateGameHandler createGameHandler;
-
+class LoginHandlerTest {
     private CreateGameHandler handler;
     private Gson gson;
 
@@ -26,7 +24,7 @@ class CreateGameHandlerTest {
 
     @Test
     public void testHandle_NullAuth() {
-        Request req = new MockRequest(null, new CreateGameRequest(null,"TestGame"));
+        Request req = new MockRequest(null, new CreateGameRequest(null, "TestGame"));
         Response res = new MockResponse();
 
         String responseJson = handler.handle(req, res);
@@ -38,11 +36,8 @@ class CreateGameHandlerTest {
 
     @Test
     public void testHandle_Success() {
-
         String authToken = AuthDAO.getInstance().generateToken("Test");
-
-
-        Request req = new MockRequest(authToken, new CreateGameRequest(null,"TestGame"));
+        Request req = new MockRequest(authToken, new CreateGameRequest(null, "TestGame"));
         Response res = new MockResponse();
 
         String responseJson = handler.handle(req, res);
@@ -86,4 +81,3 @@ class CreateGameHandlerTest {
         }
     }
 }
-
