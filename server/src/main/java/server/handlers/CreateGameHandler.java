@@ -8,7 +8,7 @@ import spark.Response;
 import model.CreateGameResponse;
 
 public class CreateGameHandler {
-    private final CreateGameService CreateGameService = new CreateGameService();
+    private final CreateGameService createGameService = new CreateGameService();
 
     public String handle (Request req, Response res){
         Gson gson = new Gson();
@@ -20,7 +20,7 @@ public class CreateGameHandler {
             return gson.toJson(new CreateGameResponse(false, "Error: unauthorized", null));
         }
 
-        CreateGameResponse response = CreateGameService.createGame(new CreateGameRequest(authToken, createGameRequest.gameName()));
+        CreateGameResponse response = createGameService.createGame(new CreateGameRequest(authToken, createGameRequest.gameName()));
 
         if (response.success() ){
             res.status(200);

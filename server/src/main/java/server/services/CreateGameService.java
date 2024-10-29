@@ -22,8 +22,8 @@ public class CreateGameService {
                 return new CreateGameResponse(false, "Error: Name already in use", null);
             }
             else{
-                int ID = gameDAO.createGame(request.gameName(), request.authToken());
-                return new CreateGameResponse(true, "Game Created", ID);
+                int iD = gameDAO.createGame(request.gameName(), request.authToken());
+                return new CreateGameResponse(true, "Game Created", iD);
             }
         }catch(Exception e){
             e.printStackTrace();
