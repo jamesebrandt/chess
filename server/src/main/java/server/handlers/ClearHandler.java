@@ -23,5 +23,7 @@ public class ClearHandler {
 
         Gson gson = new Gson();
         return gson.toJson(response);
+
+
     }
 }
