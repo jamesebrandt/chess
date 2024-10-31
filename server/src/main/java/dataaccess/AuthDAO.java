@@ -29,17 +29,28 @@ public class AuthDAO {
 
 
     public String generateToken(String username) {
+        if (username == null){return "Cannot Be Null";}
+
         String token = UUID.randomUUID().toString();
         authTokens.put(token, username);
         return token;
     }
 
+    public int getAuthListSize(){
+        return authTokens.size();
+    }
+
 
     public String getUser(String auth){
+        if (!authTokens.containsKey(auth)){return "Invalid Auth Token";}
         return authTokens.get(auth);
     }
 
-    public void  deleteAuth(String authToken){
+    public void deleteAuth(String authToken){
         authTokens.remove(authToken);
+    }
+
+    public Map<String, String> getAllAuths(){
+        return authTokens;
     }
 }
