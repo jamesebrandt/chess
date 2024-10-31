@@ -32,16 +32,6 @@ class UserDAOTest {
         assertEquals(userDAO.getUser("testUsername"), user);
     }
 
-
-    @Test
-    void getUserBadRequest() {
-        String failure = "TestUser";
-
-        assertThrows(IllegalArgumentException.class, () -> {
-            userDAO.getUser(failure);
-        });
-    }
-
     @Test
     void checkPassword() {
         User user = new User("testUsername",

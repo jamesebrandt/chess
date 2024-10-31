@@ -11,6 +11,8 @@ public class GameDAO {
     private final Map<Integer, Game> gameDb = new HashMap<>();
     private static GameDAO instance = null;
 
+    private final AuthDAO authDAO = AuthDAO.getInstance();
+
     private int createdGameID = 10;
 
     private GameDAO() {}
@@ -25,11 +27,14 @@ public class GameDAO {
         gameDb.clear();
     }
 
-    public boolean isDuplicateGameName(String gameName) {
+    public boolean gameNameAlreadyInUse(String gameName) {
         return gameDb.containsValue(gameName);
     }
 
     public int createGame(String gameName, String authToken) {
+        if (!authDAO.isValidToken(authToken)) {
+            throw new RuntimeException("Invalid AuthToken");
+        }
         int id = createdGameID;
         gameDb.put(id, new Game(id, gameName, null, null, new ChessGame()));
         createdGameID++;
@@ -44,7 +49,10 @@ public class GameDAO {
     }
 
     public boolean isValidColor(String playerColor){
-        return playerColor != null;
+        if (!playerColor.equals("WHITE") && !playerColor.equals("BLACK")){
+            return false;
+        }
+        return !playerColor.equals("");
     }
 
 

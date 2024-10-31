@@ -18,7 +18,7 @@ public class CreateGameService {
             else if (!authDAO.isValidToken(request.authToken())){
                 return new CreateGameResponse(false, "Error: unauthorized", null);
             }
-            else if(gameDAO.isDuplicateGameName(request.gameName())){
+            else if(gameDAO.gameNameAlreadyInUse(request.gameName())){
                 return new CreateGameResponse(false, "Error: Name already in use", null);
             }
             else{

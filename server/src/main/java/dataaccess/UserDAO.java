@@ -26,10 +26,8 @@ public class UserDAO {
     }
 
     public User getUser(String username) {
-        if (usersDb.get(username) != null){
-            return usersDb.get(username);}
-        throw new IllegalArgumentException("Error: User does not exist");
-    }
+            return usersDb.get(username);
+        }
 
     public boolean checkPassword(String username, String password) {
         User user = usersDb.get(username);
