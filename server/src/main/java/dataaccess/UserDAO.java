@@ -39,6 +39,10 @@ public class UserDAO {
         return false;
     }
 
+    public Map<String, User> getAllUsers(){
+        return usersDb;
+    }
+
 
     public void deleteAll() {
         usersDb.clear();
