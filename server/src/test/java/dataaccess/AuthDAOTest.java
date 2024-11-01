@@ -2,6 +2,8 @@ package dataaccess;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -78,6 +80,29 @@ class AuthDAOTest {
         try {
             DatabaseManager.configureDatabase();
         } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    void tryToGetAllTokens() {
+        try {
+            authDAO.deleteAll();
+
+            String auth1 =authDAO.generateToken("TestUser1");
+            String auth2 =authDAO.generateToken("TestUser2");
+            String auth3 =authDAO.generateToken("TestUser3");
+
+            Map<String, String> expected = new HashMap<>();
+            expected.put(auth1, "TestUser1");
+            expected.put(auth2, "TestUser2");
+            expected.put(auth3, "TestUser3");
+
+            Map<String, String> actual = authDAO.getAllAuths();
+
+            assertEquals(actual, expected);
+
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }

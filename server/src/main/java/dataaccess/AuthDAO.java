@@ -129,11 +129,43 @@ public class AuthDAO {
     }
 
 
-    public void deleteAuth(String authToken){
-        authTokens.remove(authToken);
+//    public void deleteAuth(String authToken){
+//        authTokens.remove(authToken);
+//    }
+
+    public void deleteAuth(String authToken) {
+        String query = "DELETE FROM auth_tokens WHERE token=?";
+        try {
+            Connection conn = DatabaseManager.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(query);
+            stmt.setString(1, authToken);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public Map<String, String> getAllAuths(){
+        String query = "SELECT token, username FROM auth_tokens";
+        Map<String, String> authTokens = new HashMap<>();
+
+        try (Connection conn = DatabaseManager.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()){
+                String token = rs.getString("token");
+                String username = rs.getString("username");
+
+                authTokens.put(token, username);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Database error occurred");
+        } catch (DataAccessException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Database error occurred");
+        }
         return authTokens;
     }
 }
