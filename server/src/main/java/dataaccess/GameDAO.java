@@ -1,6 +1,7 @@
 package dataaccess;
 
 import chess.ChessGame;
+import com.google.gson.Gson;
 import model.Game;
 import model.JoinGameRequest;
 
@@ -27,6 +28,8 @@ public class GameDAO {
         }
         return instance;
     }
+
+    Gson gson = new Gson();
 
 //    public void deleteAll() {
 //        gameDb.clear();
@@ -65,21 +68,17 @@ public class GameDAO {
             throw new RuntimeException("Invalid AuthToken");
         }
 
-       // Integer gameID, String gameName, String whiteUsername, String blackUsername, ChessGame game) {
-
-
-
-        Integer id = createdGameID;
-        String query = "INSERT INTO chess_games (authToken, gameName) VALUES (?,?,?,?,?)";
+        int id = createdGameID;
+        String query = "INSERT INTO chess_games (gameID, gameName, whiteUserName, blackUserName, chess_board) VALUES (?, ?, ?, ?, ?)";
         try {
             Connection conn = DatabaseManager.getConnection();
             PreparedStatement stmt = conn.prepareStatement(query);
 
-            stmt.setString(1, String.valueOf(id));
+            stmt.setInt(1, id);
             stmt.setString(2, gameName);
             stmt.setString(3, null);
             stmt.setString(4, null);
-
+            stmt.setString(5, gson.toJson(new Game(id, gameName, null, null, new ChessGame())));
 
             stmt.executeUpdate();
         } catch (DataAccessException e) {
@@ -87,8 +86,8 @@ public class GameDAO {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+        createdGameID++;
         return id;
-
     }
 
     public boolean isValidGameID(Integer gameID){

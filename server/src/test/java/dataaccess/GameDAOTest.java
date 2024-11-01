@@ -31,8 +31,7 @@ class GameDAOTest {
         gameDAO.createGame("TestGame1", auth);
         gameDAO.createGame("TestGame2", auth);
         gameDAO.createGame("TestGame3", auth);
-
-//        gameDAO.deleteAll();
+        gameDAO.deleteAll();
         assertEquals(gameDAO.listGames(), expected);
     }
 

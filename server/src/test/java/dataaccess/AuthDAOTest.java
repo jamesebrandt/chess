@@ -72,7 +72,7 @@ class AuthDAOTest {
 
         authDAO.deleteAuth(auth3);
 
-        assertEquals(authDAO.getAllAuths(), expected);
+        assertEquals(expected, authDAO.getAllAuths());
     }
 
     @Test

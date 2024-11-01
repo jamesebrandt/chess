@@ -139,6 +139,7 @@ public class AuthDAO {
             Connection conn = DatabaseManager.getConnection();
             PreparedStatement stmt = conn.prepareStatement(query);
             stmt.setString(1, authToken);
+            stmt.executeUpdate();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
