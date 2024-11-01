@@ -133,12 +133,44 @@ public class GameDAO {
     }
 
 
-    public ArrayList<Game> listGames() {
-        ArrayList<Game> gamesList = new ArrayList<>();
+//    public ArrayList<Game> listGames() {
+//        ArrayList<Game> gamesList = new ArrayList<>();
+//
+//        for (Game game : gameDb.values()) {
+//            gamesList.add(new Game(game.gameID(), game.gameName(), game.whiteUsername(), game.blackUsername(),null));
+//        }
+//        return gamesList;
+//    }
 
-        for (Game game : gameDb.values()) {
-            gamesList.add(new Game(game.gameID(), game.gameName(), game.whiteUsername(), game.blackUsername(),null));
+
+    public ArrayList<Game> listGames() {
+
+        ArrayList<Game> gamesList = new ArrayList<>();
+        String query = "SELECT gameID, gameName, whiteUserName, blackUserName, chess_board FROM chess_games";
+
+        try (var conn = DatabaseManager.getConnection();
+             var ps = conn.prepareStatement(query);
+             var rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                gamesList.add(readGame(rs));
+            }
+        } catch (Exception e) {
+            throw new ResponseException(500, String.format("Unable to read data: %s", e.getMessage()));
         }
+
         return gamesList;
+    }
+
+    private Game readGame(ResultSet rs) throws SQLException {
+        int gameId = rs.getInt("gameID");
+        String gameName = rs.getString("gameName");
+        String whiteUserName = rs.getString("whiteUserName");
+        String blackUserName = rs.getString("blackUserName");
+
+        String chessBoardJson = rs.getString("chess_board");
+        ChessGame chessBoard = new Gson().fromJson(chessBoardJson, ChessGame.class);
+
+        return new Game(gameId, gameName, whiteUserName, blackUserName, chessBoard);
     }
 }
