@@ -93,6 +93,16 @@ public class DatabaseManager {
               INDEX(name)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
             """,
+
+            """
+            CREATE TABLE IF NOT EXISTS auth_tokens (
+            token VARCHAR(255) PRIMARY KEY,
+            username VARCHAR(255) NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+            """,
+
+
     };
 //
 //    private int executeUpdate(String statement, Object... params) throws ResponseException {

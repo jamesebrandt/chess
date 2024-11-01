@@ -1,4 +1,6 @@
 package server;
+import dataaccess.DataAccessException;
+import dataaccess.DatabaseManager;
 import server.handlers.*;
 import spark.Spark;
 import static spark.Spark.*;
@@ -11,6 +13,14 @@ public class Server {
 
         Spark.staticFiles.location("/web");
 
+        //
+        try {
+            DatabaseManager.configureDatabase();
+
+            System.out.print("DB configured");
+        } catch (Exception e) {
+            System.err.print("Failed to configure DB");
+        }
         // Register your endpoints and handle exceptions here.
 
         //clear
