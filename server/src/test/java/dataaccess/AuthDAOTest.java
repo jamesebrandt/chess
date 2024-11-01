@@ -68,4 +68,16 @@ class AuthDAOTest {
 
         assertEquals(authDAO.getAllAuths(), expected);
     }
+
+    @Test
+    void connectToSQL() {
+        try {
+            DatabaseManager.configureDatabase();
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+
 }
