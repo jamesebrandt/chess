@@ -14,7 +14,7 @@ import java.sql.SQLException;
 
 public class GameDAO {
 
-    private final Map<Integer, Game> gameDb = new HashMap<>();
+  //  private final Map<Integer, Game> gameDb = new HashMap<>();
     private static GameDAO instance = null;
 
     private final AuthDAO authDAO = AuthDAO.getInstance();
@@ -33,10 +33,6 @@ public class GameDAO {
 
     Gson gson = new Gson();
 
-//    public void deleteAll() {
-//        gameDb.clear();
-//    }
-
     public void deleteAll() {
         String query = "DELETE FROM chess_games";
 
@@ -51,19 +47,27 @@ public class GameDAO {
 
     }
 
-    public boolean gameNameAlreadyInUse(String gameName) {
-        return gameDb.containsValue(gameName);
-    }
+    public boolean gameNameAlreadyInUse(String tryGameName) {
 
-//    public int createGame(String gameName, String authToken) {
-//        if (!authDAO.isValidToken(authToken)) {
-//            throw new RuntimeException("Invalid AuthToken");
-//        }
-//        int id = createdGameID;
-//        gameDb.put(id, new Game(id, gameName, null, null, new ChessGame()));
-//        createdGameID++;
-//        return id;
-//    }
+        if (tryGameName == null) {
+            return false;
+        }
+
+        String query = "SELECT COUNT(*) FROM chess_games WHERE gameName = ?";
+
+        try{
+            Connection conn = DatabaseManager.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(query);
+            stmt.setString(1, tryGameName);
+            ResultSet rs = stmt.executeQuery();
+            return rs.next() && rs.getInt(1)>0;
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     public int createGame(String gameName, String authToken) {
         if (!authDAO.isValidToken(authToken)) {
@@ -117,8 +121,6 @@ public class GameDAO {
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }
-
-
     }
 
     public boolean isValidColor(String playerColor) {
@@ -133,13 +135,43 @@ public class GameDAO {
     }
 
 
-    public boolean isStealingTeamColor(JoinGameRequest req) {
-        String playerColor = req.playerColor();
+//    public boolean isStealingTeamColor(JoinGameRequest req) {
+//        String playerColor = req.playerColor();
+//        if ("BLACK".equals(playerColor) && Objects.equals(gameDb.get(req.gameID()).blackUsername(), null)) {
+//            return true;
+//        } else {
+//            return playerColor.equals("WHITE") && Objects.equals(gameDb.get(req.gameID()).whiteUsername(), null);
+//        }
+//    }
 
-        if ("BLACK".equals(playerColor) && Objects.equals(gameDb.get(req.gameID()).blackUsername(), null)) {
-            return true;
+    public boolean isStealingTeamColor(JoinGameRequest req){
+        int testId = req.gameID();
+        if (req.playerColor().equals("BLACK")){
+            String query = "SELECT COUNT(*) FROM chess_games WHERE gameID = ? AND blackUserName IS NULL";
+            try {
+                Connection conn = DatabaseManager.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(query);
+                stmt.setInt(1, testId);
+                ResultSet rs = stmt.executeQuery();
+                return rs.next() && rs.getInt(1) > 0;
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            } catch (DataAccessException e) {
+                throw new RuntimeException(e);
+            }
         } else {
-            return playerColor.equals("WHITE") && Objects.equals(gameDb.get(req.gameID()).whiteUsername(), null);
+            String query = "SELECT COUNT(*) FROM chess_games WHERE gameID = ? AND whiteUserName IS NULL";
+            try {
+                Connection conn = DatabaseManager.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(query);
+                stmt.setInt(1, testId);
+                ResultSet rs = stmt.executeQuery();
+                return rs.next() && rs.getInt(1) > 0;
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            } catch (DataAccessException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 

@@ -1,11 +1,11 @@
 package dataaccess;
 
 import chess.ChessGame;
-import model.Game;
-import model.JoinGameRequest;
-import model.User;
+import model.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import server.services.JoinGameService;
+import server.services.RegisterService;
 
 import java.util.ArrayList;
 
@@ -15,6 +15,7 @@ class GameDAOTest {
 
     private final GameDAO gameDAO = GameDAO.getInstance();
     private final AuthDAO authDAO = AuthDAO.getInstance();
+    private final UserDAO userDAO = UserDAO.getInstance();
 
     @BeforeEach
     void clear() throws DataAccessException {
@@ -43,7 +44,35 @@ class GameDAOTest {
 
         gameDAO.createGame("TestGame1", auth);
 
-        assertEquals(gameDAO.gameNameAlreadyInUse("TestGame1"), false);
+        assertTrue(gameDAO.gameNameAlreadyInUse("TestGame1"));
+    }
+
+    @Test
+    void checkIfStealing() {
+        try {
+            RegisterService registerService = new RegisterService();
+            JoinGameService joinGameService = new JoinGameService();
+
+            RegisterRequest registerUser1Request = new RegisterRequest("TestUser1", "TestPassword", "Test1@gmail.com");
+            RegisterResponse response1 = registerService.register(registerUser1Request);
+
+            RegisterRequest registerUser2Request = new RegisterRequest("TestUser2", "TestPassword", "Test2@gmail.com");
+            RegisterResponse response2 = registerService.register(registerUser2Request);
+
+            int gameId = gameDAO.createGame("TestGame1", response1.authToken());
+
+            JoinGameRequest joinGameRequest1 = new JoinGameRequest("BLACK", gameId);
+            String result1 = (joinGameService.joinGame(joinGameRequest1, response1.authToken())).message();
+
+            JoinGameRequest joinGameRequest2 = new JoinGameRequest("BLACK", gameId);
+            String result2 = (joinGameService.joinGame(joinGameRequest2, response2.authToken())).message();
+
+            assertEquals("Added!", result1);
+            assertEquals("Error: already taken", result2);
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Test

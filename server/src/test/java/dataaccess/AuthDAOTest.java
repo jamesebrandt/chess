@@ -1,7 +1,11 @@
 package dataaccess;
 
+import com.google.gson.Gson;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import server.handlers.CreateGameHandler;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,7 +16,10 @@ import static org.junit.jupiter.api.Assertions.*;
 class AuthDAOTest {
     private AuthDAO authDAO = AuthDAO.getInstance();
 
-
+    @BeforeEach
+    public void setUp() {
+        deleteAll(); // remove later
+    }
 
     @Test
     void isValidTokenTest() {
@@ -105,8 +112,8 @@ class AuthDAOTest {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+        deleteAll(); // remove later
     }
-
 
 
 }

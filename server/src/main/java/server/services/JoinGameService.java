@@ -28,7 +28,6 @@ public class JoinGameService {
             }
 
 
-
         }catch (Exception e){
             e.printStackTrace();
             return new JoinGameResponse(false, "Error");
