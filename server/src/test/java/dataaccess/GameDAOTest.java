@@ -16,8 +16,9 @@ class GameDAOTest {
     private final AuthDAO authDAO = AuthDAO.getInstance();
 
     @BeforeEach
-    void clear(){
+    void clear() throws DataAccessException {
         gameDAO.deleteAll();
+        DatabaseManager.configureDatabase();
     }
 
     @Test
@@ -31,7 +32,7 @@ class GameDAOTest {
         gameDAO.createGame("TestGame2", auth);
         gameDAO.createGame("TestGame3", auth);
 
-        gameDAO.deleteAll();
+//        gameDAO.deleteAll();
         assertEquals(gameDAO.listGames(), expected);
     }
 

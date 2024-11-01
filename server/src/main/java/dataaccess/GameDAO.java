@@ -6,6 +6,11 @@ import model.JoinGameRequest;
 
 import java.util.*;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 public class GameDAO {
 
     private final Map<Integer, Game> gameDb = new HashMap<>();
@@ -23,22 +28,67 @@ public class GameDAO {
         return instance;
     }
 
+//    public void deleteAll() {
+//        gameDb.clear();
+//    }
+
     public void deleteAll() {
-        gameDb.clear();
+        String query = "DELETE FROM chess_games";
+
+        try {
+            Connection conn = DatabaseManager.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(query);
+
+            stmt.executeUpdate();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     public boolean gameNameAlreadyInUse(String gameName) {
         return gameDb.containsValue(gameName);
     }
 
+//    public int createGame(String gameName, String authToken) {
+//        if (!authDAO.isValidToken(authToken)) {
+//            throw new RuntimeException("Invalid AuthToken");
+//        }
+//        int id = createdGameID;
+//        gameDb.put(id, new Game(id, gameName, null, null, new ChessGame()));
+//        createdGameID++;
+//        return id;
+//    }
+
     public int createGame(String gameName, String authToken) {
         if (!authDAO.isValidToken(authToken)) {
             throw new RuntimeException("Invalid AuthToken");
         }
-        int id = createdGameID;
-        gameDb.put(id, new Game(id, gameName, null, null, new ChessGame()));
-        createdGameID++;
+
+       // Integer gameID, String gameName, String whiteUsername, String blackUsername, ChessGame game) {
+
+
+
+        Integer id = createdGameID;
+        String query = "INSERT INTO chess_games (authToken, gameName) VALUES (?,?,?,?,?)";
+        try {
+            Connection conn = DatabaseManager.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(query);
+
+            stmt.setString(1, String.valueOf(id));
+            stmt.setString(2, gameName);
+            stmt.setString(3, null);
+            stmt.setString(4, null);
+
+
+            stmt.executeUpdate();
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         return id;
+
     }
 
     public boolean isValidGameID(Integer gameID){

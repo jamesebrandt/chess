@@ -53,7 +53,7 @@ public class AuthDAO {
     public void deleteAll(){
         String query = "DELETE FROM auth_tokens";
 
-        try{
+        try {
             Connection conn = DatabaseManager.getConnection();
             PreparedStatement stmt = conn.prepareStatement(query);
 
