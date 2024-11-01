@@ -13,7 +13,13 @@ class AuthDAOTest {
 
 
     @Test
-    void isValidToken() {}
+    void isValidTokenTest() {
+        authDAO.generateToken("TestUser1");
+        String token = authDAO.generateToken("TestUser2");
+        authDAO.generateToken("TestUser3");
+
+        assertTrue(authDAO.isValidToken(token));
+    }
 
     @Test
     void deleteAll() {
@@ -54,13 +60,11 @@ class AuthDAOTest {
         authDAO.generateToken("Test");
         String invalid_auth = "c99ee8a2-f2a6-4a04-976a-1a38e9b640cc";
         String User1 =authDAO.getUser(invalid_auth);
-        assertEquals(User1, "Invalid Auth Token");
+        assertEquals(User1, "User not found");
     }
 
     @Test
     void deleteAuth() {
-        String auth1 =authDAO.generateToken("TestUser1");
-        String auth2 =authDAO.generateToken("TestUser2");
         Map<String, String> expected = authDAO.getAllAuths();
         String auth3 =authDAO.generateToken("TestUser3");
 

@@ -45,13 +45,22 @@ public class AuthDAO {
     }
 
 
+//    public void deleteAll() {
+//        // String sql = "DELETE FROM auth_tokens";
+//        authTokens.clear();
+//    }
 
+    public void deleteAll(){
+        String query = "DELETE FROM auth_tokens";
 
+        try{
+            Connection conn = DatabaseManager.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(query);
 
-
-    public void deleteAll() {
-        // String sql = "DELETE FROM auth_tokens";
-        authTokens.clear();
+            stmt.executeUpdate();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
 
@@ -92,10 +101,33 @@ public class AuthDAO {
     }
 
 
-    public String getUser(String auth){
-        if (!authTokens.containsKey(auth)){return "Invalid Auth Token";}
-        return authTokens.get(auth);
+//    public String getUser(String auth){
+//        if (!authTokens.containsKey(auth)){return "Invalid Auth Token";}
+//        return authTokens.get(auth);
+//    }
+
+    public String getUser(String auth) {
+        String query = "SELECT username FROM auth_tokens WHERE token = ?";
+
+        try (Connection conn = DatabaseManager.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, auth);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getString("username");
+            } else {
+                return "User not found";
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return "Database error";
+        } catch (DataAccessException e) {
+            e.printStackTrace();
+            return "Failed to access data";
+        }
     }
+
 
     public void deleteAuth(String authToken){
         authTokens.remove(authToken);
