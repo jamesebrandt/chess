@@ -22,12 +22,29 @@ public class UserDAO {
     }
 
 
-    public boolean registerUser(User user) {
-        if (usersDb.containsKey(user.username())) {
-            return false;
+//    public boolean registerUser(User user) {
+//        if (usersDb.containsKey(user.username())) {
+//            return false;
+//        }
+//        usersDb.put(user.username(), user);
+//        return true;
+//    }
+
+    public boolean registerUser(User user){
+        String query = "SELECT COUNT(*) FROM chess_games WHERE gameID = ?";
+
+        try{
+            Connection conn = DatabaseManager.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(query);
+            stmt.setInt(1, gameID);
+            ResultSet rs = stmt.executeQuery();
+            return rs.next() && rs.getInt(1)>0;
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
         }
-        usersDb.put(user.username(), user);
-        return true;
     }
 
     public User getUser(String username) {
