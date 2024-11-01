@@ -21,7 +21,9 @@ public class GameDAO {
 
     private int createdGameID = 10;
 
-    private GameDAO() {}
+    private GameDAO() {
+    }
+
     public static GameDAO getInstance() {
         if (instance == null) {
             instance = new GameDAO();
@@ -90,47 +92,70 @@ public class GameDAO {
         return id;
     }
 
-    public boolean isValidGameID(Integer gameID){
-        if (gameID == null){
+    public boolean isValidGameID(Integer gameID) {
+        if (gameID == null) {
             return false;
         }
         return gameDb.containsKey(gameID);
     }
 
-    public boolean isValidColor(String playerColor){
-        if (playerColor == null){
+    public boolean isValidColor(String playerColor) {
+        if (playerColor == null) {
             return false;
         }
 
-        if (!playerColor.equals("WHITE") && !playerColor.equals("BLACK")){
+        if (!playerColor.equals("WHITE") && !playerColor.equals("BLACK")) {
             return false;
         }
         return !playerColor.equals(null);
     }
 
 
-    public boolean isStealingTeamColor(JoinGameRequest req){
+    public boolean isStealingTeamColor(JoinGameRequest req) {
         String playerColor = req.playerColor();
 
-        if ("BLACK".equals(playerColor) && Objects.equals(gameDb.get(req.gameID()).blackUsername(), null)){
+        if ("BLACK".equals(playerColor) && Objects.equals(gameDb.get(req.gameID()).blackUsername(), null)) {
             return true;
+        } else {
+            return playerColor.equals("WHITE") && Objects.equals(gameDb.get(req.gameID()).whiteUsername(), null);
         }
-        else {return playerColor.equals("WHITE") && Objects.equals(gameDb.get(req.gameID()).whiteUsername(), null);}
     }
 
+
+//    public void addUsername(JoinGameRequest req, String name) {
+//        Game gameData = gameDb.get(req.gameID());
+//        if (gameData != null) {
+//            Game updatedGame;
+//            if (req.playerColor().equals("WHITE")) {
+//                updatedGame = new Game(gameData.gameID(),gameData.gameName(), name, gameData.blackUsername() ,gameData.game());
+//            } else {
+//                updatedGame = new Game(gameData.gameID(),gameData.gameName(), gameData.whiteUsername(), name, gameData.game());
+//            }
+//            gameDb.put(req.gameID(), updatedGame);
+//        }
+//    }
 
     public void addUsername(JoinGameRequest req, String name) {
-        Game gameData = gameDb.get(req.gameID());
-        if (gameData != null) {
-            Game updatedGame;
-            if (req.playerColor().equals("WHITE")) {
-                updatedGame = new Game(gameData.gameID(),gameData.gameName(), name, gameData.blackUsername() ,gameData.game());
-            } else {
-                updatedGame = new Game(gameData.gameID(),gameData.gameName(), gameData.whiteUsername(), name, gameData.game());
-            }
-            gameDb.put(req.gameID(), updatedGame);
+        String query;
+        if (req.playerColor().equals("WHITE")) {
+            query = "UPDATE chess_games SET whiteUserName = ? WHERE gameID = ?";
+        } else {
+            query = "UPDATE chess_games SET blackUserName = ? WHERE gameID = ?";
+        }
+        try {
+            Connection conn = DatabaseManager.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(query);
+            stmt.setString(1, name);
+            stmt.setInt(2, req.gameID());
+            stmt.executeUpdate();
+
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
+
 
 
 //    public ArrayList<Game> listGames() {

@@ -1,5 +1,6 @@
 package dataaccess;
 
+import chess.ChessGame;
 import model.Game;
 import model.JoinGameRequest;
 import model.User;
@@ -90,7 +91,8 @@ class GameDAOTest {
         gameDAO.addUsername(request, "TestUserName");
 
         ArrayList<Game> expected = new ArrayList<>();
-        expected.add(new Game(Id, "TestGame1",null, "TestUserName", null));
+        ChessGame defaultChessGame = new ChessGame();
+        expected.add(new Game(Id, "TestGame1",null, "TestUserName", defaultChessGame));
 
         assertEquals(expected, gameDAO.listGames());
     }
@@ -107,8 +109,9 @@ class GameDAOTest {
 
 
         ArrayList<Game> expected = new ArrayList<>();
+        ChessGame defaultChessGame = new ChessGame();
 
-        expected.add(new Game(Id1, "TestGame1","TestUserName2", "TestUserName1", null));
+        expected.add(new Game(Id1, "TestGame1","TestUserName2", "TestUserName1", defaultChessGame));
 
         assertEquals(expected, gameDAO.listGames());
     }
