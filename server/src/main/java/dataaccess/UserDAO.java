@@ -31,12 +31,34 @@ public class UserDAO {
 //    }
 
     public boolean registerUser(User user){
-        String query = "SELECT COUNT(*) FROM chess_games WHERE gameID = ?";
+        if(!isUserFree(user)){
+            return false;
+        }
+        String query = "INSERT INTO users (username, password, email) VALUES (?, ?, ?)";
 
+        try (Connection conn = DatabaseManager.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setString(1, user.username());
+            stmt.setString(2, user.password());
+            stmt.setString(3, user.email());
+            stmt.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Database error: " + e.getMessage(), e);
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+
+        return true;
+    }
+
+    public boolean isUserFree(User user){
+        String query = "SELECT COUNT(*) FROM users WHERE username = ?";
         try{
             Connection conn = DatabaseManager.getConnection();
             PreparedStatement stmt = conn.prepareStatement(query);
-            stmt.setInt(1, gameID);
+            stmt.setString(1, user.username());
             ResultSet rs = stmt.executeQuery();
             return rs.next() && rs.getInt(1)>0;
 
