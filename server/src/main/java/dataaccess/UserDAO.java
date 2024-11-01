@@ -6,6 +6,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+
+import chess.ChessGame;
+import com.google.gson.Gson;
+import model.Game;
 import model.User;
 
 public class UserDAO {
@@ -69,9 +73,35 @@ public class UserDAO {
         }
     }
 
-    public User getUser(String username) {
-            return usersDb.get(username);
+
+    public User getUser(String username){
+
+        String query = "SELECT username, password, email FROM users WHERE username = ?";
+
+        try (Connection conn = DatabaseManager.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setString(1, username);
+
+            try(ResultSet rs = stmt.executeQuery();){
+
+                if (rs.next()) {
+                    String userUsername = rs.getString("username");
+                    String UserPassword = rs.getString("password");
+                    String userEmail = rs.getString("email");
+
+                    return new User(userUsername, UserPassword, userEmail);
+                }
+                else{
+                    return null;
+                }
+            }
+
+        } catch (Exception e) {
+            throw new ResponseException(500, String.format("Unable to read data: %s", e.getMessage()));
         }
+    }
+
 
     public boolean checkPassword(String username, String password) {
         User user = usersDb.get(username);
