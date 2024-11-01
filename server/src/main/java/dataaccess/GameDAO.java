@@ -49,10 +49,14 @@ public class GameDAO {
     }
 
     public boolean isValidColor(String playerColor){
+        if (playerColor == null){
+            return false;
+        }
+
         if (!playerColor.equals("WHITE") && !playerColor.equals("BLACK")){
             return false;
         }
-        return !playerColor.equals("");
+        return !playerColor.equals(null);
     }
 
 

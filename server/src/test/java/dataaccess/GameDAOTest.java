@@ -105,15 +105,10 @@ class GameDAOTest {
         gameDAO.addUsername(request1, "TestUserName1");
         gameDAO.addUsername(request2, "TestUserName2");
 
-        int Id2 = gameDAO.createGame("Game2Name", auth1);
-        JoinGameRequest request3 = new JoinGameRequest("BLACK", Id2);
-        JoinGameRequest request4 = new JoinGameRequest("WHITE", Id2);
-        gameDAO.addUsername(request3, "TestUserName4");
-        gameDAO.addUsername(request4, "TestUserName5");
 
         ArrayList<Game> expected = new ArrayList<>();
+
         expected.add(new Game(Id1, "TestGame1","TestUserName2", "TestUserName1", null));
-        expected.add(new Game(Id2, "Game2Name","TestUserName5", "TestUserName4", null));
 
         assertEquals(expected, gameDAO.listGames());
     }

@@ -22,18 +22,20 @@ class JoinGameHandlerTest {
     void setUp() {
         handler = new JoinGameHandler();
         gson = new Gson();
+        GameDAO.getInstance().deleteAll();
     }
 
     @Test
     void testHandleSuccess() {
         String authToken = AuthDAO.getInstance().generateToken("TestUser");
-        GameDAO.getInstance().createGame("TestUser", authToken);
+        int Id = GameDAO.getInstance().createGame("TestUser", authToken);
+        JoinGameHandler joinGameHandler = new JoinGameHandler();
 
 
-        Request req = new MockRequest(authToken, new JoinGameRequest("WHITE", 10));
+        Request req = new MockRequest(authToken, new JoinGameRequest("WHITE", Id));
         Response res = new MockResponse();
 
-        JoinGameResponse response = gson.fromJson(handler.handle(req, res), JoinGameResponse.class);
+        JoinGameResponse response = gson.fromJson(joinGameHandler.handle(req, res), JoinGameResponse.class);
 
         assertEquals(200, res.status());
         assertTrue(response.success());
@@ -53,7 +55,6 @@ class JoinGameHandlerTest {
         assertEquals("Error: bad request", response.message());
     }
 
-    // Minimal mock classes for Request and Response
     static class MockRequest extends Request {
         private final String authToken;
         private final JoinGameRequest bodyRequest;
