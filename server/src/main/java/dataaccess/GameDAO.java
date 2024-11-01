@@ -92,11 +92,33 @@ public class GameDAO {
         return id;
     }
 
+//    public boolean isValidGameID(Integer gameID) {
+//        if (gameID == null) {
+//            return false;
+//        }
+//        return gameDb.containsKey(gameID);
+//    }
+
     public boolean isValidGameID(Integer gameID) {
         if (gameID == null) {
             return false;
         }
-        return gameDb.containsKey(gameID);
+        String query = "SELECT COUNT(*) FROM chess_games WHERE gameID = ?";
+
+        try{
+            Connection conn = DatabaseManager.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(query);
+            stmt.setInt(1, gameID);
+            ResultSet rs = stmt.executeQuery();
+            return rs.next() && rs.getInt(1)>0;
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+
+
     }
 
     public boolean isValidColor(String playerColor) {

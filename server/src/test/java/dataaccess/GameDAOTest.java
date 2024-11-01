@@ -63,14 +63,14 @@ class GameDAOTest {
 
         int Id = gameDAO.createGame("TestGame1", auth);
 
-        assertEquals(true, gameDAO.isValidGameID(Id));
+        assertTrue(gameDAO.isValidGameID(Id));
     }
 
     @Test
     void isValidColor() {
-        assertEquals(false, gameDAO.isValidColor("BLUE"));
-        assertEquals(true, gameDAO.isValidColor("WHITE"));
-        assertEquals(true, gameDAO.isValidColor("BLACK"));
+        assertFalse(gameDAO.isValidColor("BLUE"));
+        assertTrue(gameDAO.isValidColor("WHITE"));
+        assertTrue(gameDAO.isValidColor("BLACK"));
 
     }
 
