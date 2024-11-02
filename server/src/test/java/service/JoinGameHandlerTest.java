@@ -22,7 +22,7 @@ class JoinGameHandlerTest {
     void setUp() {
         handler = new JoinGameHandler();
         gson = new Gson();
-        GameDAO.getInstance().deleteAll();
+        TestUtils.cleanupDatabase();
     }
 
     @Test

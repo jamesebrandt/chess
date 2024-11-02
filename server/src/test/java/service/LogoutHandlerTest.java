@@ -19,11 +19,13 @@ class LogoutHandlerTest {
     public void setUp() {
         handler = new LogoutHandler();
         gson = new Gson();
+        TestUtils.cleanupDatabase();
+
     }
 
     @Test
     public void testHandleNullAuth() {
-        Request req = new MockRequest(null);
+        Request req = new MockRequest(null, null);
         Response res = new MockResponse();
 
         String responseJson = handler.handle(req, res);
@@ -36,7 +38,7 @@ class LogoutHandlerTest {
     @Test
     public void testSuccess() {
         String authToken = AuthDAO.getInstance().generateToken("Test");
-        Request req = new MockRequest(authToken);
+        Request req = new MockRequest(authToken, null);
         Response res = new MockResponse();
 
         String responseJson = handler.handle(req, res);
@@ -44,32 +46,5 @@ class LogoutHandlerTest {
 
         assertEquals(200, res.status());
         assertEquals(true, response.success());
-    }
-
-    static class MockRequest extends Request {
-        private final String authToken;
-
-        MockRequest(String authToken) {
-            this.authToken = authToken;
-        }
-
-        @Override
-        public String headers(String header) {
-            return "authorization".equals(header) ? authToken : null;
-        }
-    }
-
-    static class MockResponse extends Response {
-        private int status;
-
-        @Override
-        public void status(int statusCode) {
-            this.status = statusCode;
-        }
-
-        @Override
-        public int status() {
-            return this.status;
-        }
     }
 }
