@@ -117,14 +117,6 @@ class GameDAOTest {
     }
 
     @Test
-    void isStealingTeamColor() {
-//        JoinGameRequest request = new JoinGameRequest("BLACK", 10);
-//        boolean test = gameDAO.isStealingTeamColor(request);
-//
-//        assertEquals(true, test);
-    }
-
-    @Test
     void addUsername() {
         User user = new User("TestUser", "TestPassword", "Test1@gmail.com");
         String auth = authDAO.generateToken(user.username());
@@ -150,11 +142,10 @@ class GameDAOTest {
         gameDAO.addUsername(request2, "TestUserName2");
 
 
-        ArrayList<Game> expected = new ArrayList<>();
+        ArrayList<Game> expected_result = new ArrayList<>();
         ChessGame defaultChessGame = new ChessGame();
 
-        expected.add(new Game(id1, "TestGame1","TestUserName2", "TestUserName1", defaultChessGame));
-
-        assertEquals(expected, gameDAO.listGames());
+        expected_result.add(new Game(id1, "TestGame1","TestUserName2", "TestUserName1", defaultChessGame));
+        assertEquals(expected_result, gameDAO.listGames());
     }
 }
