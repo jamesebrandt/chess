@@ -31,7 +31,7 @@ class LoginHandlerTest {
     }
 
     @Test
-    public void testHandleNullAuth() {
+    public void testLoginHandleNullAuth() {
         Request req = new MockRequest(null, new CreateGameRequest(null, "TestGame"));
         Response res = new MockResponse();
 
@@ -43,16 +43,16 @@ class LoginHandlerTest {
     }
 
     @Test
-    public void testHandleSuccess() {
+    public void testLoginHandleSuccess() {
         String authToken = AuthDAO.getInstance().generateToken("Test");
-        Request req = new MockRequest(authToken, new CreateGameRequest(null, "TestGame"));
-        Response res = new MockResponse();
+        Request request = new MockRequest(authToken, new CreateGameRequest(null, "TestGame"));
+        Response response = new MockResponse();
 
-        String responseJson = handler.handle(req, res);
-        CreateGameResponse response = gson.fromJson(responseJson, CreateGameResponse.class);
+        String responseJson = handler.handle(request, response);
+        CreateGameResponse responseFromCreateGame = gson.fromJson(responseJson, CreateGameResponse.class);
 
-        assertEquals(200, res.status());
-        assertEquals(true, response.success());
+        assertEquals(200, response.status());
+        assertEquals(true, responseFromCreateGame.success());
     }
 
 }
