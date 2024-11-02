@@ -142,10 +142,10 @@ class GameDAOTest {
         gameDAO.addUsername(request2, "TestUserName2");
 
 
-        ArrayList<Game> expected_result = new ArrayList<>();
+        ArrayList<Game> expectedResult = new ArrayList<>();
         ChessGame defaultChessGame = new ChessGame();
 
-        expected_result.add(new Game(id1, "TestGame1","TestUserName2", "TestUserName1", defaultChessGame));
-        assertEquals(expected_result, gameDAO.listGames());
+        expectedResult.add(new Game(id1, "TestGame1","TestUserName2", "TestUserName1", defaultChessGame));
+        assertEquals(expectedResult, gameDAO.listGames());
     }
 }
