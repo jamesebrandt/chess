@@ -29,9 +29,6 @@ public class GameListHandler {
             res.status(500);
         }
 
-        res.type("application/json");
         return gson.toJson(response);
-
-
     }
 }
