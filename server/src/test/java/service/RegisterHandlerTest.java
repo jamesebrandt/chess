@@ -24,21 +24,17 @@ class RegisterHandlerTest {
         handler = new RegisterHandler();
         gson = new Gson();
 
-        AuthDAO.getInstance().deleteAll();
-        GameDAO.getInstance().deleteAll();
-        UserDAO.getInstance().deleteAll();
+        TestUtils.cleanupDatabase();
     }
 
     @AfterAll
     public static void tearDown() {
-        AuthDAO.getInstance().deleteAll();
-        GameDAO.getInstance().deleteAll();
-        UserDAO.getInstance().deleteAll();
+        TestUtils.cleanupDatabase();
     }
 
     @Test
     public void testHandleBadRequest() {
-        Request req = new MockRequest(new RegisterRequest(null, "password", "email"));
+        Request req = new MockRequest(null, new RegisterRequest(null, "password", "email"));
         Response res = new MockResponse();
 
         String responseJson = handler.handle(req, res);
@@ -50,39 +46,12 @@ class RegisterHandlerTest {
     @Test
     public void testSuccess() {
 
-        Request req = new MockRequest(new RegisterRequest("testUser", "password", "email@test.com"));
+        Request req = new MockRequest(null, new RegisterRequest("testUser", "password", "email@test.com"));
         Response res = new MockResponse();
 
         String responseJson = handler.handle(req, res);
         RegisterResponse response = gson.fromJson(responseJson, RegisterResponse.class);
         assertEquals(200, res.status());
         assertEquals(true, response.success());
-    }
-
-    static class MockRequest extends Request {
-        private final RegisterRequest bodyRequest;
-
-        MockRequest(RegisterRequest bodyRequest) {
-            this.bodyRequest = bodyRequest;
-        }
-
-        @Override
-        public String body() {
-            return new Gson().toJson(bodyRequest);
-        }
-    }
-
-    static class MockResponse extends Response {
-        private int status;
-
-        @Override
-        public void status(int statusCode) {
-            this.status = statusCode;
-        }
-
-        @Override
-        public int status() {
-            return this.status;
-        }
     }
 }
