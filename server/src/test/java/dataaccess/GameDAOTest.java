@@ -16,7 +16,6 @@ class GameDAOTest {
 
     private final GameDAO gameDAO = GameDAO.getInstance();
     private final AuthDAO authDAO = AuthDAO.getInstance();
-    private final UserDAO userDAO = UserDAO.getInstance();
 
     @BeforeEach
     void clear() throws DataAccessException {
