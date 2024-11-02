@@ -235,7 +235,7 @@ public class GameDAO {
                 gamesList.add(readGame(rs));
             }
         } catch (Exception e) {
-            throw new ResponseException(500, String.format("Unable to read data: %s", e.getMessage()));
+            throw new ResponseException(String.format("Unable to read data: %s", e.getMessage()));
         }
 
         return gamesList;

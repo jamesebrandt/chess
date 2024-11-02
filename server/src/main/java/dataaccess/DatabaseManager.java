@@ -3,9 +3,6 @@ package dataaccess;
 import java.sql.*;
 import java.util.Properties;
 
-import static java.sql.Statement.RETURN_GENERATED_KEYS;
-import static java.sql.Types.NULL;
-
 public class DatabaseManager {
     private static final String DATABASE_NAME;
     private static final String USER;
@@ -75,7 +72,7 @@ public class DatabaseManager {
                 }
             }
         } catch (SQLException ex) {
-            throw new ResponseException(500, String.format("Unable to configure database: %s", ex.getMessage()));
+            throw new ResponseException(String.format("Unable to configure database: %s", ex.getMessage()));
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }

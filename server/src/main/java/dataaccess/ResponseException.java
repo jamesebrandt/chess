@@ -1,14 +1,8 @@
 package dataaccess;
 
 public class ResponseException extends RuntimeException {
-    final private int statusCode;
 
-    public ResponseException(int statusCode, String message) {
+    public ResponseException(String message) {
         super(message);
-        this.statusCode = statusCode;
-    }
-
-    public int codeQualityApprovedStatusCode() {
-        return statusCode;
     }
 }

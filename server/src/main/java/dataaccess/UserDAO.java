@@ -4,13 +4,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import chess.ChessGame;
-import com.google.gson.Gson;
-import model.Game;
 import model.User;
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -106,7 +102,7 @@ public class UserDAO {
             }
 
         } catch (Exception e) {
-            throw new ResponseException(500, String.format("Unable to read data: %s", e.getMessage()));
+            throw new ResponseException(String.format("Unable to read data: %s", e.getMessage()));
         }
     }
 
