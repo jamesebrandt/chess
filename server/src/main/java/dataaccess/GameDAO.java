@@ -34,7 +34,7 @@ public class GameDAO {
     Gson gson = new Gson();
 
     public void deleteAll() {
-        String query = "DELETE FROM chess_games";
+        String query = "TRUNCATE TABLE chess_games";
 
         try {
             Connection conn = DatabaseManager.getConnection();

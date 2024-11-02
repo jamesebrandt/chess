@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,6 +12,7 @@ import chess.ChessGame;
 import com.google.gson.Gson;
 import model.Game;
 import model.User;
+import org.mindrot.jbcrypt.BCrypt;
 
 public class UserDAO {
 
@@ -40,11 +42,13 @@ public class UserDAO {
         }
         String query = "INSERT INTO users (username, password, email) VALUES (?, ?, ?)";
 
+        String hashedPassword = BCrypt.hashpw(user.password(), BCrypt.gensalt());
+
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
 
             stmt.setString(1, user.username());
-            stmt.setString(2, user.password());
+            stmt.setString(2, hashedPassword);
             stmt.setString(3, user.email());
             stmt.executeUpdate();
 
@@ -59,18 +63,22 @@ public class UserDAO {
 
     public boolean isUserFree(User user){
         String query = "SELECT COUNT(*) FROM users WHERE username = ?";
-        try{
-            Connection conn = DatabaseManager.getConnection();
-            PreparedStatement stmt = conn.prepareStatement(query);
+        try (Connection conn = DatabaseManager.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, user.username());
-            ResultSet rs = stmt.executeQuery();
-            return rs.next() && rs.getInt(1)>0;
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) == 0;
+                }
+            }
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }
+        return false;
     }
 
 
@@ -104,19 +112,58 @@ public class UserDAO {
 
 
     public boolean checkPassword(String username, String password) {
-        User user = usersDb.get(username);
-        if (user != null && user.password().equals(password)) {
+        User user = getUser(username);
+        if (BCrypt.checkpw(password, user.password())) {
             return true;
         }
         return false;
     }
 
     public Map<String, User> getAllUsers(){
-        return usersDb;
+
+        Map<String, User> userList = new HashMap<>();
+        String query = "SELECT username, password, email FROM users";
+
+        try {
+            Connection conn = DatabaseManager.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(query);
+
+            try (ResultSet rs = stmt.executeQuery();) {
+
+                while (rs.next()) {
+                    String userUsername = rs.getString("username");
+                    String userPassword = rs.getString("password");
+                    String userEmail = rs.getString("email");
+
+                    User user = new User(userUsername, userPassword, userEmail);
+
+                    userList.put(userUsername, user);
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+
+        return userList;
     }
 
 
     public void deleteAll() {
-        usersDb.clear();
+
+        String query = "TRUNCATE TABLE users";
+
+        try{
+            Connection conn = DatabaseManager.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(query);
+
+            stmt.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

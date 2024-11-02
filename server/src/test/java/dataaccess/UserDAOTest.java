@@ -3,6 +3,7 @@ package dataaccess;
 import model.User;
 import org.junit.jupiter.api.Test;
 import dataaccess.GameDAO;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,12 +16,18 @@ class UserDAOTest {
 
     @Test
     void registerUser() {
-        User user = new User("testUsername",
+        User expected = new User("testUsername",
                 "TestPassword",
                 "Test@email.com");
-        userDAO.registerUser(user);
+        userDAO.registerUser(expected);
+        User hashed = userDAO.getUser("testUsername");
+        boolean correctpassword = BCrypt.checkpw(expected.password(), hashed.password());
 
-        assertEquals(userDAO.getUser("testUsername"), user);
+        User expectedForgetPass = new User(expected.username(), null, expected.email());
+        User actualForgetPass = new User(hashed.username(), null, hashed.email());
+
+        assertTrue(correctpassword);
+        assertEquals(expectedForgetPass, actualForgetPass);
     }
 
     @Test
@@ -28,8 +35,16 @@ class UserDAOTest {
         User user = new User("testUsername",
                 "TestPassword",
                 "Test@email.com");
+
+        User expectedRemovedPassword = new User("testUsername",
+                null,
+                "Test@email.com");
+
+
         userDAO.registerUser(user);
-        assertEquals(userDAO.getUser("testUsername"), user);
+        User received = userDAO.getUser("testUsername");
+        User ActualeremovedPassWord = new User(received.username(), null, received.email());
+        assertEquals(expectedRemovedPassword, ActualeremovedPassWord);
     }
 
     @Test
@@ -74,6 +89,6 @@ class UserDAOTest {
 
         userDAO.deleteAll();
 
-        assertEquals(userDAO.getAllUsers(), expected);
+        assertEquals(expected, userDAO.getAllUsers());
     }
 }
