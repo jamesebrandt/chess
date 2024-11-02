@@ -127,35 +127,20 @@ public class GameDAO {
         return !playerColor.equals(null);
     }
 
+    public boolean isStealingTeamColor(JoinGameRequest req) {
+        String colorColumn = req.playerColor().equals("BLACK") ? "blackUserName" : "whiteUserName";
+        String query = "SELECT COUNT(*) FROM chess_games WHERE gameID = ? AND " + colorColumn + " IS NULL";
 
-    public boolean isStealingTeamColor(JoinGameRequest req){
-        int testId = req.gameID();
-        if (req.playerColor().equals("BLACK")){
-            String query = "SELECT COUNT(*) FROM chess_games WHERE gameID = ? AND blackUserName IS NULL";
-            try {
-                Connection conn = DatabaseManager.getConnection();
-                PreparedStatement stmt = conn.prepareStatement(query);
-                stmt.setInt(1, testId);
-                ResultSet rs = stmt.executeQuery();
-                return rs.next() && rs.getInt(1) > 0;
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            } catch (DataAccessException e) {
-                throw new RuntimeException(e);
-            }
-        } else {
-            String query = "SELECT COUNT(*) FROM chess_games WHERE gameID = ? AND whiteUserName IS NULL";
-            try {
-                Connection conn = DatabaseManager.getConnection();
-                PreparedStatement stmt = conn.prepareStatement(query);
-                stmt.setInt(1, testId);
-                ResultSet rs = stmt.executeQuery();
-                return rs.next() && rs.getInt(1) > 0;
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            } catch (DataAccessException e) {
-                throw new RuntimeException(e);
-            }
+        try {
+            Connection conn = DatabaseManager.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(query);
+            stmt.setInt(1, req.gameID());
+            ResultSet rs = stmt.executeQuery();
+            return rs.next() && rs.getInt(1) > 0;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
         }
     }
 

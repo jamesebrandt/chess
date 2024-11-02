@@ -33,7 +33,7 @@ class CreateGameHandlerTest {
 
 
     @Test
-    public void testHandleNullAuth() {
+    public void testCreateHandleNullAuth() {
         Request req = new MockRequest(null, new CreateGameRequest(null, "TestGame"));
         Response res = new MockResponse();
 

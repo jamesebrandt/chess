@@ -36,10 +36,10 @@ class LoginHandlerTest {
         Response res = new MockResponse();
 
         String responseJson = handler.handle(req, res);
-        CreateGameResponse response = gson.fromJson(responseJson, CreateGameResponse.class);
+        CreateGameResponse responseFromNullGame = gson.fromJson(responseJson, CreateGameResponse.class);
 
         assertEquals(401, res.status());
-        assertEquals("Error: unauthorized", response.message());
+        assertEquals("Error: unauthorized", responseFromNullGame.message());
     }
 
     @Test
