@@ -110,32 +110,6 @@ public class DatabaseManager {
 
     };
 
-//    private int executeUpdate(String statement, Object... params) throws ResponseException {
-//        try (var conn = DatabaseManager.getConnection()) {
-//            try (var ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
-//                for (var i = 0; i < params.length; i++) {
-//                    var param = params[i];
-//                    if (param instanceof String p) ps.setString(i + 1, p);
-//                    else if (param instanceof Integer p) ps.setInt(i + 1, p);
-//                    //else if (param instanceof Chess p) ps.setString(i + 1, p.toString());
-//                    else if (param == null) ps.setNull(i + 1, NULL);
-//                }
-//                ps.executeUpdate();
-//
-//                var rs = ps.getGeneratedKeys();
-//                if (rs.next()) {
-//                    return rs.getInt(1);
-//                }
-//
-//                return 0;
-//            }
-//        } catch (SQLException e) {
-//            throw new ResponseException(500, String.format("unable to update database: %s, %s", statement, e.getMessage()));
-//        } catch (DataAccessException e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
-
     static Connection getConnection() throws DataAccessException {
         try {
             var conn = DriverManager.getConnection(CONNECTION_URL, USER, PASSWORD);
@@ -146,6 +120,4 @@ public class DatabaseManager {
         }
     }
 
-
-    // add some methods from petshop
 }

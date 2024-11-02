@@ -23,10 +23,6 @@ public class AuthDAO {
         return instance;
     }
 
-//    public boolean isValidToken(String token) {
-//        return authTokens.containsKey(token);
-//    }
-
     public boolean isValidToken(String token){
         String query = "SELECT COUNT(*) FROM auth_tokens WHERE token = ?";
         try{
@@ -45,11 +41,6 @@ public class AuthDAO {
     }
 
 
-//    public void deleteAll() {
-//        // String sql = "DELETE FROM auth_tokens";
-//        authTokens.clear();
-//    }
-
     public void deleteAll(){
         String query = "DELETE FROM auth_tokens";
 
@@ -62,15 +53,6 @@ public class AuthDAO {
             throw new RuntimeException(e);
         }
     }
-
-
-//    public String generateToken(String username) {
-//        if (username == null){return "Cannot Be Null";}
-//
-//        String token = UUID.randomUUID().toString();
-//        authTokens.put(token, username);
-//        return token;
-//    }
 
     public String generateToken(String username) {
         if (username == null){return "Cannot Be Null";}
@@ -101,11 +83,6 @@ public class AuthDAO {
     }
 
 
-//    public String getUser(String auth){
-//        if (!authTokens.containsKey(auth)){return "Invalid Auth Token";}
-//        return authTokens.get(auth);
-//    }
-
     public String getUser(String auth) {
         String query = "SELECT username FROM auth_tokens WHERE token = ?";
 
@@ -127,11 +104,6 @@ public class AuthDAO {
             return "Failed to access data";
         }
     }
-
-
-//    public void deleteAuth(String authToken){
-//        authTokens.remove(authToken);
-//    }
 
     public void deleteAuth(String authToken) {
         String query = "DELETE FROM auth_tokens WHERE token=?";

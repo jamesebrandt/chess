@@ -14,7 +14,6 @@ import java.sql.SQLException;
 
 public class GameDAO {
 
-  //  private final Map<Integer, Game> gameDb = new HashMap<>();
     private static GameDAO instance = null;
 
     private final AuthDAO authDAO = AuthDAO.getInstance();
@@ -96,12 +95,6 @@ public class GameDAO {
         return id;
     }
 
-//    public boolean isValidGameID(Integer gameID) {
-//        if (gameID == null) {
-//            return false;
-//        }
-//        return gameDb.containsKey(gameID);
-//    }
 
     public boolean isValidGameID(Integer gameID) {
         if (gameID == null) {
@@ -135,15 +128,6 @@ public class GameDAO {
     }
 
 
-//    public boolean isStealingTeamColor(JoinGameRequest req) {
-//        String playerColor = req.playerColor();
-//        if ("BLACK".equals(playerColor) && Objects.equals(gameDb.get(req.gameID()).blackUsername(), null)) {
-//            return true;
-//        } else {
-//            return playerColor.equals("WHITE") && Objects.equals(gameDb.get(req.gameID()).whiteUsername(), null);
-//        }
-//    }
-
     public boolean isStealingTeamColor(JoinGameRequest req){
         int testId = req.gameID();
         if (req.playerColor().equals("BLACK")){
@@ -175,20 +159,6 @@ public class GameDAO {
         }
     }
 
-
-//    public void addUsername(JoinGameRequest req, String name) {
-//        Game gameData = gameDb.get(req.gameID());
-//        if (gameData != null) {
-//            Game updatedGame;
-//            if (req.playerColor().equals("WHITE")) {
-//                updatedGame = new Game(gameData.gameID(),gameData.gameName(), name, gameData.blackUsername() ,gameData.game());
-//            } else {
-//                updatedGame = new Game(gameData.gameID(),gameData.gameName(), gameData.whiteUsername(), name, gameData.game());
-//            }
-//            gameDb.put(req.gameID(), updatedGame);
-//        }
-//    }
-
     public void addUsername(JoinGameRequest req, String name) {
         String query;
         if (req.playerColor().equals("WHITE")) {
@@ -209,17 +179,6 @@ public class GameDAO {
             throw new RuntimeException(e);
         }
     }
-
-
-
-//    public ArrayList<Game> listGames() {
-//        ArrayList<Game> gamesList = new ArrayList<>();
-//
-//        for (Game game : gameDb.values()) {
-//            gamesList.add(new Game(game.gameID(), game.gameName(), game.whiteUsername(), game.blackUsername(),null));
-//        }
-//        return gamesList;
-//    }
 
 
     public ArrayList<Game> listGames() {

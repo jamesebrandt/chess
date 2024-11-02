@@ -1,11 +1,9 @@
 package dataaccess;
 
-import com.google.gson.Gson;
-import org.junit.jupiter.api.AfterAll;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import server.handlers.CreateGameHandler;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,7 +16,7 @@ class AuthDAOTest {
 
     @BeforeEach
     public void setUp() {
-        deleteAll(); // remove later
+        deleteAll();
     }
 
     @Test
@@ -112,7 +110,7 @@ class AuthDAOTest {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        deleteAll(); // remove later
+        deleteAll();
     }
 
 

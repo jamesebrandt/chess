@@ -12,7 +12,6 @@ import org.mindrot.jbcrypt.BCrypt;
 
 public class UserDAO {
 
-    private final Map<String, User> usersDb = new HashMap<>();
     private static UserDAO instance = null;
 
     private UserDAO() {}
@@ -22,15 +21,6 @@ public class UserDAO {
         }
         return instance;
     }
-
-
-//    public boolean registerUser(User user) {
-//        if (usersDb.containsKey(user.username())) {
-//            return false;
-//        }
-//        usersDb.put(user.username(), user);
-//        return true;
-//    }
 
     public boolean registerUser(User user){
         if(!isUserFree(user)){
@@ -144,10 +134,8 @@ public class UserDAO {
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }
-
         return userList;
     }
-
 
     public void deleteAll() {
 
