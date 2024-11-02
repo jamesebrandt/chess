@@ -23,13 +23,15 @@ class LoginHandlerTest {
     public void setUp() {
         handler = new CreateGameHandler();
         gson = new Gson();
-        AuthDAO.getInstance().deleteAll();
-        GameDAO.getInstance().deleteAll();
-        UserDAO.getInstance().deleteAll();
+        clearDatabase();
     }
 
     @AfterAll
     public static void tearDown() {
+        clearDatabase();
+    }
+
+    private static void clearDatabase() {
         AuthDAO.getInstance().deleteAll();
         GameDAO.getInstance().deleteAll();
         UserDAO.getInstance().deleteAll();
@@ -37,11 +39,10 @@ class LoginHandlerTest {
 
     @Test
     public void testHandleNullAuth() {
-        Request req = new MockRequest(null, new CreateGameRequest(null, "TestGame"));
+        Request req = createMockRequest(null, new CreateGameRequest(null, "TestGame"));
         Response res = new MockResponse();
 
-        String responseJson = handler.handle(req, res);
-        CreateGameResponse response = gson.fromJson(responseJson, CreateGameResponse.class);
+        CreateGameResponse response = handleRequest(req, res);
 
         assertEquals(401, res.status());
         assertEquals("Error: unauthorized", response.message());
@@ -50,14 +51,22 @@ class LoginHandlerTest {
     @Test
     public void testHandleSuccess() {
         String authToken = AuthDAO.getInstance().generateToken("Test");
-        Request req = new MockRequest(authToken, new CreateGameRequest(null, "TestGame"));
+        Request req = createMockRequest(authToken, new CreateGameRequest(null, "TestGame"));
         Response res = new MockResponse();
 
-        String responseJson = handler.handle(req, res);
-        CreateGameResponse response = gson.fromJson(responseJson, CreateGameResponse.class);
+        CreateGameResponse response = handleRequest(req, res);
 
         assertEquals(200, res.status());
         assertEquals(true, response.success());
+    }
+
+    private Request createMockRequest(String authToken, CreateGameRequest bodyRequest) {
+        return new MockRequest(authToken, bodyRequest);
+    }
+
+    private CreateGameResponse handleRequest(Request req, Response res) {
+        String responseJson = handler.handle(req, res);
+        return gson.fromJson(responseJson, CreateGameResponse.class);
     }
 
     static class MockRequest extends Request {
