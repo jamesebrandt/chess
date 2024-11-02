@@ -43,8 +43,8 @@ class UserDAOTest {
 
         userDAO.registerUser(user);
         User received = userDAO.getUser("testUsername");
-        User ActualeremovedPassWord = new User(received.username(), null, received.email());
-        assertEquals(expectedRemovedPassword, ActualeremovedPassWord);
+        User actualRemovedPassword = new User(received.username(), null, received.email());
+        assertEquals(expectedRemovedPassword, actualRemovedPassword);
     }
 
     @Test

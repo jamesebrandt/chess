@@ -28,11 +28,11 @@ class JoinGameHandlerTest {
     @Test
     void testHandleSuccess() {
         String authToken = AuthDAO.getInstance().generateToken("TestUser");
-        int Id = GameDAO.getInstance().createGame("TestUser", authToken);
+        int id = GameDAO.getInstance().createGame("TestUser", authToken);
         JoinGameHandler joinGameHandler = new JoinGameHandler();
 
 
-        Request req = new MockRequest(authToken, new JoinGameRequest("WHITE", Id));
+        Request req = new MockRequest(authToken, new JoinGameRequest("WHITE", id));
         Response res = new MockResponse();
 
         JoinGameResponse response = gson.fromJson(joinGameHandler.handle(req, res), JoinGameResponse.class);

@@ -95,10 +95,10 @@ public class UserDAO {
 
                 if (rs.next()) {
                     String userUsername = rs.getString("username");
-                    String UserPassword = rs.getString("password");
+                    String userPassword = rs.getString("password");
                     String userEmail = rs.getString("email");
 
-                    return new User(userUsername, UserPassword, userEmail);
+                    return new User(userUsername, userPassword, userEmail);
                 }
                 else{
                     return null;

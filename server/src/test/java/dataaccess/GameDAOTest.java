@@ -2,6 +2,7 @@ package dataaccess;
 
 import chess.ChessGame;
 import model.*;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import server.services.JoinGameService;
@@ -21,6 +22,18 @@ class GameDAOTest {
     void clear() throws DataAccessException {
         gameDAO.deleteAll();
         DatabaseManager.configureDatabase();
+        AuthDAO.getInstance().deleteAll();
+        GameDAO.getInstance().deleteAll();
+        UserDAO.getInstance().deleteAll();
+    }
+
+
+    @AfterAll
+    public static void tearDown() {
+        AuthDAO.getInstance().deleteAll();
+        GameDAO.getInstance().deleteAll();
+        UserDAO.getInstance().deleteAll();
+
     }
 
     @Test
@@ -80,9 +93,9 @@ class GameDAOTest {
         User user = new User("TestUser", "TestPassword", "Test1@gmail.com");
         String auth = authDAO.generateToken(user.username());
 
-        int Id = gameDAO.createGame("TestGame1", auth);
+        int id = gameDAO.createGame("TestGame1", auth);
 
-        assertEquals(Id+1, gameDAO.createGame("TestGame", auth));
+        assertEquals(id+1, gameDAO.createGame("TestGame", auth));
     }
 
     @Test
@@ -90,9 +103,9 @@ class GameDAOTest {
         User user = new User("TestUser", "TestPassword", "Test1@gmail.com");
         String auth = authDAO.generateToken(user.username());
 
-        int Id = gameDAO.createGame("TestGame1", auth);
+        int id = gameDAO.createGame("TestGame1", auth);
 
-        assertTrue(gameDAO.isValidGameID(Id));
+        assertTrue(gameDAO.isValidGameID(id));
     }
 
     @Test
@@ -115,13 +128,13 @@ class GameDAOTest {
     void addUsername() {
         User user = new User("TestUser", "TestPassword", "Test1@gmail.com");
         String auth = authDAO.generateToken(user.username());
-        int Id = gameDAO.createGame("TestGame1", auth);
-        JoinGameRequest request = new JoinGameRequest("BLACK", Id);
+        int id = gameDAO.createGame("TestGame1", auth);
+        JoinGameRequest request = new JoinGameRequest("BLACK", id);
         gameDAO.addUsername(request, "TestUserName");
 
         ArrayList<Game> expected = new ArrayList<>();
         ChessGame defaultChessGame = new ChessGame();
-        expected.add(new Game(Id, "TestGame1",null, "TestUserName", defaultChessGame));
+        expected.add(new Game(id, "TestGame1",null, "TestUserName", defaultChessGame));
 
         assertEquals(expected, gameDAO.listGames());
     }
@@ -130,9 +143,9 @@ class GameDAOTest {
     void listGames() {
         User user1 = new User("TestUser", "TestPassword", "Test1@gmail.com");
         String auth1 = authDAO.generateToken(user1.username());
-        int Id1 = gameDAO.createGame("TestGame1", auth1);
-        JoinGameRequest request1 = new JoinGameRequest("BLACK", Id1);
-        JoinGameRequest request2 = new JoinGameRequest("WHITE", Id1);
+        int id1 = gameDAO.createGame("TestGame1", auth1);
+        JoinGameRequest request1 = new JoinGameRequest("BLACK", id1);
+        JoinGameRequest request2 = new JoinGameRequest("WHITE", id1);
         gameDAO.addUsername(request1, "TestUserName1");
         gameDAO.addUsername(request2, "TestUserName2");
 
@@ -140,7 +153,7 @@ class GameDAOTest {
         ArrayList<Game> expected = new ArrayList<>();
         ChessGame defaultChessGame = new ChessGame();
 
-        expected.add(new Game(Id1, "TestGame1","TestUserName2", "TestUserName1", defaultChessGame));
+        expected.add(new Game(id1, "TestGame1","TestUserName2", "TestUserName1", defaultChessGame));
 
         assertEquals(expected, gameDAO.listGames());
     }

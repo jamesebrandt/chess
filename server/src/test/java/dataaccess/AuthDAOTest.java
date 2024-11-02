@@ -60,16 +60,16 @@ class AuthDAOTest {
     @Test
     void getUser() {
         String auth = authDAO.generateToken("Test");
-        String User1 =authDAO.getUser(auth);
-        assertEquals(User1, "Test");
+        String user1 =authDAO.getUser(auth);
+        assertEquals(user1, "Test");
     }
 
     @Test
     void badUserRequest() {
         authDAO.generateToken("Test");
-        String invalid_auth = "c99ee8a2-f2a6-4a04-976a-1a38e9b640cc";
-        String User1 =authDAO.getUser(invalid_auth);
-        assertEquals(User1, "User not found");
+        String invalidAuth = "c99ee8a2-f2a6-4a04-976a-1a38e9b640cc";
+        String user1 =authDAO.getUser(invalidAuth);
+        assertEquals(user1, "User not found");
     }
 
     @Test

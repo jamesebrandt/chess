@@ -8,7 +8,7 @@ public class ResponseException extends RuntimeException {
         this.statusCode = statusCode;
     }
 
-    public int StatusCode() {
+    public int codeQualityApprovedStatusCode() {
         return statusCode;
     }
 }

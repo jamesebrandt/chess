@@ -14,10 +14,9 @@ import spark.Request;
 import spark.Response;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class CreateGameHandlerTest {
-    private CreateGameHandler createGameHandler;
-
     private CreateGameHandler handler;
     private Gson gson;
 
@@ -25,13 +24,16 @@ class CreateGameHandlerTest {
     public void setUp() {
         handler = new CreateGameHandler();
         gson = new Gson();
-
-        AuthDAO.getInstance().deleteAll();
-        GameDAO.getInstance().deleteAll();
-        UserDAO.getInstance().deleteAll();
+        cleanup();  // Consolidated cleanup method
     }
+
     @AfterAll
     public static void tearDown() {
+        cleanup();  // Consolidated cleanup method
+    }
+
+    // Consolidated method to clean up data in DAOs
+    private static void cleanup() {
         AuthDAO.getInstance().deleteAll();
         GameDAO.getInstance().deleteAll();
         UserDAO.getInstance().deleteAll();
@@ -51,9 +53,7 @@ class CreateGameHandlerTest {
 
     @Test
     public void testHandleSuccess() {
-
         String authToken = AuthDAO.getInstance().generateToken("Test");
-
 
         Request req = new MockRequest(authToken, new CreateGameRequest(null,"TestGame"));
         Response res = new MockResponse();
@@ -62,7 +62,7 @@ class CreateGameHandlerTest {
         CreateGameResponse response = gson.fromJson(responseJson, CreateGameResponse.class);
 
         assertEquals(200, res.status());
-        assertEquals(true, response.success());
+        assertTrue(response.success());
     }
 
     static class MockRequest extends Request {
@@ -99,4 +99,3 @@ class CreateGameHandlerTest {
         }
     }
 }
-
