@@ -1,8 +1,12 @@
 package service;
 
 import com.google.gson.Gson;
+import dataaccess.AuthDAO;
+import dataaccess.GameDAO;
+import dataaccess.UserDAO;
 import model.RegisterRequest;
 import model.RegisterResponse;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import server.handlers.RegisterHandler;
@@ -19,6 +23,17 @@ class RegisterHandlerTest {
     public void setUp() {
         handler = new RegisterHandler();
         gson = new Gson();
+
+        AuthDAO.getInstance().deleteAll();
+        GameDAO.getInstance().deleteAll();
+        UserDAO.getInstance().deleteAll();
+    }
+
+    @AfterAll
+    public static void tearDown() {
+        AuthDAO.getInstance().deleteAll();
+        GameDAO.getInstance().deleteAll();
+        UserDAO.getInstance().deleteAll();
     }
 
     @Test

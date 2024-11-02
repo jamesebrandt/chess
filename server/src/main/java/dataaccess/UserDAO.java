@@ -113,6 +113,9 @@ public class UserDAO {
 
     public boolean checkPassword(String username, String password) {
         User user = getUser(username);
+        if (user == null){
+            return false;
+        }
         if (BCrypt.checkpw(password, user.password())) {
             return true;
         }
