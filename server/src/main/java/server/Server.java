@@ -1,5 +1,4 @@
 package server;
-import dataaccess.DataAccessException;
 import dataaccess.DatabaseManager;
 import server.handlers.*;
 import spark.Spark;
@@ -21,7 +20,6 @@ public class Server {
         } catch (Exception e) {
             System.err.print("Failed to configure DB");
         }
-        // Register your endpoints and handle exceptions here.
 
         //clear
         delete("/db", (req, res) -> {
