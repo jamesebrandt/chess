@@ -4,6 +4,12 @@ import java.util.Arrays;
 
 public class PreLoginClient {
 
+    private final ServerFacade server;
+
+    public PreLoginClient(String serverUrl){
+        server = new ServerFacade(serverUrl);
+    }
+
     public String eval(String inputLine){
         try {
             var tokens = inputLine.toUpperCase().split(" ");

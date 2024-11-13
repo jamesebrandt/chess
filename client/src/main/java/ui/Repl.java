@@ -10,8 +10,8 @@ public class Repl{
 
 
     public Repl(String serverUrl){
-        preLoginClient = new PreLoginClient();
-        postLoginClient = new PostLoginClient();
+        preLoginClient = new PreLoginClient(serverUrl);
+        postLoginClient = new PostLoginClient(serverUrl);
         gameClient = new GameClient();
     }
 
@@ -61,12 +61,14 @@ public class Repl{
                 result = postLoginClient.eval(line);
                 if (result.equals("playing game")){
                     inGame();
+                    return;
                 }
                 if (result.equals("Quitting Client")){
                     exiting = true;
                     return;
+                }else {
+                    System.out.print(result);
                 }
-                System.out.print(result);
             } catch (Throwable e){
                 var msg = e.toString();
                 System.out.print(msg);
@@ -85,23 +87,23 @@ public class Repl{
         var result = "";
         result = result.toUpperCase();
 
-        while (!result.equals("QUIT") && !result.equals("Exiting the game")){
+        while (!result.equals("QUIT") && !result.equals("Exiting the game") && !exiting){
             printPrompt();
             String line = scanner.nextLine();
             try {
                 result = gameClient.eval(line);
                 if (result.equals("Leaving Game")){
+                    System.out.print(result);
                     loggedIn();
+                }else {
+                    System.out.print(result);
                 }
-                System.out.print(result);
             } catch (Throwable e){
                 var msg = e.toString();
                 System.out.print(msg);
             }
         }
-        System.out.println();
     }
-
 
     private void printPrompt() {
         System.out.print("\n" + ">>> ");

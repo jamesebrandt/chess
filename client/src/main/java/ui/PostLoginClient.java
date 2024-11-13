@@ -4,6 +4,12 @@ import java.util.Arrays;
 
 public class PostLoginClient {
 
+    private final ServerFacade server;
+
+    public PostLoginClient(String serverUrl){
+        server = new ServerFacade(serverUrl);
+    }
+
 
     public String eval(String inputLine){
         try {
@@ -16,6 +22,7 @@ public class PostLoginClient {
                 case "LIST_GAMES" -> listGames(params);
                 case "PLAY_GAME" -> playGame(params);
                 case "OBSERVE_GAME" -> observeGame(params);
+                case "CLEAR" -> clearGames(params);
                 case "QUIT" -> "Quitting Client";
                 default -> help();
 
@@ -45,6 +52,11 @@ public class PostLoginClient {
         return "not implemented";
     }
 
+    public String clearGames(String... input) throws Exception {
+        server.clear();
+        return "Server Cleared";
+    }
+
     public String help() {
         return """
                 - Logout
@@ -52,6 +64,7 @@ public class PostLoginClient {
                 - List_games
                 - Play_game <gameID>
                 - Observe_game <gameID>
+                - Clear
                 - Help
                 - Quit
                 """;

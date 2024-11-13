@@ -22,11 +22,6 @@ public class ServerFacadeTests {
         server.stop();
     }
 
-//    @BeforeEach
-//    static void clearDataBase(){
-//        server
-//    }
-
 
     @Test
     public void sampleTest() {
