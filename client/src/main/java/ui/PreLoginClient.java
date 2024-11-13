@@ -12,8 +12,7 @@ public class PreLoginClient {
             return switch (cmd) {
                 case "REGISTER" -> register(params);
                 case "LOGIN" -> login(params);
-                case "HELP" -> help();
-                case "QUIT" -> "quit";
+                case "QUIT" -> "Quitting Client";
                 default -> help();
             };
         } catch (Exception e) {

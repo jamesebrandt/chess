@@ -2,7 +2,6 @@ package ui;
 
 import java.util.Arrays;
 
-
 public class GameClient {
 
     private PrintBoard whiteBoard;
@@ -18,11 +17,11 @@ public class GameClient {
             var cmd = (tokens.length > 0) ? tokens[0] : "help";
             var params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (cmd) {
-                case "HELP" -> help();
                 case "LOGOUT" -> move(params);
-                case "CREATE_GAME" -> exit(params);
-                case "QUIT" -> "quit";
-                default -> drawBoard();
+                case "CREATE_GAME" -> createGame(params);
+                case "EXIT_GAME" -> "Leaving Game";
+                case "DRAW" -> drawBoard();
+                default -> help();
 
             };
         } catch (Exception e) {
@@ -34,7 +33,7 @@ public class GameClient {
         return "not implemented";
     }
 
-    public String exit(String... input){
+    public String createGame(String... input){
         return "not implemented";
     }
 
@@ -43,16 +42,15 @@ public class GameClient {
         System.out.println();
         blackBoard.drawBoard();
 
-        return "not implemented";
+        return "Both Boards Drawn";
     }
-
 
     public String help() {
         return """
+                - Draw
                 - Make_Move
                 - Exit_Game
                 - Help
-                - Quit
                 """;
     }
 }

@@ -11,13 +11,12 @@ public class PostLoginClient {
             var cmd = (tokens.length > 0) ? tokens[0] : "help";
             var params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (cmd) {
-                case "HELP" -> help();
                 case "LOGOUT" -> logout(params);
                 case "CREATE_GAME" -> createGame(params);
                 case "LIST_GAMES" -> listGames(params);
                 case "PLAY_GAME" -> playGame(params);
                 case "OBSERVE_GAME" -> observeGame(params);
-                case "QUIT" -> "quit";
+                case "QUIT" -> "Quitting Client";
                 default -> help();
 
             };

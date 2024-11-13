@@ -6,6 +6,7 @@ public class Repl{
     private final PreLoginClient preLoginClient;
     private final PostLoginClient postLoginClient;
     private final GameClient gameClient;
+    private boolean exiting = false;
 
 
     public Repl(String serverUrl){
@@ -22,7 +23,7 @@ public class Repl{
         var result = "";
         result = result.toUpperCase();
 
-        while (!result.equals("QUIT")){
+        while (!exiting && !result.equals("Quitting Client")){
             printPrompt();
             String line = scanner.nextLine();
             try {
@@ -30,7 +31,12 @@ public class Repl{
                 if (result.equals("Successful Login")){
                     loggedIn();
                 }
-                System.out.print(result);
+                if (!exiting) {
+                    System.out.print(result);
+                }
+                else{
+                    System.out.print("Closing Client");
+                }
             } catch (Throwable e){
                 var msg = e.toString();
                 System.out.print(msg);
@@ -48,13 +54,17 @@ public class Repl{
         var result = "";
         result = result.toUpperCase();
 
-        while (!result.equals("QUIT") && !result.equals("LOGOUT")){
+        while (!result.equals("LOGOUT")){
             printPrompt();
             String line = scanner.nextLine();
             try {
                 result = postLoginClient.eval(line);
                 if (result.equals("playing game")){
                     inGame();
+                }
+                if (result.equals("Quitting Client")){
+                    exiting = true;
+                    return;
                 }
                 System.out.print(result);
             } catch (Throwable e){
@@ -68,18 +78,21 @@ public class Repl{
 
     private void inGame(){
 
-        System.out.println("Logged in!");
-        System.out.print(postLoginClient.help());
+        System.out.println("In Game!");
+        System.out.print(gameClient.help());
 
         Scanner scanner = new Scanner(System.in);
         var result = "";
         result = result.toUpperCase();
 
-        while (!result.equals("QUIT") && !result.equals("EXIT_GAME")){
+        while (!result.equals("QUIT") && !result.equals("Exiting the game")){
             printPrompt();
             String line = scanner.nextLine();
             try {
-                result = postLoginClient.eval(line);
+                result = gameClient.eval(line);
+                if (result.equals("Leaving Game")){
+                    loggedIn();
+                }
                 System.out.print(result);
             } catch (Throwable e){
                 var msg = e.toString();
