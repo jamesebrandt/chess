@@ -1,15 +1,56 @@
 package ui;
 
-public class DisplayBoardBlack {
+public class PrintBoard {
 
     private String[][] board;
 
-    public DisplayBoardBlack(){
+    public PrintBoard(Boolean isWhitePerspective){
         board = new String[8][8];
-        initializeBoard();
+        initializeBoard(isWhitePerspective);
+
     }
 
-    private void initializeBoard(){
+    private void initializeBoard(Boolean isWhitePerspective){
+        if (isWhitePerspective){
+            initializeWhiteBoard();
+        }
+        else{
+            initializeBlackBoard();
+        }
+    }
+
+
+    private void initializeWhiteBoard(){
+
+        board[0][0] = EscapeSequences.WHITE_ROOK;
+        board[0][1] = EscapeSequences.WHITE_KNIGHT;
+        board[0][2] = EscapeSequences.WHITE_BISHOP;
+        board[0][3] = EscapeSequences.WHITE_QUEEN;
+        board[0][4] = EscapeSequences.WHITE_KING;
+        board[0][5] = EscapeSequences.WHITE_BISHOP;
+        board[0][6] = EscapeSequences.WHITE_KNIGHT;
+        board[0][7] = EscapeSequences.WHITE_ROOK;
+
+        for (int i = 0; i < 8; i++){
+            board[1][i] = EscapeSequences.WHITE_PAWN;
+        }
+
+        board[7][0] = EscapeSequences.BLACK_ROOK;
+        board[7][1] = EscapeSequences.BLACK_KNIGHT;
+        board[7][2] = EscapeSequences.BLACK_BISHOP;
+        board[7][3] = EscapeSequences.BLACK_QUEEN;
+        board[7][4] = EscapeSequences.BLACK_KING;
+        board[7][5] = EscapeSequences.BLACK_BISHOP;
+        board[7][6] = EscapeSequences.BLACK_KNIGHT;
+        board[7][7] = EscapeSequences.BLACK_ROOK;
+
+        for (int i = 0; i < 8; i++){
+            board[6][i] = EscapeSequences.BLACK_PAWN;
+        }
+    }
+
+
+    private void initializeBlackBoard(){
 
         board[7][0] = EscapeSequences.WHITE_ROOK;
         board[7][1] = EscapeSequences.WHITE_KNIGHT;
@@ -52,13 +93,9 @@ public class DisplayBoardBlack {
                 } else {
                     System.out.print(board[row][col]);
                 }
-
                 System.out.print(EscapeSequences.RESET_BG_COLOR);
             }
             System.out.println();
         }
-
     }
-
-
 }

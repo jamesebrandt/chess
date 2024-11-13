@@ -33,7 +33,6 @@ public class GameClient {
     }
 
     public String drawBoard(String... input){
-        DisplayBoardBlack blackBoard = new DisplayBoardBlack();
         return "not implemented";
     }
 
