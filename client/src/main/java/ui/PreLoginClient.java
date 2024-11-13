@@ -4,7 +4,6 @@ import java.util.Arrays;
 
 public class PreLoginClient {
 
-
     public String eval(String inputLine){
         try {
             var tokens = inputLine.toUpperCase().split(" ");
@@ -27,7 +26,9 @@ public class PreLoginClient {
     }
 
     public String login(String... input){
-        return "not implemented";
+
+
+        return "Successful Login";
     }
 
     public String help() {

@@ -11,11 +11,8 @@ public class Server {
         Spark.port(desiredPort);
 
         Spark.staticFiles.location("/web");
-
-        //
         try {
             DatabaseManager.configureDatabase();
-
             System.out.print("DB configured");
         } catch (Exception e) {
             System.err.print("Failed to configure DB");
