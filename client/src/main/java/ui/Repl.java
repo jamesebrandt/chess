@@ -21,8 +21,9 @@ public class Repl{
         System.out.println("Welcome to the Chess Server! Sign in to Start");
         System.out.print(preLoginClient.help());
 
-        whiteBoard.printBoard();
-        blackBoard.printBoard();
+        whiteBoard.drawBoard();
+        System.out.println();
+        blackBoard.drawBoard();
 
         Scanner scanner = new Scanner(System.in);
         var result = "";
