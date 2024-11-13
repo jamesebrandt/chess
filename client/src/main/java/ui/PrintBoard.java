@@ -28,8 +28,9 @@ public class PrintBoard {
         }
 
         for (int i = 1; i < 9; i++) {
-            board[i][0] = " " + (char)('A' + i - 1) + " ";
-            board[i][9] = " " + (char)('A' + i - 1) + " ";
+            int numb = 9-i;
+            board[i][0] = " " + numb + " ";
+            board[i][9] = " " + numb + " ";
         }
 
         board[1][1] = EscapeSequences.WHITE_ROOK;
@@ -67,6 +68,11 @@ public class PrintBoard {
             board[9][i] = " " + (char)('A' + i - 1) + " ";
         }
 
+        for (int i = 8; i > 0; i--){
+            board[i][0] = " " + i + " ";
+            board[i][9] = " " + i + " ";
+        }
+
         board[1][1] = EscapeSequences.BLACK_ROOK;
         board[1][2] = EscapeSequences.BLACK_KNIGHT;
         board[1][3] = EscapeSequences.BLACK_BISHOP;
@@ -80,7 +86,6 @@ public class PrintBoard {
             board[2][i] = EscapeSequences.BLACK_PAWN;
         }
 
-        // White pieces
         board[8][1] = EscapeSequences.WHITE_ROOK;
         board[8][2] = EscapeSequences.WHITE_KNIGHT;
         board[8][3] = EscapeSequences.WHITE_BISHOP;
