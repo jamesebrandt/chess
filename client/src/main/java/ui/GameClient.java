@@ -5,8 +5,14 @@ import java.util.Arrays;
 
 public class GameClient {
 
+    private PrintBoard whiteBoard;
+    private PrintBoard blackBoard;
 
     public String eval(String inputLine) {
+
+        whiteBoard = new PrintBoard(true);
+        blackBoard = new PrintBoard(false);
+
         try {
             var tokens = inputLine.toUpperCase().split(" ");
             var cmd = (tokens.length > 0) ? tokens[0] : "help";
@@ -33,6 +39,10 @@ public class GameClient {
     }
 
     public String drawBoard(String... input){
+        whiteBoard.drawBoard();
+        System.out.println();
+        blackBoard.drawBoard();
+
         return "not implemented";
     }
 
