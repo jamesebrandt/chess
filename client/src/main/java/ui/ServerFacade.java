@@ -70,15 +70,16 @@ public class ServerFacade {
         }
     }
 
-    public GameListResponse listGames() throws Exception{
+    public GameListResponse listGames() throws Exception {
         try {
             var path = "/game";
-            GameListRequest gameListRequest = new GameListRequest(manager.getSessionToken(currentUsername));
-            return this.makeRequest("GET", path, gameListRequest, GameListResponse.class);
-        }catch (Exception e){
+            String token = manager.getSessionToken(currentUsername);
+            return this.makeRequest("GET", path, null, GameListResponse.class);
+        } catch (Exception e) {
             throw new RuntimeException("Failed to List Games");
         }
     }
+
 
     public LoginResponse login(String username, String password) throws Exception{
         try {
@@ -92,7 +93,7 @@ public class ServerFacade {
             return loginResponse;
 
         }catch (Exception e){
-            throw new RuntimeException("Register before you try to sign in");
+            throw new RuntimeException("Incorrect Password or Unregistered Account");
         }
     }
 
@@ -116,14 +117,20 @@ public class ServerFacade {
             URL url = (new URI(serverUrl + path)).toURL();
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
             http.setRequestMethod(method);
-            http.setDoOutput(true);
+
+            if (!method.equals("GET")) {
+                http.setDoOutput(true);
+            }
 
             String token = manager.getSessionToken(currentUsername);
             if (token != null && !token.isEmpty()) {
                 http.addRequestProperty("Authorization", token);
             }
 
-            writeBody(request, http);
+            if (request != null && !method.equals("GET")) {
+                writeBody(request, http);
+            }
+
             http.connect();
             throwIfNotSuccessful(http);
             return readBody(http, responseClass);

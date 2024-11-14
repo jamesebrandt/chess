@@ -4,10 +4,7 @@ import model.CreateGameResponse;
 import model.Game;
 import model.GameListResponse;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class PostLoginClient {
 
@@ -68,27 +65,20 @@ public class PostLoginClient {
             return "[]";
         }
 
+        StringBuilder sb = new StringBuilder();
+        sb.append("List of Current Games:\n");
+
         for (Game game : gameList) {
-            Integer hiddenGameId = game.gameID();
-            gameIdHider.put(gameIdCount, hiddenGameId);
+            String gameName = game.gameName();
+            String players = "White User: " + game.whiteUsername() +
+                    "  Black User: " + game.blackUsername();
+
+            sb.append(gameIdCount).append(". ").append(gameName)
+                    .append(" - Players: ").append(players).append("\n");
+
+            gameIdHider.put(gameIdCount, game.gameID());
             gameIdCount++;
         }
-
-        StringBuilder sb = new StringBuilder();
-        sb.append("List of Current Games: \n[");
-
-        int i = 1;
-        for (Map.Entry<Integer, Integer> entry : gameIdHider.entrySet()) {
-            int hiddenGameId = entry.getValue();
-            sb.append("Game Count: ").append(entry.getKey())
-                    .append(" (Game ID: ").append(hiddenGameId).append(")");
-
-            if (i < gameIdHider.size()) {
-                sb.append(", ");
-            }
-            i++;
-        }
-        sb.append("]");
 
         return sb.toString();
     }
