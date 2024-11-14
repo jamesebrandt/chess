@@ -3,7 +3,6 @@ package ui;
 import model.LoginResponse;
 import model.RegisterResponse;
 import java.util.Arrays;
-import java.util.Map;
 
 public class PreLoginClient {
 

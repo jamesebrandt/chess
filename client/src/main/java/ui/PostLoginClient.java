@@ -1,8 +1,6 @@
 package ui;
 
-import model.CreateGameResponse;
-import model.Game;
-import model.GameListResponse;
+import model.*;
 
 import java.util.*;
 
@@ -58,33 +56,53 @@ public class PostLoginClient {
     }
 
     public String listGames() throws Exception {
-        GameListResponse gameListResponse = serverfacade.listGames();
-        ArrayList<Game> gameList = gameListResponse.games();
+        try {
+            GameListResponse gameListResponse = serverfacade.listGames();
+            ArrayList<Game> gameList = gameListResponse.games();
 
-        if (gameList == null || gameList.isEmpty()) {
-            return "[]";
+            if (gameList == null || gameList.isEmpty()) {
+                return "[]";
+            }
+
+            StringBuilder sb = new StringBuilder();
+            sb.append("List of Current Games:\n");
+
+            for (Game game : gameList) {
+                String gameName = game.gameName();
+
+                String whiteUser = (game.whiteUsername() == null) ? "OPEN" : game.whiteUsername();
+                String blackUser = (game.blackUsername() == null) ? "OPEN" : game.blackUsername();
+
+                String players = "White User: " + whiteUser +
+                        "  Black User: " + blackUser;
+
+                sb.append(gameIdCount).append(". ").append(gameName)
+                        .append(" - Players: ").append(players).append("\n");
+
+                gameIdHider.put(gameIdCount, game.gameID());
+                gameIdCount++;
+            }
+
+            return sb.toString();
+        }catch (Exception e){
+            throw new RuntimeException("Failed to list games");
         }
-
-        StringBuilder sb = new StringBuilder();
-        sb.append("List of Current Games:\n");
-
-        for (Game game : gameList) {
-            String gameName = game.gameName();
-            String players = "White User: " + game.whiteUsername() +
-                    "  Black User: " + game.blackUsername();
-
-            sb.append(gameIdCount).append(". ").append(gameName)
-                    .append(" - Players: ").append(players).append("\n");
-
-            gameIdHider.put(gameIdCount, game.gameID());
-            gameIdCount++;
-        }
-
-        return sb.toString();
     }
 
     public String playGame(String... input) {
-        return "playing game";
+        try {
+            if (input.length < 2) {
+                throw new RuntimeException("Expected: play_game <gameID> <team>");
+            }
+            int gameId = Integer.parseInt(input[0]);
+            String team = input[1];
+
+            JoinGameResponse joinGameResponse = serverfacade.joinGame(team, gameId);
+            return joinGameResponse.message();
+
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to join game: " + e.getMessage());
+        }
     }
 
     public String observeGame(String... input){
@@ -101,7 +119,7 @@ public class PostLoginClient {
                 - Logout
                 - Create_game <gamename>
                 - List_games
-                - Play_game <gameID>
+                - Play_game <gameID> <team>
                 - Observe_game <gameID>
                 - Clear
                 - Help

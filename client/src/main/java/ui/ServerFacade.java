@@ -9,6 +9,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.Map;
 
 import model.*;
@@ -19,6 +20,8 @@ public class ServerFacade {
     private String currentUsername;
     private final String serverUrl;
     private SessionManager manager = new SessionManager();
+    private Map<Integer, Integer> gameIdHider = new HashMap<>();
+    private int gameIdCount = 1;
 
 
     public ServerFacade(String url){
@@ -39,6 +42,14 @@ public class ServerFacade {
 
     public void setCurrentUsername(String currentUsername) {
         this.currentUsername = currentUsername;
+    }
+
+    public void setGameIdHiderValue(int clientGameId, int serverGameId){
+        gameIdHider.put(clientGameId, serverGameId);
+    }
+
+    public int getGameIdHiderValue(int clientGameId){
+        return gameIdHider.get(clientGameId);
     }
 
     public void clear() throws Exception{
@@ -100,10 +111,13 @@ public class ServerFacade {
     public JoinGameResponse joinGame(String team, int id) throws Exception{
         try {
             var path = "/game";
-            JoinGameRequest joinGameRequest = new JoinGameRequest(team, id);
-            JoinGameResponse joinGameResponse = this.makeRequest("POST", path, joinGameRequest, JoinGameResponse.class);
+            if (!team.equals("WHITE") && !team.equals("BLACK")) {
+                throw new RuntimeException("You must select 'WHITE' or 'BLACK' as team color");
+            }
 
-            return joinGameResponse;
+
+            JoinGameRequest joinGameRequest = new JoinGameRequest(team, id);
+            return this.makeRequest("PUT", path, joinGameRequest, JoinGameResponse.class);
 
         }catch (Exception e){
             throw new RuntimeException("Register before you try to sign in");
