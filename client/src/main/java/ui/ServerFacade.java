@@ -52,6 +52,12 @@ public class ServerFacade {
         return gameIdHider.get(clientGameId);
     }
 
+    public int getGameIdCountAndIndex(){
+        int temp = gameIdCount;
+        gameIdCount++;
+        return temp;
+    }
+
     public void clear() throws Exception{
         var path = "/db";
         this.makeRequest("DELETE", path, null, null);

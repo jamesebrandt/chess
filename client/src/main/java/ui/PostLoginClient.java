@@ -7,8 +7,6 @@ import java.util.*;
 public class PostLoginClient {
 
     private final ServerFacade serverfacade;
-    private Map<Integer, Integer> gameIdHider = new HashMap<>();
-    private int gameIdCount = 1;
 
     public PostLoginClient(String serverUrl){
         this.serverfacade = ServerFacade.getInstance(serverUrl);
@@ -76,11 +74,11 @@ public class PostLoginClient {
                 String players = "White User: " + whiteUser +
                         "  Black User: " + blackUser;
 
-                sb.append(gameIdCount).append(". ").append(gameName)
+                int id = serverfacade.getGameIdCountAndIndex();
+                sb.append(id).append(". ").append(gameName)
                         .append(" - Players: ").append(players).append("\n");
 
-                gameIdHider.put(gameIdCount, game.gameID());
-                gameIdCount++;
+                serverfacade.setGameIdHiderValue(id, game.gameID());
             }
 
             return sb.toString();
