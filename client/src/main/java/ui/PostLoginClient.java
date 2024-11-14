@@ -1,5 +1,6 @@
 package ui;
 
+import model.CreateGameResponse;
 import model.Game;
 import model.GameListResponse;
 
@@ -11,7 +12,7 @@ public class PostLoginClient {
     private final ServerFacade serverfacade;
 
     public PostLoginClient(String serverUrl){
-        this.serverfacade = new ServerFacade(serverUrl);
+        this.serverfacade = ServerFacade.getInstance(serverUrl);
     }
 
 
@@ -23,7 +24,7 @@ public class PostLoginClient {
             return switch (cmd) {
                 case "LOGOUT" -> logout(params);
                 case "CREATE_GAME" -> createGame(params);
-                case "LIST_GAMES" -> listGames(params);
+                case "LIST_GAMES" -> listGames();
                 case "PLAY_GAME" -> playGame(params);
                 case "OBSERVE_GAME" -> observeGame(params);
                 case "CLEAR" -> clearGames(params);
@@ -41,10 +42,20 @@ public class PostLoginClient {
     }
 
     public String createGame(String... input){
-        return "not implemented";
+        if (input.length >= 1) {
+            CreateGameResponse createGameResponse = serverfacade.createGame(input[0]);
+            if (createGameResponse.success()){
+                return "Successfully created game: " + input[1];
+            }
+            else{
+                return "Something went wrong with your game creation";
+            }
+        }
+
+        throw new RuntimeException("Expected: <gamename>");
     }
 
-    public String listGames(String... input) throws Exception {
+    public String listGames() throws Exception {
         GameListResponse gameListResponse =  serverfacade.listGames();
         serverfacade.listGames();
 

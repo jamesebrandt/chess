@@ -15,12 +15,29 @@ import model.*;
 
 public class ServerFacade {
 
-    SessionManager manager = new SessionManager();
-    String currentUsername;
+    private static ServerFacade instance;
+    private String currentUsername;
     private final String serverUrl;
+    SessionManager manager = new SessionManager();
+
     public ServerFacade(String url){
-        serverUrl = url;
+        this.serverUrl = url;
         this.manager = new SessionManager();
+    }
+
+    public static synchronized ServerFacade getInstance(String serverUrl) {
+        if (instance == null) {
+            instance = new ServerFacade(serverUrl);
+        }
+        return instance;
+    }
+
+    public String getCurrentUsername() {
+        return currentUsername;
+    }
+
+    public void setCurrentUsername(String currentUsername) {
+        this.currentUsername = currentUsername;
     }
 
     public void clear() throws Exception{
@@ -41,6 +58,17 @@ public class ServerFacade {
         }
     }
 
+    public CreateGameResponse createGame(String gameID){
+        try {
+            var path = "/game";
+            CreateGameRequest createGameRequest = new CreateGameRequest(manager.getSessionToken(currentUsername), gameID);
+            CreateGameResponse createGameResponse = this.makeRequest("POST", path, createGameRequest, CreateGameResponse.class);
+            return createGameResponse;
+        }catch (Exception e){
+            throw new RuntimeException("Failed to Create Game");
+        }
+    }
+
     public GameListResponse listGames() throws Exception{
         try {
             var path = "/game";
@@ -57,7 +85,7 @@ public class ServerFacade {
             LoginRequest loginRequest = new LoginRequest(username, password, null);
             return this.makeRequest("POST", path, loginRequest, LoginResponse.class);
         }catch (Exception e){
-            throw new RuntimeException("Failed to Register");
+            throw new RuntimeException("Failed to Register, username taken");
         }
     }
 
@@ -69,6 +97,11 @@ public class ServerFacade {
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
             http.setRequestMethod(method);
             http.setDoOutput(true);
+
+            String token = manager.getSessionToken(currentUsername);
+            if (token != null && !token.isEmpty()) {
+                http.addRequestProperty("Authorization", "Bearer " + token);
+            }
 
             writeBody(request, http);
             http.connect();

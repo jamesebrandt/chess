@@ -7,12 +7,14 @@ public class Repl{
     private final PostLoginClient postLoginClient;
     private final GameClient gameClient;
     private replState gameState;
+    private ServerFacade serverFacade;
 
     public Repl(String serverUrl){
-        preLoginClient = new PreLoginClient(serverUrl);
-        postLoginClient = new PostLoginClient(serverUrl);
-        gameClient = new GameClient();
-        gameState = replState.PRELOGIN;
+        this.preLoginClient = new PreLoginClient(serverUrl);
+        this.postLoginClient = new PostLoginClient(serverUrl);
+        this.gameClient = new GameClient(serverUrl);
+        this.gameState = replState.PRELOGIN;
+        this.serverFacade = ServerFacade.getInstance(serverUrl);
     }
 
     public enum replState{

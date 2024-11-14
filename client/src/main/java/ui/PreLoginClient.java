@@ -11,7 +11,7 @@ public class PreLoginClient {
     private SessionManager manager = new SessionManager();
 
     public PreLoginClient(String serverUrl){
-        this.serverFacade = new ServerFacade(serverUrl);
+        this.serverFacade = ServerFacade.getInstance(serverUrl);
     }
 
     public String eval(String inputLine){

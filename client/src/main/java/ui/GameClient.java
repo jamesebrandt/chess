@@ -7,6 +7,13 @@ public class GameClient {
     private PrintBoard whiteBoard;
     private PrintBoard blackBoard;
 
+    private final ServerFacade serverfacade;
+
+    public GameClient(String serverUrl){
+        this.serverfacade = ServerFacade.getInstance(serverUrl);
+    }
+
+
     public String eval(String inputLine) {
 
         whiteBoard = new PrintBoard(true);
