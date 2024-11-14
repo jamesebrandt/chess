@@ -10,6 +10,9 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
 
+import model.RegisterRequest;
+import model.RegisterResponse;
+
 public class ServerFacade {
 
     private final String serverUrl;
@@ -21,7 +24,16 @@ public class ServerFacade {
     public void clear() throws Exception{
         var path = "/db";
         this.makeRequest("DELETE", path, null, null);
+    }
 
+    public RegisterResponse register(String username, String password, String email) throws Exception{
+        try {
+            var path = "/user";
+            RegisterRequest req = new RegisterRequest(username, password, email);
+            return this.makeRequest("POST", path, req, RegisterResponse.class);
+        }catch (Exception e){
+            throw new RuntimeException("Failed to Register");
+        }
     }
 
 

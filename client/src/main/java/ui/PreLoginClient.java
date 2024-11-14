@@ -1,5 +1,9 @@
 package ui;
 
+import model.RegisterRequest;
+import model.RegisterResponse;
+
+import java.text.MessageFormat;
 import java.util.Arrays;
 
 public class PreLoginClient {
@@ -26,8 +30,17 @@ public class PreLoginClient {
         }
     }
 
-    public String register(String... input){
-        return "not implemented";
+    public String register(String... input) throws Exception {
+        if (input.length >= 3){
+            RegisterResponse registerResponse =  server.register(input[0], input[1], input[2]);
+            if (registerResponse.success()) {
+                return "User Registered and logged in under " + registerResponse.username();
+            }
+            else{
+                return registerResponse.message();
+            }
+        }
+        throw new RuntimeException("Expected: <username> <password> <email>");
     }
 
     public String login(String... input){

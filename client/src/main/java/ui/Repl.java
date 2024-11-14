@@ -6,32 +6,50 @@ public class Repl{
     private final PreLoginClient preLoginClient;
     private final PostLoginClient postLoginClient;
     private final GameClient gameClient;
-    private boolean exiting = false;
+    private replState gameState;
 
 
     public Repl(String serverUrl){
         preLoginClient = new PreLoginClient(serverUrl);
         postLoginClient = new PostLoginClient(serverUrl);
         gameClient = new GameClient();
+        gameState = replState.PRELOGIN;
+    }
+
+    public enum replState{
+        PRELOGIN,
+        LOGGEDIN,
+        INGAME,
+        EXITING
     }
 
     public void run(){
         System.out.println("Welcome to the Chess Server! Sign in to Start");
+        if (gameState.equals(replState.PRELOGIN)) {preLogin();}
+        if (gameState.equals(replState.LOGGEDIN)) {loggedIn();}
+        if (gameState.equals(replState.INGAME)) {inGame();}
+    }
+
+    private void preLogin(){
         System.out.print(preLoginClient.help());
 
         Scanner scanner = new Scanner(System.in);
         var result = "";
         result = result.toUpperCase();
 
-        while (!exiting && !result.equals("Quitting Client")){
+        while (!gameState.equals(replState.EXITING) && !result.equals("Quitting Client")){
             printPrompt();
             String line = scanner.nextLine();
             try {
                 result = preLoginClient.eval(line);
                 if (result.equals("Successful Login")){
-                    loggedIn();
+                    gameState = replState.LOGGEDIN;
+                    return;
+                } else if (result.startsWith("User Registered and logged in under ")) {
+                    gameState = replState.LOGGEDIN;
+                    return;
                 }
-                if (!exiting) {
+                if (!gameState.equals(replState.EXITING)) {
                     System.out.print(result);
                 }
                 else{
@@ -64,7 +82,7 @@ public class Repl{
                     return;
                 }
                 if (result.equals("Quitting Client")){
-                    exiting = true;
+                    gameState = replState.EXITING;
                     return;
                 }else {
                     System.out.print(result);
@@ -87,13 +105,13 @@ public class Repl{
         var result = "";
         result = result.toUpperCase();
 
-        while (!result.equals("QUIT") && !result.equals("Exiting the game") && !exiting){
+        while (!result.equals("QUIT") && !result.equals("Exiting the game") && !gameState.equals(replState.EXITING)){
             printPrompt();
             String line = scanner.nextLine();
             try {
                 result = gameClient.eval(line);
                 if (result.equals("Leaving Game")){
-                    System.out.print(result);
+                    System.out.println(result);
                     loggedIn();
                 }else {
                     System.out.print(result);
