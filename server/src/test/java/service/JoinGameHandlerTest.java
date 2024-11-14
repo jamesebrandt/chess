@@ -25,6 +25,8 @@ class JoinGameHandlerTest {
         TestUtils.cleanupDatabase();
     }
 
+    //
+
     @Test
     void testHandleSuccess() {
         String authToken = AuthDAO.getInstance().generateToken("TestUser");
