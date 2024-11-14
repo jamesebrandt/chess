@@ -9,11 +9,9 @@ import java.util.Arrays;
 public class PostLoginClient {
 
     private final ServerFacade serverfacade;
-    private final String authtoken;
 
-    public PostLoginClient(String serverUrl, String authtoken){
+    public PostLoginClient(String serverUrl){
         serverfacade = new ServerFacade(serverUrl);
-        this.authtoken = authtoken;
     }
 
 
@@ -47,8 +45,8 @@ public class PostLoginClient {
     }
 
     public String listGames(String... input) throws Exception {
-        GameListResponse gameListResponse =  serverfacade.listGames(input[0]);
-        serverfacade.listGames(input[1]);
+        GameListResponse gameListResponse =  serverfacade.listGames();
+        serverfacade.listGames();
 
         ArrayList<Game> gameList = gameListResponse.games();
 

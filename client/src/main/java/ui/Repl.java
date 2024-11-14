@@ -8,11 +8,9 @@ public class Repl{
     private final GameClient gameClient;
     private replState gameState;
 
-
-
     public Repl(String serverUrl){
         preLoginClient = new PreLoginClient(serverUrl);
-        postLoginClient = new PostLoginClient(serverUrl, null);
+        postLoginClient = new PostLoginClient(serverUrl);
         gameClient = new GameClient();
         gameState = replState.PRELOGIN;
     }
@@ -27,7 +25,7 @@ public class Repl{
     public void run(){
         System.out.println("Welcome to the Chess Server! Sign in to Start");
         if (gameState.equals(replState.PRELOGIN)) {preLogin();}
-        if (gameState.equals(replState.LOGGEDIN)) {loggedIn();}
+        if (gameState.equals(replState.LOGGEDIN)) {loggedIn(null);}
         if (gameState.equals(replState.INGAME)) {inGame();}
     }
 

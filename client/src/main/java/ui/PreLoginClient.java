@@ -1,10 +1,9 @@
 package ui;
 
-import model.RegisterRequest;
+import model.LoginResponse;
 import model.RegisterResponse;
-
-import java.text.MessageFormat;
 import java.util.Arrays;
+import java.util.Map;
 
 public class PreLoginClient {
 
@@ -32,7 +31,7 @@ public class PreLoginClient {
 
     public String register(String... input) throws Exception {
         if (input.length >= 3){
-            RegisterResponse registerResponse =  server.register(input[0], input[1], input[2]);
+            RegisterResponse registerResponse = server.register(input[0], input[1], input[2]);
             if (registerResponse.success()) {
                 return "User Registered and logged in under "+ registerResponse.username();
             }
@@ -43,10 +42,19 @@ public class PreLoginClient {
         throw new RuntimeException("Expected: <username> <password> <email>");
     }
 
-    public String login(String... input){
-
-
-        return "Successful Login";
+    public String login(String... input) throws Exception {
+        if (input.length >= 2){
+            LoginResponse loginResponse = server.login(input[0], input[1]);
+            if (loginResponse.success()) {
+                String authToken = loginResponse.authToken();
+                sessionTokens.put(loginResponse.username(), authToken);
+                return "User Registered and logged in under "+ loginResponse.username();
+            }
+            else{
+                return "Login Failed: " + loginResponse.message();
+            }
+        }
+        throw new RuntimeException("Expected: <username> <password>");
     }
 
     public String help() {

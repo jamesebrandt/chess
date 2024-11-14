@@ -9,19 +9,18 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
+import java.util.Map;
 
-import model.GameListRequest;
-import model.GameListResponse;
-import model.RegisterRequest;
-import model.RegisterResponse;
+import model.*;
 
 public class ServerFacade {
 
+    SessionManager manager = new SessionManager();
+    String currentUsername;
     private final String serverUrl;
-    private String authToken;
-
     public ServerFacade(String url){
         serverUrl = url;
+        this.manager = new SessionManager();
     }
 
     public void clear() throws Exception{
@@ -32,20 +31,33 @@ public class ServerFacade {
     public RegisterResponse register(String username, String password, String email) throws Exception{
         try {
             var path = "/user";
-            RegisterRequest req = new RegisterRequest(username, password, email);
-            return this.makeRequest("POST", path, req, RegisterResponse.class);
+            RegisterRequest registerRequest = new RegisterRequest(username, password, email);
+            RegisterResponse registerResponse = this.makeRequest("POST", path, registerRequest, RegisterResponse.class);
+            manager.addSessionToken(registerResponse.username(), registerResponse.authToken());
+            currentUsername = registerResponse.username();
+            return registerResponse;
         }catch (Exception e){
             throw new RuntimeException("Failed to Register");
         }
     }
 
-    public GameListResponse listGames(String authToken) throws Exception{
+    public GameListResponse listGames() throws Exception{
         try {
             var path = "/game";
-            GameListRequest gameListRequest = new GameListRequest(authToken);
+            GameListRequest gameListRequest = new GameListRequest(manager.getSessionToken(currentUsername));
             return this.makeRequest("POST", path, gameListRequest, GameListResponse.class);
         }catch (Exception e){
             throw new RuntimeException("Failed to List Games");
+        }
+    }
+
+    public LoginResponse login(String username, String password) throws Exception{
+        try {
+            var path = "/user";
+            LoginRequest loginRequest = new LoginRequest(username, password, null);
+            return this.makeRequest("POST", path, loginRequest, LoginResponse.class);
+        }catch (Exception e){
+            throw new RuntimeException("Failed to Register");
         }
     }
 

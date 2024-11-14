@@ -30,10 +30,16 @@ public class ServerFacadeTests {
     @Test
     public void testClear() throws Exception {
 
-        serverFacade.register("test_user", "test_password","test@gmail.com");
-        serverFacade.clear();
+//        serverFacade.register("test_user", "test_password","test@gmail.com");
+//        serverFacade.clear();
+//
+//        assert(serverFacade.listGames());
+    }
 
-        assert(serverFacade.)
+    @Test
+    void register() throws Exception {
+        var authData = serverFacade.register("player1", "password", "p1@email.com");
+        assertTrue(authData.authToken().length() > 10);
     }
 
 //    @Test
