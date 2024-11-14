@@ -85,18 +85,20 @@ public class Repl{
             String line = scanner.nextLine();
             try {
                 result = postLoginClient.eval(line);
-                if (result.equals("playing game")){
-                    gameState = replState.INGAME;
-                    return;
-                }
-                else if (result.equals("Quitting Client")){
-                    gameState = replState.EXITING;
-                    return;
-                }else if (result.equals("Logged out!")){
-                    gameState = replState.PRELOGIN;
-                    return;
-                }else {
-                    System.out.print(result);
+                switch (result) {
+                    case "playing game" -> {
+                        gameState = replState.INGAME;
+                        return;
+                    }
+                    case "Quitting Client" -> {
+                        gameState = replState.EXITING;
+                        return;
+                    }
+                    case "Logged out!" -> {
+                        gameState = replState.PRELOGIN;
+                        return;
+                    }
+                    default -> System.out.print(result);
                 }
             } catch (Throwable e){
                 var msg = e.toString();
@@ -123,7 +125,7 @@ public class Repl{
                 result = gameClient.eval(line);
                 if (result.equals("Leaving Game")){
                     System.out.println(result);
-                    gameState.equals(replState.LOGGEDIN);
+                    gameState = replState.LOGGEDIN;
                     return;
                 }else {
                     System.out.print(result);

@@ -87,20 +87,15 @@ public class PostLoginClient {
         }
     }
 
-    public String playGame(String... input) {
-        try {
-            if (input.length < 2) {
-                throw new RuntimeException("Expected: play_game <gameID> <team>");
-            }
-            int gameId = Integer.parseInt(input[0]);
-            String team = input[1];
-
-            JoinGameResponse joinGameResponse = serverfacade.joinGame(team, gameId);
-            return joinGameResponse.message();
-
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to join game: " + e.getMessage());
+    public String playGame(String... input) throws Exception {
+        if (input.length < 2) {
+            throw new RuntimeException("Expected: play_game <gameID> <team>");
         }
+        int gameId = Integer.parseInt(input[0]);
+        String team = input[1];
+
+        JoinGameResponse joinGameResponse = serverfacade.joinGame(team, gameId);
+        return joinGameResponse.message();
     }
 
     public String observeGame(String... input){

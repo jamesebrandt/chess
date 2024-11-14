@@ -121,12 +121,13 @@ public class ServerFacade {
                 throw new RuntimeException("You must select 'WHITE' or 'BLACK' as team color");
             }
 
+            int serverId = getGameIdHiderValue(id);
 
-            JoinGameRequest joinGameRequest = new JoinGameRequest(team, id);
+            JoinGameRequest joinGameRequest = new JoinGameRequest(team, serverId);
             return this.makeRequest("PUT", path, joinGameRequest, JoinGameResponse.class);
 
         }catch (Exception e){
-            throw new RuntimeException("Register before you try to sign in");
+            throw new RuntimeException("Unable to join game");
         }
     }
 
