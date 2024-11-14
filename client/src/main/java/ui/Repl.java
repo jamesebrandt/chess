@@ -25,10 +25,18 @@ public class Repl{
     }
 
     public void run(){
-        System.out.println("Welcome to the Chess Server! Sign in to Start");
-        if (gameState.equals(replState.PRELOGIN)) {preLogin();}
-        if (gameState.equals(replState.LOGGEDIN)) {loggedIn(null);}
-        if (gameState.equals(replState.INGAME)) {inGame();}
+        while(!gameState.equals(replState.EXITING)) {
+            if (gameState.equals(replState.PRELOGIN)) {
+                System.out.println("Welcome to the Chess Server! Sign in to Begin");
+                preLogin();
+            }
+            if (gameState.equals(replState.LOGGEDIN)) {
+                loggedIn();
+            }
+            if (gameState.equals(replState.INGAME)) {
+                inGame();
+            }
+        }
     }
 
     private void preLogin(){
@@ -64,14 +72,13 @@ public class Repl{
         System.out.println();
     }
 
-    private void loggedIn(String authToken){
+    private void loggedIn(){
 
-        System.out.println("Logged in!");
+        System.out.println("Logged in as " + serverFacade.getCurrentUsername());
         System.out.print(postLoginClient.help());
 
         Scanner scanner = new Scanner(System.in);
         var result = "";
-        result = result.toUpperCase();
 
         while (gameState.equals(replState.LOGGEDIN)){
             printPrompt();
@@ -85,12 +92,10 @@ public class Repl{
                 else if (result.equals("Quitting Client")){
                     gameState = replState.EXITING;
                     return;
-                }else if (result.equals("Quitting Client")) {
-                    gameState = replState.EXITING;
+                }else if (result.equals("Logged out!")){
+                    gameState = replState.PRELOGIN;
                     return;
-                }
-
-                else {
+                }else {
                     System.out.print(result);
                 }
             } catch (Throwable e){

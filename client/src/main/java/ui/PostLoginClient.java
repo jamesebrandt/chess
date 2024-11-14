@@ -6,10 +6,14 @@ import model.GameListResponse;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public class PostLoginClient {
 
     private final ServerFacade serverfacade;
+    private Map<Integer, Integer> gameIdHider = new HashMap<>();
+    private int gameIdCount = 1;
 
     public PostLoginClient(String serverUrl){
         this.serverfacade = ServerFacade.getInstance(serverUrl);
@@ -38,7 +42,8 @@ public class PostLoginClient {
     }
 
     public String logout(String... input){
-        return "not implemented";
+        serverfacade.setCurrentUsername(null);
+        return "Logged out!";
     }
 
     public String createGame(String... input){
@@ -56,25 +61,36 @@ public class PostLoginClient {
     }
 
     public String listGames() throws Exception {
-        GameListResponse gameListResponse =  serverfacade.listGames();
-        serverfacade.listGames();
-
+        GameListResponse gameListResponse = serverfacade.listGames();
         ArrayList<Game> gameList = gameListResponse.games();
 
         if (gameList == null || gameList.isEmpty()) {
             return "[]";
         }
-        StringBuilder sb = new StringBuilder();
-        sb.append("[");
 
-        for (int i = 0; i < gameList.size(); i++) {
-            sb.append(gameList.get(i));
-            if (i < gameList.size() - 1) {
+        for (Game game : gameList) {
+            Integer hiddenGameId = game.gameID();
+            gameIdHider.put(gameIdCount, hiddenGameId);
+            gameIdCount++;
+        }
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("List of Current Games: \n[");
+
+        int i = 1;
+        for (Map.Entry<Integer, Integer> entry : gameIdHider.entrySet()) {
+            int hiddenGameId = entry.getValue();
+            sb.append("Game Count: ").append(entry.getKey())
+                    .append(" (Game ID: ").append(hiddenGameId).append(")");
+
+            if (i < gameIdHider.size()) {
                 sb.append(", ");
             }
+            i++;
         }
         sb.append("]");
-        return "List of Current Games: \n"+  sb;
+
+        return sb.toString();
     }
 
     public String playGame(String... input) {

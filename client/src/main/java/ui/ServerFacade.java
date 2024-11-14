@@ -18,7 +18,8 @@ public class ServerFacade {
     private static ServerFacade instance;
     private String currentUsername;
     private final String serverUrl;
-    SessionManager manager = new SessionManager();
+    private SessionManager manager = new SessionManager();
+
 
     public ServerFacade(String url){
         this.serverUrl = url;
@@ -54,7 +55,7 @@ public class ServerFacade {
             currentUsername = registerResponse.username();
             return registerResponse;
         }catch (Exception e){
-            throw new RuntimeException("Failed to Register");
+            throw new RuntimeException("Failed to Register: Username Taken");
         }
     }
 
@@ -73,7 +74,7 @@ public class ServerFacade {
         try {
             var path = "/game";
             GameListRequest gameListRequest = new GameListRequest(manager.getSessionToken(currentUsername));
-            return this.makeRequest("POST", path, gameListRequest, GameListResponse.class);
+            return this.makeRequest("GET", path, gameListRequest, GameListResponse.class);
         }catch (Exception e){
             throw new RuntimeException("Failed to List Games");
         }
@@ -81,11 +82,30 @@ public class ServerFacade {
 
     public LoginResponse login(String username, String password) throws Exception{
         try {
-            var path = "/user";
+            var path = "/session";
             LoginRequest loginRequest = new LoginRequest(username, password, null);
-            return this.makeRequest("POST", path, loginRequest, LoginResponse.class);
+            LoginResponse loginResponse = this.makeRequest("POST", path, loginRequest, LoginResponse.class);
+
+            manager.addSessionToken(loginResponse.username(), loginResponse.authToken());
+            currentUsername = loginResponse.username();
+
+            return loginResponse;
+
         }catch (Exception e){
-            throw new RuntimeException("Failed to Register, username taken");
+            throw new RuntimeException("Register before you try to sign in");
+        }
+    }
+
+    public JoinGameResponse joinGame(String team, int id) throws Exception{
+        try {
+            var path = "/game";
+            JoinGameRequest joinGameRequest = new JoinGameRequest(team, id);
+            JoinGameResponse joinGameResponse = this.makeRequest("POST", path, joinGameRequest, JoinGameResponse.class);
+
+            return joinGameResponse;
+
+        }catch (Exception e){
+            throw new RuntimeException("Register before you try to sign in");
         }
     }
 
