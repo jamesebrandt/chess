@@ -7,10 +7,11 @@ import java.util.Map;
 
 public class PreLoginClient {
 
-    private final ServerFacade server;
+    private final ServerFacade serverFacade;
+    private SessionManager manager = new SessionManager();
 
     public PreLoginClient(String serverUrl){
-        server = new ServerFacade(serverUrl);
+        this.serverFacade = new ServerFacade(serverUrl);
     }
 
     public String eval(String inputLine){
@@ -31,7 +32,7 @@ public class PreLoginClient {
 
     public String register(String... input) throws Exception {
         if (input.length >= 3){
-            RegisterResponse registerResponse = server.register(input[0], input[1], input[2]);
+            RegisterResponse registerResponse = serverFacade.register(input[0], input[1], input[2]);
             if (registerResponse.success()) {
                 return "User Registered and logged in under "+ registerResponse.username();
             }
@@ -44,10 +45,10 @@ public class PreLoginClient {
 
     public String login(String... input) throws Exception {
         if (input.length >= 2){
-            LoginResponse loginResponse = server.login(input[0], input[1]);
+            LoginResponse loginResponse = serverFacade.login(input[0], input[1]);
             if (loginResponse.success()) {
                 String authToken = loginResponse.authToken();
-                sessionTokens.put(loginResponse.username(), authToken);
+                manager.addSessionToken(loginResponse.username(), authToken);
                 return "User Registered and logged in under "+ loginResponse.username();
             }
             else{

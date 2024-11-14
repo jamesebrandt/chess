@@ -11,7 +11,7 @@ public class PostLoginClient {
     private final ServerFacade serverfacade;
 
     public PostLoginClient(String serverUrl){
-        serverfacade = new ServerFacade(serverUrl);
+        this.serverfacade = new ServerFacade(serverUrl);
     }
 
 
