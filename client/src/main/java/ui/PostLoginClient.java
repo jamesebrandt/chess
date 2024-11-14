@@ -1,13 +1,19 @@
 package ui;
 
+import model.Game;
+import model.GameListResponse;
+
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class PostLoginClient {
 
-    private final ServerFacade server;
+    private final ServerFacade serverfacade;
+    private final String authtoken;
 
-    public PostLoginClient(String serverUrl){
-        server = new ServerFacade(serverUrl);
+    public PostLoginClient(String serverUrl, String authtoken){
+        serverfacade = new ServerFacade(serverUrl);
+        this.authtoken = authtoken;
     }
 
 
@@ -40,8 +46,26 @@ public class PostLoginClient {
         return "not implemented";
     }
 
-    public String listGames(String... input) {
-        return "not implemented";
+    public String listGames(String... input) throws Exception {
+        GameListResponse gameListResponse =  serverfacade.listGames(input[0]);
+        serverfacade.listGames(input[1]);
+
+        ArrayList<Game> gameList = gameListResponse.games();
+
+        if (gameList == null || gameList.isEmpty()) {
+            return "[]";
+        }
+        StringBuilder sb = new StringBuilder();
+        sb.append("[");
+
+        for (int i = 0; i < gameList.size(); i++) {
+            sb.append(gameList.get(i));
+            if (i < gameList.size() - 1) {
+                sb.append(", ");
+            }
+        }
+        sb.append("]");
+        return "List of Current Games: \n"+  sb;
     }
 
     public String playGame(String... input) {
@@ -53,7 +77,7 @@ public class PostLoginClient {
     }
 
     public String clearGames(String... input) throws Exception {
-        server.clear();
+        serverfacade.clear();
         return "Server Cleared";
     }
 

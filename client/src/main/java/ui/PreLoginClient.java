@@ -34,7 +34,7 @@ public class PreLoginClient {
         if (input.length >= 3){
             RegisterResponse registerResponse =  server.register(input[0], input[1], input[2]);
             if (registerResponse.success()) {
-                return "User Registered and logged in under " + registerResponse.username();
+                return "User Registered and logged in under "+ registerResponse.username();
             }
             else{
                 return registerResponse.message();

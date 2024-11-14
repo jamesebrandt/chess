@@ -10,12 +10,15 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
 
+import model.GameListRequest;
+import model.GameListResponse;
 import model.RegisterRequest;
 import model.RegisterResponse;
 
 public class ServerFacade {
 
     private final String serverUrl;
+    private String authToken;
 
     public ServerFacade(String url){
         serverUrl = url;
@@ -33,6 +36,16 @@ public class ServerFacade {
             return this.makeRequest("POST", path, req, RegisterResponse.class);
         }catch (Exception e){
             throw new RuntimeException("Failed to Register");
+        }
+    }
+
+    public GameListResponse listGames(String authToken) throws Exception{
+        try {
+            var path = "/game";
+            GameListRequest gameListRequest = new GameListRequest(authToken);
+            return this.makeRequest("POST", path, gameListRequest, GameListResponse.class);
+        }catch (Exception e){
+            throw new RuntimeException("Failed to List Games");
         }
     }
 

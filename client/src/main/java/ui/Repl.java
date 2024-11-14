@@ -9,9 +9,10 @@ public class Repl{
     private replState gameState;
 
 
+
     public Repl(String serverUrl){
         preLoginClient = new PreLoginClient(serverUrl);
-        postLoginClient = new PostLoginClient(serverUrl);
+        postLoginClient = new PostLoginClient(serverUrl, null);
         gameClient = new GameClient();
         gameState = replState.PRELOGIN;
     }
@@ -63,7 +64,7 @@ public class Repl{
         System.out.println();
     }
 
-    private void loggedIn(){
+    private void loggedIn(String authToken){
 
         System.out.println("Logged in!");
         System.out.print(postLoginClient.help());
@@ -72,19 +73,24 @@ public class Repl{
         var result = "";
         result = result.toUpperCase();
 
-        while (!result.equals("LOGOUT")){
+        while (gameState.equals(replState.LOGGEDIN)){
             printPrompt();
             String line = scanner.nextLine();
             try {
                 result = postLoginClient.eval(line);
                 if (result.equals("playing game")){
-                    inGame();
+                    gameState = replState.INGAME;
                     return;
                 }
-                if (result.equals("Quitting Client")){
+                else if (result.equals("Quitting Client")){
                     gameState = replState.EXITING;
                     return;
-                }else {
+                }else if (result.equals("Quitting Client")) {
+                    gameState = replState.EXITING;
+                    return;
+                }
+
+                else {
                     System.out.print(result);
                 }
             } catch (Throwable e){
@@ -112,7 +118,8 @@ public class Repl{
                 result = gameClient.eval(line);
                 if (result.equals("Leaving Game")){
                     System.out.println(result);
-                    loggedIn();
+                    gameState.equals(replState.LOGGEDIN);
+                    return;
                 }else {
                     System.out.print(result);
                 }
