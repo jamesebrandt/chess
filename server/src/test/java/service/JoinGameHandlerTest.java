@@ -1,7 +1,7 @@
 package service;
 
 import com.google.gson.Gson;
-import dataaccess.GameDAO;
+import dataAccess.GameDAO;
 import model.JoinGameRequest;
 import model.JoinGameResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import server.handlers.JoinGameHandler;
 import spark.Request;
 import spark.Response;
-import dataaccess.AuthDAO;
+import dataAccess.AuthDAO;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -28,7 +28,7 @@ class JoinGameHandlerTest {
     @Test
     void testHandleSuccess() {
         String authToken = AuthDAO.getInstance().generateToken("TestUser");
-        int id = GameDAO.getInstance().createGame("TestUser", authToken);
+        Integer id = GameDAO.getInstance().createGame("TestUser", authToken);
         JoinGameHandler joinGameHandler = new JoinGameHandler();
 
 
@@ -45,7 +45,7 @@ class JoinGameHandlerTest {
     void testHandleBadRequest() {
         String authToken = AuthDAO.getInstance().generateToken("TestUser");
 
-        Request req = new MockRequest(authToken, new JoinGameRequest(null, 10));
+        Request req = new MockRequest(authToken, new JoinGameRequest(null, 1234));
         Response res = new MockResponse();
 
         JoinGameResponse response = gson.fromJson(handler.handle(req, res), JoinGameResponse.class);

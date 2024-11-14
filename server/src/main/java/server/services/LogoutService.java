@@ -1,6 +1,6 @@
 package server.services;
 
-import dataaccess.AuthDAO;
+import dataAccess.AuthDAO;
 import model.LogoutResponse;
 
 public class LogoutService {

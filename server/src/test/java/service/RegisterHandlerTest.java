@@ -1,9 +1,6 @@
 package service;
 
 import com.google.gson.Gson;
-import dataaccess.AuthDAO;
-import dataaccess.GameDAO;
-import dataaccess.UserDAO;
 import model.RegisterRequest;
 import model.RegisterResponse;
 import org.junit.jupiter.api.AfterAll;

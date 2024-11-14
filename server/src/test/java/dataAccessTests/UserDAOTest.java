@@ -1,8 +1,8 @@
-package dataaccess;
+package dataAccessTests;
 
+import dataAccess.UserDAO;
 import model.User;
 import org.junit.jupiter.api.Test;
-import dataaccess.GameDAO;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.HashMap;

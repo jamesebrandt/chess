@@ -2,8 +2,8 @@ package server.services;
 
 import model.CreateGameRequest;
 import model.CreateGameResponse;
-import dataaccess.GameDAO;
-import dataaccess.AuthDAO;
+import dataAccess.GameDAO;
+import dataAccess.AuthDAO;
 
 public class CreateGameService {
 

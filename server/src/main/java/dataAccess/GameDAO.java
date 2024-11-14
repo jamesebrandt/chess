@@ -1,4 +1,4 @@
-package dataaccess;
+package dataAccess;
 
 import chess.ChessGame;
 import com.google.gson.Gson;
@@ -17,8 +17,6 @@ public class GameDAO {
     private static GameDAO instance = null;
 
     private final AuthDAO authDAO = AuthDAO.getInstance();
-
-    private int createdGameID = 10;
 
     private GameDAO() {
     }
@@ -73,7 +71,7 @@ public class GameDAO {
             throw new RuntimeException("Invalid AuthToken");
         }
 
-        int id = createdGameID;
+        int id = generateGameId();
         String query = "INSERT INTO chess_games (gameID, gameName, whiteUserName, blackUserName, chess_board) VALUES (?, ?, ?, ?, ?)";
         try {
             Connection conn = DatabaseManager.getConnection();
@@ -91,7 +89,6 @@ public class GameDAO {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        createdGameID++;
         return id;
     }
 
@@ -195,5 +192,11 @@ public class GameDAO {
         ChessGame chessBoard = new Gson().fromJson(chessBoardJson, ChessGame.class);
 
         return new Game(gameId, gameName, whiteUserName, blackUserName, chessBoard);
+    }
+
+    private Integer generateGameId() {
+        Random random = new Random();
+        Integer randomNumber = 10000000 + random.nextInt(90000000); // Range: 10,000,000 to 99,999,999
+        return randomNumber;
     }
 }

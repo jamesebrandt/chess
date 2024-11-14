@@ -100,7 +100,7 @@ public class ServerFacade {
 
             String token = manager.getSessionToken(currentUsername);
             if (token != null && !token.isEmpty()) {
-                http.addRequestProperty("Authorization", "Bearer " + token);
+                http.addRequestProperty("Authorization", token);
             }
 
             writeBody(request, http);

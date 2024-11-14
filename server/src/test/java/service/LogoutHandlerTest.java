@@ -1,7 +1,7 @@
 package service;
 
 import com.google.gson.Gson;
-import dataaccess.AuthDAO;
+import dataAccess.AuthDAO;
 import model.LogoutResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

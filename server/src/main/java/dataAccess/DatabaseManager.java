@@ -1,4 +1,4 @@
-package dataaccess;
+package dataAccess;
 
 import java.sql.*;
 import java.util.Properties;
@@ -89,7 +89,7 @@ public class DatabaseManager {
 
             """
             CREATE TABLE IF NOT EXISTS chess_games (
-            gameID INT PRIMARY KEY,
+            gameID VARCHAR(15) PRIMARY KEY,
             gameName VARCHAR(255) NOT NULL,
             whiteUserName VARCHAR(255),
             blackUserName VARCHAR(255),

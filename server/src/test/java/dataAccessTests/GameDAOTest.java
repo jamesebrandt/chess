@@ -1,6 +1,7 @@
-package dataaccess;
+package dataAccessTests;
 
 import chess.ChessGame;
+import dataAccess.*;
 import model.*;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -92,9 +93,10 @@ class GameDAOTest {
         User user = new User("TestUser", "TestPassword", "Test1@gmail.com");
         String auth = authDAO.generateToken(user.username());
 
-        int id = gameDAO.createGame("TestGame1", auth);
+        Integer id = gameDAO.createGame("TestGame1", auth);
+        assert String.valueOf(gameDAO.createGame("TestGame", auth)).length() > 5
+                : "Value should be greater than 5!";
 
-        assertEquals(id+1, gameDAO.createGame("TestGame", auth));
     }
 
     @Test
@@ -102,7 +104,7 @@ class GameDAOTest {
         User user = new User("TestUser", "TestPassword", "Test1@gmail.com");
         String auth = authDAO.generateToken(user.username());
 
-        int id = gameDAO.createGame("TestGame1", auth);
+        Integer id = gameDAO.createGame("TestGame1", auth);
 
         assertTrue(gameDAO.isValidGameID(id));
     }
@@ -119,7 +121,7 @@ class GameDAOTest {
     void addUsername() {
         User user = new User("TestUser", "TestPassword", "Test1@gmail.com");
         String auth = authDAO.generateToken(user.username());
-        int id = gameDAO.createGame("TestGame1", auth);
+        Integer id = gameDAO.createGame("TestGame1", auth);
         JoinGameRequest request = new JoinGameRequest("BLACK", id);
         gameDAO.addUsername(request, "TestUserName");
 
@@ -134,7 +136,7 @@ class GameDAOTest {
     void listGames() {
         User user1 = new User("TestUser", "TestPassword", "Test1@gmail.com");
         String auth1 = authDAO.generateToken(user1.username());
-        int id1 = gameDAO.createGame("TestGame1", auth1);
+        Integer id1 = gameDAO.createGame("TestGame1", auth1);
         JoinGameRequest request1 = new JoinGameRequest("BLACK", id1);
         JoinGameRequest request2 = new JoinGameRequest("WHITE", id1);
         gameDAO.addUsername(request1, "TestUserName1");

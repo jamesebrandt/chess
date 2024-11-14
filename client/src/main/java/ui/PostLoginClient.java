@@ -45,7 +45,7 @@ public class PostLoginClient {
         if (input.length >= 1) {
             CreateGameResponse createGameResponse = serverfacade.createGame(input[0]);
             if (createGameResponse.success()){
-                return "Successfully created game: " + input[1];
+                return "Successfully created game: " + Arrays.toString(input);
             }
             else{
                 return "Something went wrong with your game creation";
