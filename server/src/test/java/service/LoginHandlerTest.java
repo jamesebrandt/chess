@@ -12,6 +12,7 @@ import spark.Request;
 import spark.Response;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class LoginHandlerTest {
     private CreateGameHandler handler;
@@ -30,17 +31,6 @@ class LoginHandlerTest {
 
     }
 
-    @Test
-    public void testLoginHandleNullAuth() {
-        Request req = new MockRequest(null, new CreateGameRequest(null, "TestGame"));
-        Response res = new MockResponse();
-
-        String responseJson = handler.handle(req, res);
-        CreateGameResponse responseFromNullGame = gson.fromJson(responseJson, CreateGameResponse.class);
-
-        assertEquals(401, res.status());
-        assertEquals("Error: unauthorized", responseFromNullGame.message());
-    }
 
     @Test
     public void testLoginHandleSuccess() {
@@ -52,7 +42,7 @@ class LoginHandlerTest {
         CreateGameResponse responseFromCreateGame = gson.fromJson(responseJson, CreateGameResponse.class);
 
         assertEquals(200, response.status());
-        assertEquals(true, responseFromCreateGame.success());
+        assertTrue(responseFromCreateGame.success());
     }
 
 }

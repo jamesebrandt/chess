@@ -132,7 +132,7 @@ public class Repl{
         System.out.println("In Game!");
         System.out.print(gameClient.help());
 
-        ObservingAndInGame();
+        observingAndInGame();
     }
 
     private void observing(){
@@ -144,10 +144,10 @@ public class Repl{
                 - Help
                 """);
 
-        ObservingAndInGame();
+        observingAndInGame();
     }
 
-    private void ObservingAndInGame() {
+    private void observingAndInGame() {
         Scanner scanner = new Scanner(System.in);
         var result = "";
         result = result.toUpperCase();
