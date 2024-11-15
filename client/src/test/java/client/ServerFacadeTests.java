@@ -14,7 +14,8 @@ public class ServerFacadeTests {
 
     @BeforeAll
     public static void init() {
-        String serverUrl = "http://localhost:8080";
+        var port = 8080;
+        String serverUrl = "http://localhost:"+port;
         server = new Server();
         server.run(0);
         System.out.println("Started test HTTP server");
