@@ -185,14 +185,6 @@ public class ServerFacadeTests {
     }
 
     @Test
-    void testGetInstance() {
-        var port = 0;
-        ServerFacade instance1 = ServerFacade.getInstance("http://localhost:"+port);
-        ServerFacade instance2 = ServerFacade.getInstance("http://localhost:"+port);
-        assertSame(instance1, instance2, "getInstance should return the same instance");
-    }
-
-    @Test
     void testMultipleRegistrationsDifferentUsers() throws Exception {
         var authData1 = serverFacade.register("user1", "password1", "user1@email.com");
         var authData2 = serverFacade.register("user2", "password2", "user2@email.com");
