@@ -1,4 +1,4 @@
-package dataaccessTests;
+package dataaccesstests;
 
 
 import dataaccess.AuthDAO;
