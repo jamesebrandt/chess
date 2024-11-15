@@ -195,7 +195,8 @@ public class ServerFacadeTests {
     void testMultipleRegistrationsDifferentUsers() throws Exception {
         var authData1 = serverFacade.register("user1", "password1", "user1@email.com");
         var authData2 = serverFacade.register("user2", "password2", "user2@email.com");
-        assertNotEquals(authData1.authToken(), authData2.authToken(), "Different users should have different auth tokens");
+        assertNotEquals(authData1.authToken(), authData2.authToken(),
+                "Different users should have different auth tokens");
     }
 
     @Test
@@ -231,7 +232,8 @@ public class ServerFacadeTests {
         var response = serverFacade.listGames();
 
         var gameNames = response.games().stream().map(game -> game.gameName()).toList();
-        assertTrue(gameNames.contains("game1") && gameNames.contains("game2"), "Game names should match the created games");
+        assertTrue(gameNames.contains("game1") && gameNames.contains("game2"),
+                "Game names should match the created games");
     }
 
     @Test
@@ -249,7 +251,8 @@ public class ServerFacadeTests {
         serverFacade.register("observerUser", "password", "observer@email.com");
         serverFacade.login("observerUser", "password");
         var game = serverFacade.createGame("observeTestGame");
-        assertFalse(serverFacade.isObserving(game.gameID()), "User should not be observing any game by default");
+        assertFalse(serverFacade.isObserving(game.gameID()),
+                "User should not be observing any game by default");
     }
 
     @Test
