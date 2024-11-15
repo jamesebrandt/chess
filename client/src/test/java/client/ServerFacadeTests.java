@@ -16,8 +16,8 @@ public class ServerFacadeTests {
     public static void init() {
         String serverUrl = "http://localhost:8080";
         server = new Server();
-        server.run(8080);
-        System.out.println("Started test HTTP server on 8080");
+        server.run(0);
+        System.out.println("Started test HTTP server");
         serverFacade = ServerFacade.getInstance(serverUrl);
     }
 
@@ -181,6 +181,82 @@ public class ServerFacadeTests {
         serverFacade.createGame("newGame2");
         serverFacade.clear();
         assertThrows(RuntimeException.class, () -> serverFacade.listGames(), "Empty Games List");
+    }
+
+    @Test
+    void testGetInstance() {
+        ServerFacade instance1 = ServerFacade.getInstance("http://localhost:8080");
+        ServerFacade instance2 = ServerFacade.getInstance("http://localhost:8080");
+        assertSame(instance1, instance2, "getInstance should return the same instance");
+    }
+
+    @Test
+    void testMultipleRegistrationsDifferentUsers() throws Exception {
+        var authData1 = serverFacade.register("user1", "password1", "user1@email.com");
+        var authData2 = serverFacade.register("user2", "password2", "user2@email.com");
+        assertNotEquals(authData1.authToken(), authData2.authToken(), "Different users should have different auth tokens");
+    }
+
+    @Test
+    void testGetCurrentUsernameAfterLogin() throws Exception {
+        serverFacade.register("testUser", "password", "testUser@email.com");
+        serverFacade.login("testUser", "password");
+        assertEquals("testUser", serverFacade.getCurrentUsername(), "Current username should match the logged-in user");
+    }
+
+    @Test
+    void testClearDatabase() throws Exception {
+        serverFacade.register("userForClearTest", "password", "userForClearTest@email.com");
+        serverFacade.clear();
+        assertThrows(RuntimeException.class, () -> serverFacade.login("userForClearTest", "password"), "Database should be cleared and login should fail");
+    }
+
+    @Test
+    void testDuplicateGameIdsWithHider() {
+        int clientId1 = serverFacade.getGameIdCountAndIndex();
+        int clientId2 = serverFacade.getGameIdCountAndIndex();
+        serverFacade.setGameIdHiderValue(clientId1, 500);
+        serverFacade.setGameIdHiderValue(clientId2, 501);
+        assertEquals(500, serverFacade.getGameIdHiderValue(clientId1));
+        assertEquals(501, serverFacade.getGameIdHiderValue(clientId2));
+    }
+
+    @Test
+    void testListGamesReturnsCorrectGameNames() throws Exception {
+        serverFacade.register("gameListUser", "password", "gamelist@email.com");
+        serverFacade.login("gameListUser", "password");
+        serverFacade.createGame("game1");
+        serverFacade.createGame("game2");
+        var response = serverFacade.listGames();
+
+        var gameNames = response.games().stream().map(game -> game.gameName()).toList();
+        assertTrue(gameNames.contains("game1") && gameNames.contains("game2"), "Game names should match the created games");
+    }
+
+    @Test
+    void testJoinGameWithoutLogin() {
+        assertThrows(RuntimeException.class, () -> serverFacade.joinGame("WHITE", 1), "Joining a game without logging in should throw an exception");
+    }
+
+    @Test
+    void testCreateGameWithoutLogin() {
+        assertThrows(RuntimeException.class, () -> serverFacade.createGame("gameWithoutLogin"), "Creating a game without logging in should throw an exception");
+    }
+
+    @Test
+    void testIsObservingFalseByDefault() throws Exception {
+        serverFacade.register("observerUser", "password", "observer@email.com");
+        serverFacade.login("observerUser", "password");
+        var game = serverFacade.createGame("observeTestGame");
+        assertFalse(serverFacade.isObserving(game.gameID()), "User should not be observing any game by default");
+    }
+
+    @Test
+    void testSuccessfulLoginDoesNotThrow() {
+        assertDoesNotThrow(() -> {
+            serverFacade.register("noThrowUser", "password", "nothrow@email.com");
+            serverFacade.login("noThrowUser", "password");
+        }, "Successful login should not throw any exception");
     }
 
 
