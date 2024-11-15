@@ -1,5 +1,5 @@
 package server;
-import dataAccess.DatabaseManager;
+import dataaccess.DatabaseManager;
 import server.handlers.*;
 import spark.Spark;
 import static spark.Spark.*;

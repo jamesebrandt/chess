@@ -1,7 +1,7 @@
 package server.services;
 
-import dataAccess.AuthDAO;
-import dataAccess.GameDAO;
+import dataaccess.AuthDAO;
+import dataaccess.GameDAO;
 import model.JoinGameRequest;
 import model.JoinGameResponse;
 

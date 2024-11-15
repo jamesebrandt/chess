@@ -1,6 +1,6 @@
 package dataAccessTests;
 
-import dataAccess.UserDAO;
+import dataaccess.UserDAO;
 import model.User;
 import org.junit.jupiter.api.Test;
 import org.mindrot.jbcrypt.BCrypt;

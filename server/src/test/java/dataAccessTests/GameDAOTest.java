@@ -1,7 +1,7 @@
 package dataAccessTests;
 
 import chess.ChessGame;
-import dataAccess.*;
+import dataaccess.*;
 import model.*;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
