@@ -186,8 +186,9 @@ public class ServerFacadeTests {
 
     @Test
     void testGetInstance() {
-        ServerFacade instance1 = ServerFacade.getInstance("http://localhost:8080");
-        ServerFacade instance2 = ServerFacade.getInstance("http://localhost:8080");
+        var port = 0;
+        ServerFacade instance1 = ServerFacade.getInstance("http://localhost:"+port);
+        ServerFacade instance2 = ServerFacade.getInstance("http://localhost:"+port);
         assertSame(instance1, instance2, "getInstance should return the same instance");
     }
 
