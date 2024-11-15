@@ -4,10 +4,12 @@ import com.google.gson.Gson;
 import dataaccess.AuthDAO;
 import model.CreateGameRequest;
 import model.CreateGameResponse;
+import model.LoginRequest;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import server.handlers.CreateGameHandler;
+import server.handlers.LoginHandler;
 import spark.Request;
 import spark.Response;
 
@@ -30,19 +32,4 @@ class LoginHandlerTest {
         TestUtils.cleanupDatabase();
 
     }
-
-
-    @Test
-    public void testLoginHandleSuccess() {
-        String authToken = AuthDAO.getInstance().generateToken("Test");
-        Request request = new MockRequest(authToken, new CreateGameRequest(null, "TestGame"));
-        Response response = new MockResponse();
-
-        String responseJson = handler.handle(request, response);
-        CreateGameResponse responseFromCreateGame = gson.fromJson(responseJson, CreateGameResponse.class);
-
-        assertEquals(200, response.status());
-        assertTrue(responseFromCreateGame.success());
-    }
-
 }

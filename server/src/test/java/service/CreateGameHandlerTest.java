@@ -45,7 +45,7 @@ class CreateGameHandlerTest {
     }
 
     @Test
-    public void testHandleSuccess() {
+    public void testHandleCreateGameSuccess() {
         String authToken = AuthDAO.getInstance().generateToken("Test");
         Request req = new MockRequest(authToken, new CreateGameRequest(null, "TestGame"));
         Response res = new MockResponse();

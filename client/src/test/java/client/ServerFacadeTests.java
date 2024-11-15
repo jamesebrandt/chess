@@ -210,7 +210,8 @@ public class ServerFacadeTests {
     void testClearDatabase() throws Exception {
         serverFacade.register("userForClearTest", "password", "userForClearTest@email.com");
         serverFacade.clear();
-        assertThrows(RuntimeException.class, () -> serverFacade.login("userForClearTest", "password"), "Database should be cleared and login should fail");
+        assertThrows(RuntimeException.class, () -> serverFacade.login("userForClearTest",
+                "password"), "Database should be cleared and login should fail");
     }
 
     @Test
@@ -238,12 +239,14 @@ public class ServerFacadeTests {
 
     @Test
     void testJoinGameWithoutLogin() {
-        assertThrows(RuntimeException.class, () -> serverFacade.joinGame("WHITE", 1), "Joining a game without logging in should throw an exception");
+        assertThrows(RuntimeException.class, () -> serverFacade.joinGame("WHITE", 1),
+                "Joining a game without logging in should throw an exception");
     }
 
     @Test
     void testCreateGameWithoutLogin() {
-        assertThrows(RuntimeException.class, () -> serverFacade.createGame("gameWithoutLogin"), "Creating a game without logging in should throw an exception");
+        assertThrows(RuntimeException.class, () -> serverFacade.createGame("gameWithoutLogin"),
+                "Creating a game without logging in should throw an exception");
     }
 
     @Test
