@@ -6,18 +6,18 @@ public class Repl{
     private final PreLoginClient preLoginClient;
     private final PostLoginClient postLoginClient;
     private final GameClient gameClient;
-    private loopState gameState;
+    private LoopState gameState;
     private ServerFacade serverFacade;
 
     public Repl(String serverUrl){
         this.preLoginClient = new PreLoginClient(serverUrl);
         this.postLoginClient = new PostLoginClient(serverUrl);
         this.gameClient = new GameClient(serverUrl);
-        this.gameState = loopState.PRELOGIN;
+        this.gameState = LoopState.PRELOGIN;
         this.serverFacade = ServerFacade.getInstance(serverUrl);
     }
 
-    public enum loopState{
+    public enum LoopState{
         PRELOGIN,
         LOGGEDIN,
         INGAME,
@@ -26,18 +26,18 @@ public class Repl{
     }
 
     public void run(){
-        while(!gameState.equals(loopState.EXITING)) {
-            if (gameState.equals(loopState.PRELOGIN)) {
+        while(!gameState.equals(LoopState.EXITING)) {
+            if (gameState.equals(LoopState.PRELOGIN)) {
                 System.out.println("Welcome to the Chess Server! Sign in to Begin");
                 preLogin();
             }
-            if (gameState.equals(loopState.LOGGEDIN)) {
+            if (gameState.equals(LoopState.LOGGEDIN)) {
                 loggedIn();
             }
-            if (gameState.equals(loopState.INGAME)) {
+            if (gameState.equals(LoopState.INGAME)) {
                 inGame();
             }
-            if (gameState.equals(loopState.OBSERVING)) {
+            if (gameState.equals(LoopState.OBSERVING)) {
                 observing();
             }
         }
@@ -50,19 +50,19 @@ public class Repl{
         var result = "";
         result = result.toUpperCase();
 
-        while (!gameState.equals(loopState.EXITING) && !result.equals("Quitting Client")){
+        while (!gameState.equals(LoopState.EXITING) && !result.equals("Quitting Client")){
             printPrompt();
             String line = scanner.nextLine();
             try {
                 result = preLoginClient.eval(line);
                 if (result.equals("Successful Login")){
-                    gameState = loopState.LOGGEDIN;
+                    gameState = LoopState.LOGGEDIN;
                     return;
                 } else if (result.startsWith("User Registered and logged in under ")) {
-                    gameState = loopState.LOGGEDIN;
+                    gameState = LoopState.LOGGEDIN;
                     return;
                 }
-                if (!gameState.equals(loopState.EXITING)) {
+                if (!gameState.equals(LoopState.EXITING)) {
                     System.out.print(result);
                 }
                 else{
@@ -84,7 +84,7 @@ public class Repl{
         Scanner scanner = new Scanner(System.in);
         var result = "";
 
-        while (gameState.equals(loopState.LOGGEDIN)){
+        while (gameState.equals(LoopState.LOGGEDIN)){
             printPrompt();
             String line = scanner.nextLine();
             try {
@@ -92,25 +92,25 @@ public class Repl{
                 String userName = serverFacade.getCurrentUsername();
                 switch (result) {
                     case "playing game" -> {
-                        gameState = loopState.INGAME;
+                        gameState = LoopState.INGAME;
                         return;
                     }
                     case "Quitting Client" -> {
-                        gameState = loopState.EXITING;
+                        gameState = LoopState.EXITING;
                         return;
                     }
                     case "Logged out!" -> {
-                        gameState = loopState.PRELOGIN;
+                        gameState = LoopState.PRELOGIN;
                         return;
                     }
                     default -> {
                         if (result.startsWith(userName)) {
                             System.out.printf("Welcome, %s! %s%n", userName, result);
-                            gameState = loopState.INGAME;
+                            gameState = LoopState.INGAME;
                             return;
                         } else if (result.startsWith("Observing game:")){
                             System.out.printf("Welcome, %s! %s%n", userName, result);
-                            gameState = loopState.OBSERVING;
+                            gameState = LoopState.OBSERVING;
                             return;
                         }
                         else {
@@ -136,14 +136,14 @@ public class Repl{
         var result = "";
         result = result.toUpperCase();
 
-        while (!result.equals("QUIT") && !result.equals("Exiting the game") && !gameState.equals(loopState.EXITING)){
+        while (!result.equals("QUIT") && !result.equals("Exiting the game") && !gameState.equals(LoopState.EXITING)){
             printPrompt();
             String line = scanner.nextLine();
             try {
                 result = gameClient.eval(line);
                 if (result.equals("Leaving Game")){
                     System.out.println(result);
-                    gameState = loopState.LOGGEDIN;
+                    gameState = LoopState.LOGGEDIN;
                     return;
                 }else {
                     System.out.print(result);
@@ -168,14 +168,14 @@ public class Repl{
         var result = "";
         result = result.toUpperCase();
 
-        while (!result.equals("QUIT") && !result.equals("Exiting the game") && !gameState.equals(loopState.EXITING)){
+        while (!result.equals("QUIT") && !result.equals("Exiting the game") && !gameState.equals(LoopState.EXITING)){
             printPrompt();
             String line = scanner.nextLine();
             try {
                 result = gameClient.eval(line);
                 if (result.equals("Leaving Game")){
                     System.out.println(result);
-                    gameState = loopState.LOGGEDIN;
+                    gameState = LoopState.LOGGEDIN;
                     return;
                 }else {
                     System.out.print(result);
