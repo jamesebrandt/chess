@@ -132,27 +132,7 @@ public class Repl{
         System.out.println("In Game!");
         System.out.print(gameClient.help());
 
-        Scanner scanner = new Scanner(System.in);
-        var result = "";
-        result = result.toUpperCase();
-
-        while (!result.equals("QUIT") && !result.equals("Exiting the game") && !gameState.equals(LoopState.EXITING)){
-            printPrompt();
-            String line = scanner.nextLine();
-            try {
-                result = gameClient.eval(line);
-                if (result.equals("Leaving Game")){
-                    System.out.println(result);
-                    gameState = LoopState.LOGGEDIN;
-                    return;
-                }else {
-                    System.out.print(result);
-                }
-            } catch (Throwable e){
-                var msg = e.toString();
-                System.out.print(msg);
-            }
-        }
+        ObservingAndInGame();
     }
 
     private void observing(){
@@ -164,6 +144,10 @@ public class Repl{
                 - Help
                 """);
 
+        ObservingAndInGame();
+    }
+
+    private void ObservingAndInGame() {
         Scanner scanner = new Scanner(System.in);
         var result = "";
         result = result.toUpperCase();
@@ -186,7 +170,6 @@ public class Repl{
             }
         }
     }
-
 
 
     private void printPrompt() {
