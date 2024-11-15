@@ -76,10 +76,10 @@ public class ServerFacade {
         }
     }
 
-    public CreateGameResponse createGame(String gameID){
+    public CreateGameResponse createGame(String gameName){
         try {
             var path = "/game";
-            CreateGameRequest createGameRequest = new CreateGameRequest(manager.getSessionToken(currentUsername), gameID);
+            CreateGameRequest createGameRequest = new CreateGameRequest(manager.getSessionToken(currentUsername), gameName);
             CreateGameResponse createGameResponse = this.makeRequest("POST", path, createGameRequest, CreateGameResponse.class);
             return createGameResponse;
         }catch (Exception e){
@@ -97,7 +97,7 @@ public class ServerFacade {
             String token = manager.getSessionToken(currentUsername);
             return this.makeRequest("GET", path, null, GameListResponse.class);
         } catch (Exception e) {
-            throw new RuntimeException("Failed to List Games");
+            throw new RuntimeException("Empty Games List");
         }
     }
 
