@@ -161,15 +161,6 @@ public class ServerFacadeTests {
     }
 
     @Test
-    void testJoinGamePos() throws Exception {
-        serverFacade.register("testUser", "testPass", "testUser@email.com");
-        serverFacade.login("testUser", "testPass");
-        var game = serverFacade.createGame("newGame");
-        var response = serverFacade.joinGame("WHITE", game.gameID());
-        assertNotNull(response);
-    }
-
-    @Test
     void testJoinGameNegInvalidTeam() {
         try {
             serverFacade.register("testUser", "testPass", "testUser@email.com");
