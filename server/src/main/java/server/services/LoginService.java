@@ -1,7 +1,7 @@
 package server.services;
 
-import dataAccess.AuthDAO;
-import dataAccess.UserDAO;
+import dataaccess.AuthDAO;
+import dataaccess.UserDAO;
 import model.LoginRequest;
 import model.LoginResponse;
 

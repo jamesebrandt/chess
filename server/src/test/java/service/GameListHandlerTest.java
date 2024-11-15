@@ -1,8 +1,8 @@
 package service;
 
 import com.google.gson.Gson;
-import dataAccess.AuthDAO;
-import dataAccess.GameDAO;
+import dataaccess.AuthDAO;
+import dataaccess.GameDAO;
 import model.GameListRequest;
 import model.GameListResponse;
 import org.junit.jupiter.api.BeforeEach;
