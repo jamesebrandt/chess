@@ -16,7 +16,7 @@ public class ServerFacadeTests {
     public static void init() {
         String serverUrl = "http://localhost:8080";
         server = new Server();
-        server.run(8080);
+        server.run(0);
         System.out.println("Started test HTTP server on 8080");
         serverFacade = ServerFacade.getInstance(serverUrl);
     }
