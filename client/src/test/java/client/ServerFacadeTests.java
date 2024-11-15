@@ -36,11 +36,12 @@ public class ServerFacadeTests {
     void test1ClearPos() throws Exception {
         try {
             serverFacade.clear();
-            // Assert
         } catch (Exception e) {
             fail("Expected no exception, but got: " + e.getMessage());
         }
     }
+
+
 
     @Test
     void tes1tRegisterPos() throws Exception {
