@@ -23,7 +23,7 @@ public class PostLoginClient {
                 case "CREATE_GAME" -> createGame(params);
                 case "LIST_GAMES" -> listGames();
                 case "PLAY_GAME" -> playGame(params);
-                case "OBSERVE_GAME" -> observeGame(params);
+                case "OBSERVE" -> observeGame(params);
                 case "CLEAR" -> clearGames(params);
                 case "QUIT" -> "Quitting Client";
                 default -> help();
@@ -95,11 +95,29 @@ public class PostLoginClient {
         String team = input[1];
 
         JoinGameResponse joinGameResponse = serverfacade.joinGame(team, gameId);
-        return joinGameResponse.message();
+        if (joinGameResponse.success()){
+
+            return serverfacade.getCurrentUsername() +
+                    " has been added to game #"+gameId+ " on "+ team + " team";
+        }
+        else{
+            return "This games spot is filled already";
+        }
     }
 
     public String observeGame(String... input){
-        return "not implemented";
+        if (input.length < 1) {
+            throw new RuntimeException("Expected: observe <gameID>");
+        }
+        int gameId = Integer.parseInt(input[0]);
+
+
+        if (serverfacade.isObserving(gameId)){
+            return "Observing game: " + input[0];
+        }
+        else{
+            return "Unable to observe this game";
+        }
     }
 
     public String clearGames(String... input) throws Exception {

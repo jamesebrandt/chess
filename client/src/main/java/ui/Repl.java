@@ -21,7 +21,8 @@ public class Repl{
         PRELOGIN,
         LOGGEDIN,
         INGAME,
-        EXITING
+        EXITING,
+        OBSERVING
     }
 
     public void run(){
@@ -35,6 +36,9 @@ public class Repl{
             }
             if (gameState.equals(replState.INGAME)) {
                 inGame();
+            }
+            if (gameState.equals(replState.OBSERVING)) {
+                observing();
             }
         }
     }
@@ -85,6 +89,7 @@ public class Repl{
             String line = scanner.nextLine();
             try {
                 result = postLoginClient.eval(line);
+                String userName = serverFacade.getCurrentUsername();
                 switch (result) {
                     case "playing game" -> {
                         gameState = replState.INGAME;
@@ -98,7 +103,20 @@ public class Repl{
                         gameState = replState.PRELOGIN;
                         return;
                     }
-                    default -> System.out.print(result);
+                    default -> {
+                        if (result.startsWith(userName)) {
+                            System.out.printf("Welcome, %s! %s%n", userName, result);
+                            gameState = replState.INGAME;
+                            return;
+                        } else if (result.startsWith("Observing game:")){
+                            System.out.printf("Welcome, %s! %s%n", userName, result);
+                            gameState = replState.OBSERVING;
+                            return;
+                        }
+                        else {
+                            System.out.print(result);
+                        }
+                    }
                 }
             } catch (Throwable e){
                 var msg = e.toString();
@@ -136,6 +154,40 @@ public class Repl{
             }
         }
     }
+
+    private void observing(){
+
+        System.out.println("Observing Game");
+        System.out.print("""
+                - Draw
+                - Exit_Game
+                - Help
+                """);
+
+        Scanner scanner = new Scanner(System.in);
+        var result = "";
+        result = result.toUpperCase();
+
+        while (!result.equals("QUIT") && !result.equals("Exiting the game") && !gameState.equals(replState.EXITING)){
+            printPrompt();
+            String line = scanner.nextLine();
+            try {
+                result = gameClient.eval(line);
+                if (result.equals("Leaving Game")){
+                    System.out.println(result);
+                    gameState = replState.LOGGEDIN;
+                    return;
+                }else {
+                    System.out.print(result);
+                }
+            } catch (Throwable e){
+                var msg = e.toString();
+                System.out.print(msg);
+            }
+        }
+    }
+
+
 
     private void printPrompt() {
         System.out.print("\n" + ">>> ");

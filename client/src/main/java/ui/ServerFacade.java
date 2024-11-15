@@ -87,6 +87,10 @@ public class ServerFacade {
         }
     }
 
+    public boolean isObserving(int gameId){
+        return gameIdHider.containsKey(gameId);
+    }
+
     public GameListResponse listGames() throws Exception {
         try {
             var path = "/game";
