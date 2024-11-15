@@ -1,7 +1,7 @@
 package service;
 
 import com.google.gson.Gson;
-import dataaccess.GameDAO;
+import dataAccess.GameDAO;
 import model.JoinGameRequest;
 import model.JoinGameResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import server.handlers.JoinGameHandler;
 import spark.Request;
 import spark.Response;
-import dataaccess.AuthDAO;
+import dataAccess.AuthDAO;
 
 import static org.junit.jupiter.api.Assertions.*;
 

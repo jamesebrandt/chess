@@ -3,8 +3,8 @@ package server.services;
 import model.Game;
 import model.GameListResponse;
 import model.GameListRequest;
-import dataaccess.AuthDAO;
-import dataaccess.GameDAO;
+import dataAccess.AuthDAO;
+import dataAccess.GameDAO;
 
 import java.util.ArrayList;
 

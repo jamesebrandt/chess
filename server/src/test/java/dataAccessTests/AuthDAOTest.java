@@ -1,9 +1,9 @@
-package dataaccesstests;
+package dataAccessTests;
 
 
-import dataaccess.AuthDAO;
-import dataaccess.DataAccessException;
-import dataaccess.DatabaseManager;
+import dataAccess.AuthDAO;
+import dataAccess.DataAccessException;
+import dataAccess.DatabaseManager;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
