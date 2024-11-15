@@ -142,4 +142,55 @@ public class ServerFacadeTests {
         }
     }
 
+    @Test
+    void testSetCurrentUsername() {
+        serverFacade.setCurrentUsername("newUser");
+        assertEquals("newUser", serverFacade.getCurrentUsername());
+    }
+
+    @Test
+    void testGameIdHiderSetAndGet() {
+        serverFacade.setGameIdHiderValue(1, 1001);
+        assertEquals(1001, serverFacade.getGameIdHiderValue(1));
+    }
+
+    @Test
+    void testGetGameIdCountAndIndex() {
+        int initialCount = serverFacade.getGameIdCountAndIndex();
+        assertEquals(initialCount + 1, serverFacade.getGameIdCountAndIndex());
+    }
+
+    @Test
+    void testJoinGamePos() throws Exception {
+        serverFacade.register("testUser", "testPass", "testUser@email.com");
+        serverFacade.login("testUser", "testPass");
+        var game = serverFacade.createGame("newGame");
+        var response = serverFacade.joinGame("WHITE", game.gameID());
+        assertNotNull(response);
+    }
+
+    @Test
+    void testJoinGameNegInvalidTeam() {
+        try {
+            serverFacade.register("testUser", "testPass", "testUser@email.com");
+            serverFacade.login("testUser", "testPass");
+            var game = serverFacade.createGame("newGame");
+            serverFacade.joinGame("INVALID_TEAM", game.gameID());
+            fail("Expected a RuntimeException for invalid team selection");
+        } catch (Exception e) {
+            assertEquals("Unable to join game", e.getMessage());
+        }
+    }
+
+    @Test
+    void testEmptyGamesListAfterClear() throws Exception {
+        serverFacade.register("testUser", "testPass", "testUser@email.com");
+        serverFacade.login("testUser", "testPass");
+        serverFacade.createGame("newGame1");
+        serverFacade.createGame("newGame2");
+        serverFacade.clear();
+        assertThrows(RuntimeException.class, () -> serverFacade.listGames(), "Empty Games List");
+    }
+
+
 }

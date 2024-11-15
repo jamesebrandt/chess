@@ -1,4 +1,4 @@
-package dataAccessTests;
+package dataaccessTests;
 
 import dataaccess.UserDAO;
 import model.User;
