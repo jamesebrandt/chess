@@ -54,9 +54,10 @@ public class Repl {
                     gameState = LoopState.LOGGEDIN;
                     return;
                 }
-                if (!gameState.equals(LoopState.EXITING)) {
+                if (!gameState.equals(LoopState.EXITING) && !result.equals("Quitting Client")) {
                     System.out.print(result);
                 } else {
+                    gameState = LoopState.EXITING;
                     System.out.print("Closing Client");
                 }
             } catch (Throwable e) {

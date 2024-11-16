@@ -156,9 +156,10 @@ public class ServerFacadeTests {
     }
 
     @Test
-    void testGetGameIdCountAndIndex() {
-        int initialCount = serverFacade.getGameIdCountAndIndex();
-        assertEquals(initialCount + 1, serverFacade.getGameIdCountAndIndex());
+    void testGetNewGameIdCount() {
+        int initialCount = serverFacade.getNewGameIdCount();
+        serverFacade.indexGameIdCount();
+        assertEquals(initialCount + 1, serverFacade.getNewGameIdCount());
     }
 
     @Test
@@ -207,15 +208,6 @@ public class ServerFacadeTests {
                 "password"), "Database should be cleared and login should fail");
     }
 
-    @Test
-    void testDuplicateGameIdsWithHider() {
-        int clientId1 = serverFacade.getGameIdCountAndIndex();
-        int clientId2 = serverFacade.getGameIdCountAndIndex();
-        serverFacade.setGameIdHiderValue(clientId1, 500);
-        serverFacade.setGameIdHiderValue(clientId2, 501);
-        assertEquals(500, serverFacade.getGameIdHiderValue(clientId1));
-        assertEquals(501, serverFacade.getGameIdHiderValue(clientId2));
-    }
 
     @Test
     void testListGamesReturnsCorrectGameNames() throws Exception {

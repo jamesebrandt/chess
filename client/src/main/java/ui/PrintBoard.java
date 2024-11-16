@@ -1,5 +1,7 @@
 package ui;
 
+import java.util.Objects;
+
 public class PrintBoard {
 
     private String[][] board;
@@ -23,8 +25,8 @@ public class PrintBoard {
     private void initializeWhiteBoard(){
 
         for (int i = 1; i < 9; i++) {
-            board[0][i] = " " + (char)('A' + i - 1) + " ";
-            board[9][i] = " " + (char)('A' + i - 1) + " ";
+            board[0][i] = " " + (char)('H' - i + 1) + " ";
+            board[9][i] = " " + (char)('H' - i + 1) + " ";
         }
 
         for (int i = 1; i < 9; i++) {
@@ -63,9 +65,9 @@ public class PrintBoard {
 
     private void initializeBlackBoard(){
 
-        for (int i = 1; i <= 8; i++) {
-            board[0][i] = " " + (char)('A' + i - 1) + " ";
-            board[9][i] = " " + (char)('A' + i - 1) + " ";
+        for (int i = 1; i < 9; i++) {
+            board[0][i] = " " + (char)('H' - i + 1) + " ";
+            board[9][i] = " " + (char)('H' - i + 1) + " ";
         }
 
         for (int i = 8; i > 0; i--){
@@ -76,8 +78,8 @@ public class PrintBoard {
         board[1][1] = EscapeSequences.BLACK_ROOK;
         board[1][2] = EscapeSequences.BLACK_KNIGHT;
         board[1][3] = EscapeSequences.BLACK_BISHOP;
-        board[1][4] = EscapeSequences.BLACK_QUEEN;
-        board[1][5] = EscapeSequences.BLACK_KING;
+        board[1][4] = EscapeSequences.BLACK_KING;
+        board[1][5] = EscapeSequences.BLACK_QUEEN;
         board[1][6] = EscapeSequences.BLACK_BISHOP;
         board[1][7] = EscapeSequences.BLACK_KNIGHT;
         board[1][8] = EscapeSequences.BLACK_ROOK;
@@ -89,8 +91,8 @@ public class PrintBoard {
         board[8][1] = EscapeSequences.WHITE_ROOK;
         board[8][2] = EscapeSequences.WHITE_KNIGHT;
         board[8][3] = EscapeSequences.WHITE_BISHOP;
-        board[8][4] = EscapeSequences.WHITE_QUEEN;
-        board[8][5] = EscapeSequences.WHITE_KING;
+        board[8][4] = EscapeSequences.WHITE_KING;
+        board[8][5] = EscapeSequences.WHITE_QUEEN;
         board[8][6] = EscapeSequences.WHITE_BISHOP;
         board[8][7] = EscapeSequences.WHITE_KNIGHT;
         board[8][8] = EscapeSequences.WHITE_ROOK;
@@ -107,6 +109,7 @@ public class PrintBoard {
 
                 if (isBorder(row, col)) {
                     System.out.print(EscapeSequences.SET_BG_COLOR_BLACK);
+                    System.out.print(EscapeSequences.SET_TEXT_COLOR_WHITE);
                     System.out.print(board[row][col] == null ? EscapeSequences.EMPTY : board[row][col]);
                 } else {
 
@@ -115,7 +118,23 @@ public class PrintBoard {
                     } else {
                         System.out.print(EscapeSequences.SET_BG_COLOR_DARK_GREY);
                     }
-                    System.out.print(board[row][col] == null ? EscapeSequences.EMPTY : board[row][col]);
+
+                    if (Objects.equals(board[row][col], EscapeSequences.BLACK_ROOK)||
+                            Objects.equals(board[row][col], EscapeSequences.BLACK_BISHOP)||
+                            Objects.equals(board[row][col], EscapeSequences.BLACK_KNIGHT)||
+                            Objects.equals(board[row][col], EscapeSequences.BLACK_KING)||
+                            Objects.equals(board[row][col], EscapeSequences.BLACK_PAWN)||
+                            Objects.equals(board[row][col], EscapeSequences.BLACK_QUEEN)||
+                            Objects.equals(board[row][col], null)
+                                    ){
+                        System.out.print(EscapeSequences.SET_TEXT_COLOR_WHITE);
+                        System.out.print(board[row][col] == null ? EscapeSequences.EMPTY : board[row][col]);
+                    }
+                    else {
+                        System.out.print(EscapeSequences.SET_TEXT_COLOR_BLACK);
+                        System.out.print(board[row][col] == null ? EscapeSequences.EMPTY : board[row][col]);
+                    }
+                    System.out.print(EscapeSequences.RESET_BG_COLOR);
                 }
                 System.out.print(EscapeSequences.RESET_BG_COLOR);
             }

@@ -52,10 +52,12 @@ public class ServerFacade {
         return gameIdHider.get(clientGameId);
     }
 
-    public int getGameIdCountAndIndex(){
-        int temp = gameIdCount;
+    public int getNewGameIdCount(){
+        return gameIdCount;
+    }
+
+    public void indexGameIdCount(){
         gameIdCount++;
-        return temp;
     }
 
     public void clear() throws Exception{

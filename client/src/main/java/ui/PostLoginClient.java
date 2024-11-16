@@ -7,6 +7,7 @@ import java.util.*;
 public class PostLoginClient {
 
     private final ServerFacade serverfacade;
+    private final Map<String, Integer> listGamesMap = new HashMap<>();
 
     public PostLoginClient(String serverUrl){
         this.serverfacade = ServerFacade.getInstance(serverUrl);
@@ -74,11 +75,19 @@ public class PostLoginClient {
                 String players = "White User: " + whiteUser +
                         "  Black User: " + blackUser;
 
-                int id = serverfacade.getGameIdCountAndIndex();
-                sb.append(id).append(". ").append(gameName)
-                        .append(" - Players: ").append(players).append("\n");
+                if (listGamesMap.containsKey(gameName)) {
+                    sb.append(listGamesMap.get(gameName)).append(". ").append(gameName)
+                            .append(" - Players: ").append(players).append("\n");
+                }else {
+                    int id = serverfacade.getNewGameIdCount();
+                    serverfacade.indexGameIdCount();
 
-                serverfacade.setGameIdHiderValue(id, game.gameID());
+                    sb.append(id).append(". ").append(gameName)
+                            .append(" - Players: ").append(players).append("\n");
+
+                    serverfacade.setGameIdHiderValue(id, game.gameID());
+                    listGamesMap.put(gameName, id);
+                }
             }
 
             return sb.toString();
