@@ -6,6 +6,8 @@ import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import websocket.commands.UserGameCommand;
 
+import java.io.IOException;
+
 @websocket
 public class WebSocketHandler {
 
@@ -17,39 +19,39 @@ public class WebSocketHandler {
     public void onMessage(Session session, String msg) {
         try {
             UserGameCommand command = gson.fromJson(msg, UserGameCommand.class);
-
             String username = authDAO.getUser(command.getAuthToken());
 
-            connections.add(command.getGameID(), session);
-
             switch (command.getCommandType()) {
-                case CONNECT -> connect(session, username);
-                case MAKE_MOVE -> makeMove(session, username);
-                case LEAVE -> leaveGame(session, username);
-                case RESIGN -> resign(session, username);
+                case CONNECT -> connect(username, command, session);
+                case MAKE_MOVE -> makeMove(username, command, session);
+                case LEAVE -> leaveGame(username, command, session);
+                case RESIGN -> resign(username, command, session);
             }
-        } catch (UnauthorizedException ex) {
-            sendMessage(session.getRemote(), new ErrorMessage("Error: unauthorized"));
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            sendMessage(session.getRemote(), new ErrorMessage("Error: " + ex.getMessage()));
+        }catch (Exception e){
+            throw new RuntimeException("Error in onMessage in websocket handler");
         }
     }
 
-    private void connect(Session session, String username){
-        //connect to game
-
-        //notify all others in the game that they joined
-
-        //send error messages if invalid inputs
+    private void connect(String username, UserGameCommand command, Session session) throws IOException {
+        try {
+            //connect to game
+            connections.add(username, command.getAuthToken(), command.getGameID(), session);
+            //notify all others in the game that they joined
+            var message = String.format("%s has joined the game", username);
+            connections.broadcast(username, command);
+            //send error messages if invalid inputs
+        }
+        catch (IOException e){
+            throw new IOException(e);
+        }
     }
 
-    private void makeMove(Session session, String username){
+    private void makeMove(String username, UserGameCommand command, Session session){
     }
 
-    private void leaveGame(Session session, String username){
+    private void leaveGame(String username, UserGameCommand command, Session session){
     }
 
-    private void resign(Session session, String username){
+    private void resign(String username, UserGameCommand command, Session session){
     }
 }
