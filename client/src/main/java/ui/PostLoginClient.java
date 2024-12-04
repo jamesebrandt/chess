@@ -13,7 +13,6 @@ public class PostLoginClient {
         this.serverfacade = ServerFacade.getInstance(serverUrl);
     }
 
-
     public String eval(String inputLine){
         try {
             var tokens = inputLine.toUpperCase().split(" ");
@@ -104,8 +103,8 @@ public class PostLoginClient {
         String team = input[1];
 
         JoinGameResponse joinGameResponse = serverfacade.joinGame(team, gameId);
-        if (joinGameResponse.success()){
 
+        if (joinGameResponse.success()){
             return serverfacade.getCurrentUsername() +
                     " has been added to game #"+gameId+ " on "+ team + " team";
         }

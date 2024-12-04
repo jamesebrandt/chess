@@ -1,8 +1,10 @@
 package ui;
 
+import websocket.messages.ServerMessage;
+
 import java.util.Scanner;
 
-public class Repl {
+public class Repl implements ServerMessageObserver{
     private final PreLoginClient preLoginClient;
     private final PostLoginClient postLoginClient;
     private final GameClient gameClient;
@@ -152,5 +154,11 @@ public class Repl {
 
     private void printPrompt() {
         System.out.print("\n>>> ");
+    }
+
+    @Override
+    public void notify(ServerMessage message) {
+        System.out.println(ServerMessage.ServerMessageType());
+        printPrompt();
     }
 }

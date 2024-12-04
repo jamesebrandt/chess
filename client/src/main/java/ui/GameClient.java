@@ -25,7 +25,6 @@ public class GameClient {
             var params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (cmd) {
                 case "LOGOUT" -> move(params);
-                case "CREATE_GAME" -> createGame(params);
                 case "EXIT_GAME" -> "Leaving Game";
                 case "DRAW" -> drawBoard();
                 default -> help();
@@ -40,9 +39,6 @@ public class GameClient {
         return "not implemented";
     }
 
-    public String createGame(String... input){
-        return "not implemented";
-    }
 
     public String drawBoard(String... input){
         whiteBoard.drawBoard();
