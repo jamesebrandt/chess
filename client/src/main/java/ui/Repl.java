@@ -158,7 +158,19 @@ public class Repl implements ServerMessageObserver{
 
     @Override
     public void notify(ServerMessage message) {
-        System.out.println(ServerMessage.ServerMessageType());
-        printPrompt();
+        switch (message.getServerMessageType()){
+            case NOTIFICATION -> displayNotification(message);
+            case LOAD_GAME -> loadGame(message);
+            case ERROR -> displayError(message);
+        }
+    }
+
+    private void displayNotification(ServerMessage message){
+    }
+
+    private void loadGame(ServerMessage message){
+    }
+
+    private void displayError(ServerMessage message){
     }
 }

@@ -14,15 +14,15 @@ public class ConnectionManager {
         connections.put(gameID, connection);
     }
 
-    public void remove(String visitorName) {
-        connections.remove(visitorName);
+    public void remove(String username) {
+        connections.remove(username);
     }
 
-    public void broadcast(String excludeVisitorName, Notification notification) throws IOException {
+    public void broadcast(String excludeUserName, Notification notification) throws IOException {
         var removeList = new ArrayList<Connection>();
         for (var c : connections.values()) {
             if (c.session.isOpen()) {
-                if (!c.visitorName.equals(excludeVisitorName)) {
+                if (!c.username.equals(excludeUserName)) {
                     c.send(notification.toString());
                 }
             } else {
