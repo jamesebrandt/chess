@@ -22,6 +22,7 @@ public class ServerFacade {
     private SessionManager manager = new SessionManager();
     private Map<Integer, Integer> gameIdHider = new HashMap<>();
     private int gameIdCount = 1;
+    private int currentGameId = 0;
 
 
     public ServerFacade(String url){
@@ -60,6 +61,15 @@ public class ServerFacade {
         gameIdCount++;
     }
 
+    public String getAuth(){
+        return manager.getSessionToken(currentUsername);
+    }
+
+    public int getGameId(){
+        return currentGameId;
+    }
+
+
     public void clear() throws Exception{
         var path = "/db";
         this.makeRequest("DELETE", path, null, null);
@@ -96,7 +106,6 @@ public class ServerFacade {
     public GameListResponse listGames() throws Exception {
         try {
             var path = "/game";
-            String token = manager.getSessionToken(currentUsername);
             return this.makeRequest("GET", path, null, GameListResponse.class);
         } catch (Exception e) {
             throw new RuntimeException("Empty Games List");
@@ -127,6 +136,7 @@ public class ServerFacade {
                 throw new RuntimeException("You must select 'WHITE' or 'BLACK' as team color");
             }
 
+            currentGameId = id;
             int serverId = getGameIdHiderValue(id);
 
             JoinGameRequest joinGameRequest = new JoinGameRequest(team, serverId);

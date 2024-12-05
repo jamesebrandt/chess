@@ -9,15 +9,19 @@ public class Repl implements ServerMessageObserver{
     private final PreLoginClient preLoginClient;
     private final PostLoginClient postLoginClient;
     private final GameClient gameClient;
+    private final ObserverClient observerClient;
     private LoopState gameState;
     private ServerFacade serverFacade;
+    private int currentGameId;
 
     public Repl(String serverUrl) throws ResponseException {
         this.preLoginClient = new PreLoginClient(serverUrl);
         this.postLoginClient = new PostLoginClient(serverUrl);
         this.gameClient = new GameClient(serverUrl, this);
+        this.observerClient = new ObserverClient(serverUrl, this);
         this.gameState = LoopState.PRELOGIN;
         this.serverFacade = ServerFacade.getInstance(serverUrl);
+        this.currentGameId = 0;
     }
 
     public enum LoopState {
@@ -97,6 +101,7 @@ public class Repl implements ServerMessageObserver{
 
                 if (result.startsWith(userName)) {
                     System.out.printf("Welcome, %s! %s%n", userName, result);
+
                     gameState = LoopState.INGAME;
                     return;
                 } else if (result.startsWith("Observing game:")) {
@@ -116,7 +121,30 @@ public class Repl implements ServerMessageObserver{
     private void inGame() {
         System.out.println("In Game!");
         System.out.print(gameClient.help());
-        observingAndInGame();
+        Scanner scanner = new Scanner(System.in);
+        var result = "";
+        result = result.toUpperCase();
+
+        while (!result.equals("QUIT") && !result.equals("Exiting the game") && !gameState.equals(LoopState.EXITING)) {
+            printPrompt();
+            String line = scanner.nextLine();
+            try {
+                result = gameClient.eval(line);
+                if (result.equals("Leaving Game")) {
+                    System.out.println(result);
+                    gameState = LoopState.LOGGEDIN;
+                    return;
+                }
+                else if(result.equals()){
+
+
+                } else {
+                    System.out.print(result);
+                }
+            } catch (Throwable e) {
+                System.out.print(e.toString());
+            }
+        }
     }
 
     private void observing() {
@@ -127,10 +155,6 @@ public class Repl implements ServerMessageObserver{
                 - Help
                 """);
 
-        observingAndInGame();
-    }
-
-    private void observingAndInGame() {
         Scanner scanner = new Scanner(System.in);
         var result = "";
         result = result.toUpperCase();
@@ -139,7 +163,7 @@ public class Repl implements ServerMessageObserver{
             printPrompt();
             String line = scanner.nextLine();
             try {
-                result = gameClient.eval(line);
+                result = observerClient.eval(line);
                 if (result.equals("Leaving Game")) {
                     System.out.println(result);
                     gameState = LoopState.LOGGEDIN;
@@ -167,11 +191,14 @@ public class Repl implements ServerMessageObserver{
     }
 
     private void displayNotification(ServerMessage message){
+        System.out.print("Notification: " + message.toString());
     }
 
     private void loadGame(ServerMessage message){
+
     }
 
     private void displayError(ServerMessage message){
+        System.out.print("ERROR: " + message.toString());
     }
 }

@@ -15,8 +15,8 @@ import java.net.URISyntaxException;
 public class WebSocketFacade extends Endpoint {
 
     Session session;
-    SessionManager sessionManager;
     ServerMessageObserver serverMessageObserver;
+    ServerFacade serverFacade;
 
 
     // create the websocket connection in the constructor
@@ -25,6 +25,7 @@ public class WebSocketFacade extends Endpoint {
             url = url.replace("http", "ws");
             URI socketURI = new URI(url + "/ws");
             this.serverMessageObserver = serverMessageObserver;
+            this.serverFacade = new ServerFacade(url);
 
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
             this.session = container.connectToServer(this, socketURI);
@@ -45,9 +46,9 @@ public class WebSocketFacade extends Endpoint {
         }
     }
 
-    public void makeMove(String auth, int gameID) throws ResponseException {
+    public void makeMove(String move) throws ResponseException {
         try {
-            var command = new UserGameCommand(UserGameCommand.CommandType.MAKE_MOVE, auth, gameID);
+            var command = new UserGameCommand(UserGameCommand.CommandType.MAKE_MOVE, serverFacade.getAuth(), serverFacade.getGameId());
             this.session.getBasicRemote().sendText(new Gson().toJson(command));
         } catch (IOException ex) {
             throw new ResponseException(500, ex.getMessage());

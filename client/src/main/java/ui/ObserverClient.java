@@ -1,9 +1,10 @@
 package ui;
+
 import Exceptions.ResponseException;
 
 import java.util.Arrays;
 
-public class GameClient{
+public class ObserverClient {
 
     private PrintBoard whiteBoard;
     private PrintBoard blackBoard;
@@ -11,7 +12,7 @@ public class GameClient{
     private final ServerFacade serverfacade;
     private final WebSocketFacade webSocketFacade;
 
-    public GameClient(String serverUrl, ServerMessageObserver serverMessageObserver) throws ResponseException {
+    public ObserverClient(String serverUrl, ServerMessageObserver serverMessageObserver) throws ResponseException {
         this.serverfacade = ServerFacade.getInstance(serverUrl);
         this.webSocketFacade = new WebSocketFacade(serverUrl, serverMessageObserver);
     }
@@ -27,7 +28,6 @@ public class GameClient{
             var params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (cmd) {
                 case "EXIT_GAME" -> "Leaving Game";
-                case "MOVE" -> move(params);
                 case "DRAW" -> drawBoard();
                 default -> help();
 
@@ -37,13 +37,6 @@ public class GameClient{
         }
     }
 
-    public String move(String... input){
-        webSocketFacade.makeMove(input [1]);
-    }
-
-    //save the board as we go so if the server closes or the game is over then we keep the board
-
-
     public String drawBoard(String... input){
         whiteBoard.drawBoard();
         System.out.println();
@@ -52,10 +45,10 @@ public class GameClient{
         return "Both Boards Drawn";
     }
 
-    public String help() {
+
+    public String help(){
         return """
                 - Draw
-                - Make_Move
                 - Exit_Game
                 - Help
                 """;

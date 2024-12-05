@@ -106,7 +106,7 @@ public class PostLoginClient {
 
         if (joinGameResponse.success()){
             return serverfacade.getCurrentUsername() +
-                    " has been added to game #"+gameId+ " on "+ team + " team";
+                    " has been added to game #" + gameId + " on " + team + " team";
         }
         else{
             return "This games spot is filled already";
