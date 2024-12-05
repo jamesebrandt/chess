@@ -1,5 +1,6 @@
 package ui;
 
+import Exceptions.ResponseException;
 import websocket.messages.ServerMessage;
 
 import java.util.Scanner;
@@ -11,10 +12,10 @@ public class Repl implements ServerMessageObserver{
     private LoopState gameState;
     private ServerFacade serverFacade;
 
-    public Repl(String serverUrl) {
+    public Repl(String serverUrl) throws ResponseException {
         this.preLoginClient = new PreLoginClient(serverUrl);
         this.postLoginClient = new PostLoginClient(serverUrl);
-        this.gameClient = new GameClient(serverUrl);
+        this.gameClient = new GameClient(serverUrl, this);
         this.gameState = LoopState.PRELOGIN;
         this.serverFacade = ServerFacade.getInstance(serverUrl);
     }

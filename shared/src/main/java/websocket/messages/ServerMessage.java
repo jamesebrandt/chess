@@ -1,5 +1,7 @@
 package websocket.messages;
 
+import com.google.gson.Gson;
+
 import java.util.Objects;
 
 /**
@@ -35,6 +37,11 @@ public class ServerMessage {
         }
         ServerMessage that = (ServerMessage) o;
         return getServerMessageType() == that.getServerMessageType();
+    }
+
+    @Override
+    public String toString() {
+        return new Gson().toJson(this);
     }
 
     @Override

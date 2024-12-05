@@ -1,6 +1,7 @@
 package server;
 import dataaccess.DatabaseManager;
 import server.handlers.*;
+import server.websocket.WebSocketHandler;
 import spark.Spark;
 import static spark.Spark.*;
 
@@ -17,6 +18,9 @@ public class Server {
         } catch (Exception e) {
             System.err.print("Failed to configure DB");
         }
+
+        WebSocketHandler webSocketHandler = new WebSocketHandler();
+        webSocket("/ws", webSocketHandler);
 
         //clear
         delete("/db", (req, res) -> {

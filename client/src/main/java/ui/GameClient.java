@@ -1,18 +1,22 @@
 package ui;
 
+import Exceptions.ResponseException;
+import websocket.messages.ServerMessage;
+
 import java.util.Arrays;
 
-public class GameClient {
+public class GameClient{
 
     private PrintBoard whiteBoard;
     private PrintBoard blackBoard;
 
     private final ServerFacade serverfacade;
+    private final WebSocketFacade webSocketFacade;
 
-    public GameClient(String serverUrl){
+    public GameClient(String serverUrl, ServerMessageObserver serverMessageObserver) throws ResponseException {
         this.serverfacade = ServerFacade.getInstance(serverUrl);
+        this.webSocketFacade = new WebSocketFacade(serverUrl, serverMessageObserver);
     }
-
 
     public String eval(String inputLine) {
 
@@ -37,7 +41,11 @@ public class GameClient {
 
     public String move(String... input){
         return "not implemented";
+
+
     }
+
+    //save the board as we go so if the server closes or the game is over then we keep the board
 
 
     public String drawBoard(String... input){
