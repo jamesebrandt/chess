@@ -134,9 +134,11 @@ public class Repl implements ServerMessageObserver{
                     System.out.println(result);
                     gameState = LoopState.LOGGEDIN;
                     return;
-                }
-                else if(result.equals()){
 
+                }
+                else if(result.startsWith("Move made to ")){
+                    System.out.println(result);
+                    gameClient.eval("DRAW");
 
                 } else {
                     System.out.print(result);
@@ -151,7 +153,7 @@ public class Repl implements ServerMessageObserver{
         System.out.println("Observing Game");
         System.out.print("""
                 - Draw
-                - Exit_Game
+                - Exit
                 - Help
                 """);
 

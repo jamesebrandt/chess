@@ -20,9 +20,9 @@ public class PostLoginClient {
             var params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (cmd) {
                 case "LOGOUT" -> logout(params);
-                case "CREATE_GAME" -> createGame(params);
-                case "LIST_GAMES" -> listGames();
-                case "PLAY_GAME" -> playGame(params);
+                case "CREATE" -> createGame(params);
+                case "LIST" -> listGames();
+                case "PLAY" -> playGame(params);
                 case "OBSERVE" -> observeGame(params);
                 case "CLEAR" -> clearGames(params);
                 case "QUIT" -> "Quitting Client";
@@ -136,10 +136,10 @@ public class PostLoginClient {
     public String help() {
         return """
                 - Logout
-                - Create_game <gamename>
-                - List_games
-                - Play_game <gameID> <team>
-                - Observe_game <gameID>
+                - Create <gamename>
+                - List
+                - Play <gameID> <team>
+                - Observe <gameID>
                 - Clear
                 - Help
                 - Quit

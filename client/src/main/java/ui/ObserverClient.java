@@ -27,7 +27,7 @@ public class ObserverClient {
             var cmd = (tokens.length > 0) ? tokens[0] : "help";
             var params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (cmd) {
-                case "EXIT_GAME" -> "Leaving Game";
+                case "EXIT" -> "Leaving Game";
                 case "DRAW" -> drawBoard();
                 default -> help();
 
@@ -49,7 +49,7 @@ public class ObserverClient {
     public String help(){
         return """
                 - Draw
-                - Exit_Game
+                - Exit
                 - Help
                 """;
     }
