@@ -41,8 +41,9 @@ public class Server {
         });
 
         // logout
-        path("/session", () -> {
-            delete("", new LogoutHandler()::handle);
+        delete("/session", (req, res) -> {
+            LogoutHandler logoutHandler = new LogoutHandler();
+            return logoutHandler.handle(req, res);
         });
 
         //create game

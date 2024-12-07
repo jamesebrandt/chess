@@ -102,8 +102,9 @@ public class Repl implements ServerMessageObserver{
                 } else if (result.equals("Quitting Client")) {
                     gameState = LoopState.EXITING;
                     return;
-                } else if (result.equals("Logged out!")) {
+                } else if (result.startsWith("Logged out!")) {
                     gameState = LoopState.PRELOGIN;
+                    System.out.printf(result + "\n");
                     return;
                 }
 
@@ -128,6 +129,7 @@ public class Repl implements ServerMessageObserver{
 
     private void inGame() throws ResponseException {
         gameClient.connectToWebSocket(this, serverFacade.getAuth(), currentGameId);
+
         System.out.println("In Game!");
         System.out.print(gameClient.help());
         Scanner scanner = new Scanner(System.in);

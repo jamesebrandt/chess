@@ -20,7 +20,7 @@ public class ServerFacade {
     private String currentUsername;
     private final String serverUrl;
     private SessionManager manager = new SessionManager();
-    private Map<Integer, Integer> gameIdHider = new HashMap<>();
+    private final Map<Integer, Integer> gameIdHider = new HashMap<>();
     private int gameIdCount = 1;
     private int currentGameId = 0;
 
@@ -69,7 +69,6 @@ public class ServerFacade {
         return currentGameId;
     }
 
-
     public void clear() throws Exception{
         var path = "/db";
         this.makeRequest("DELETE", path, null, null);
@@ -92,8 +91,7 @@ public class ServerFacade {
         try {
             var path = "/game";
             CreateGameRequest createGameRequest = new CreateGameRequest(manager.getSessionToken(currentUsername), gameName);
-            CreateGameResponse createGameResponse = this.makeRequest("POST", path, createGameRequest, CreateGameResponse.class);
-            return createGameResponse;
+            return this.makeRequest("POST", path, createGameRequest, CreateGameResponse.class);
         }catch (Exception e){
             throw new RuntimeException("Failed to Create Game");
         }
@@ -113,7 +111,7 @@ public class ServerFacade {
     }
 
 
-    public LoginResponse login(String username, String password) throws Exception{
+    public LoginResponse login(String username, String password) {
         try {
             var path = "/session";
             LoginRequest loginRequest = new LoginRequest(username, password, null);
@@ -129,7 +127,17 @@ public class ServerFacade {
         }
     }
 
-    public JoinGameResponse joinGame(String team, int id) throws Exception{
+    public void logout() {
+        try {
+            var path = "/session";
+            this.makeRequest("DELETE", path, null, null);
+
+        }catch (Exception e){
+            throw new RuntimeException("Unable to logout (incorrect auth Token");
+        }
+    }
+
+    public JoinGameResponse joinGame(String team, int id) {
         try {
             var path = "/game";
             if (!team.equals("WHITE") && !team.equals("BLACK")) {

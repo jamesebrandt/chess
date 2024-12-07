@@ -34,9 +34,10 @@ public class PostLoginClient {
         }
     }
 
-    public String logout(String... input){
+    public String logout(String... input) throws Exception {
+        serverfacade.logout();
         serverfacade.setCurrentUsername(null);
-        return "Logged out!";
+        return "Logged out! - Auth Token Permanently Terminated";
     }
 
     public String createGame(String... input){

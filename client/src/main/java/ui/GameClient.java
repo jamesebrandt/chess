@@ -31,7 +31,7 @@ public class GameClient{
             var cmd = (tokens.length > 0) ? tokens[0] : "help";
             var params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (cmd) {
-                case "EXIT" -> "Leaving Game";
+                case "EXIT" -> leaveGame();
                 case "MOVE" -> move(params);
                 case "DRAW" -> drawBoard();
                 default -> help();
@@ -45,6 +45,12 @@ public class GameClient{
     public String move(String... input) throws ResponseException {
         webSocketFacade.makeMove(input[0]);
         return "Move made to " + input[1];
+    }
+
+    public String leaveGame() throws Exception {
+
+
+        return "Leaving Game";
     }
 
     //save the board as we go so if the server closes or the game is over then we keep the board
