@@ -1,5 +1,6 @@
 package ui;
 import Exceptions.ResponseException;
+import model.JoinGameResponse;
 
 import java.util.Arrays;
 
@@ -11,6 +12,7 @@ public class GameClient{
     private final ServerFacade serverfacade;
     private WebSocketFacade webSocketFacade;
     private final String serverUrl;
+    private SessionManager manager = SessionManager.getInstance();
 
     public GameClient(String serverUrl) {
         this.serverfacade = ServerFacade.getInstance(serverUrl);
@@ -47,10 +49,19 @@ public class GameClient{
         return "Move made to " + input[1];
     }
 
-    public String leaveGame() throws Exception {
+    public String leaveGame() {
 
+        String team = manager.getTeam(serverfacade.getCurrentUsername());
+        int gameId = manager.getGameId(serverfacade.getCurrentUsername());
 
-        return "Leaving Game";
+        JoinGameResponse joinGameResponse = serverfacade.leaveGame(team, gameId);
+
+        if (joinGameResponse.success()){
+            return "You have left game: " + gameId;
+        }
+        else{
+            return "Failed to leave Game";
+        }
     }
 
     //save the board as we go so if the server closes or the game is over then we keep the board

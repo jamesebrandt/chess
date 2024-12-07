@@ -8,9 +8,11 @@ public class PostLoginClient {
 
     private final ServerFacade serverfacade;
     private final Map<String, Integer> listGamesMap = new HashMap<>();
+    SessionManager sessionManager;
 
     public PostLoginClient(String serverUrl){
         this.serverfacade = ServerFacade.getInstance(serverUrl);
+        this.sessionManager = SessionManager.getInstance();
     }
 
     public String eval(String inputLine){
@@ -54,7 +56,7 @@ public class PostLoginClient {
         throw new RuntimeException("Expected: <gamename>");
     }
 
-    public String listGames() throws Exception {
+    public String listGames() {
         try {
             GameListResponse gameListResponse = serverfacade.listGames();
             ArrayList<Game> gameList = gameListResponse.games();
@@ -96,7 +98,7 @@ public class PostLoginClient {
         }
     }
 
-    public String playGame(String... input) throws Exception {
+    public String playGame(String... input) {
         if (input.length < 2) {
             throw new RuntimeException("Expected: play_game <gameID> <team>");
         }
@@ -106,6 +108,9 @@ public class PostLoginClient {
         JoinGameResponse joinGameResponse = serverfacade.joinGame(team, gameId);
 
         if (joinGameResponse.success()){
+            sessionManager.setTeam(serverfacade.getCurrentUsername(), team);
+            sessionManager.setGameId(serverfacade.getCurrentUsername(), gameId);
+
             return serverfacade.getCurrentUsername() +
                     " has been added to game #" + gameId + " on " + team + " team";
         }

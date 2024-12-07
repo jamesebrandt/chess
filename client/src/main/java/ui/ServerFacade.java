@@ -143,7 +143,6 @@ public class ServerFacade {
             if (!team.equals("WHITE") && !team.equals("BLACK")) {
                 throw new RuntimeException("You must select 'WHITE' or 'BLACK' as team color");
             }
-
             currentGameId = id;
             int serverId = getGameIdHiderValue(id);
 
@@ -155,6 +154,22 @@ public class ServerFacade {
         }
     }
 
+    public JoinGameResponse leaveGame(String team, int id) {
+        try {
+            var path = "/game";
+
+            currentGameId = id;
+            int serverId = getGameIdHiderValue(id);
+
+            JoinGameRequest joinGameRequest = new JoinGameRequest(team, serverId);
+            return this.makeRequest("PUT", path, joinGameRequest, JoinGameResponse.class);
+
+
+
+        }catch (Exception e){
+            throw new RuntimeException("Unable to leave game");
+        }
+    }
 
 
     private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) {

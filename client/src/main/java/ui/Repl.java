@@ -141,7 +141,7 @@ public class Repl implements ServerMessageObserver{
             String line = scanner.nextLine();
             try {
                 result = gameClient.eval(line);
-                if (result.equals("Leaving Game")) {
+                if (result.startsWith("You have left game: ")) {
                     System.out.println(result);
                     gameState = LoopState.LOGGEDIN;
                     return;
