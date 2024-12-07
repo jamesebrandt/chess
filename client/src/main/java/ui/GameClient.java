@@ -11,9 +11,9 @@ public class GameClient{
     private final ServerFacade serverfacade;
     private final WebSocketFacade webSocketFacade;
 
-    public GameClient(String serverUrl, ServerMessageObserver serverMessageObserver) throws ResponseException {
+    public GameClient(String serverUrl, ServerMessageObserver serverMessageObserver, String auth, int gameId) throws ResponseException {
         this.serverfacade = ServerFacade.getInstance(serverUrl);
-        this.webSocketFacade = new WebSocketFacade(serverUrl, serverMessageObserver);
+        this.webSocketFacade = new WebSocketFacade(serverUrl, serverMessageObserver, auth, gameId);
     }
 
     public String eval(String inputLine) {

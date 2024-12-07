@@ -20,7 +20,7 @@ public class WebSocketFacade extends Endpoint {
 
 
     // create the websocket connection in the constructor
-    public WebSocketFacade(String url, ServerMessageObserver serverMessageObserver) throws ResponseException {
+    public WebSocketFacade(String url, ServerMessageObserver serverMessageObserver, String authToken, Integer gameID) throws ResponseException {
         try {
             url = url.replace("http", "ws");
             URI socketURI = new URI(url + "/ws");
@@ -41,6 +41,13 @@ public class WebSocketFacade extends Endpoint {
                     }
                 }
             });
+
+            UserGameCommand connectCommand = new UserGameCommand(
+                    UserGameCommand.CommandType.CONNECT, authToken, gameID
+            );
+            String commandJson = new Gson().toJson(connectCommand);
+            this.session.getAsyncRemote().sendText(commandJson);
+
         }catch (DeploymentException | IOException | URISyntaxException ex) {
             throw new ResponseException(500, ex.getMessage());
         }

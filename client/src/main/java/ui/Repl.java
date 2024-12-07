@@ -13,15 +13,22 @@ public class Repl implements ServerMessageObserver{
     private LoopState gameState;
     private ServerFacade serverFacade;
     private int currentGameId;
+    private SessionManager manager;
 
     public Repl(String serverUrl) throws ResponseException {
+
+        this.serverFacade = ServerFacade.getInstance(serverUrl); // Singleton initialization
+        this.manager = new SessionManager();
+
+        String sessionToken = manager.getSessionToken(serverFacade.getCurrentUsername());
+        this.currentGameId = 0;
+
         this.preLoginClient = new PreLoginClient(serverUrl);
         this.postLoginClient = new PostLoginClient(serverUrl);
-        this.gameClient = new GameClient(serverUrl, this);
-        this.observerClient = new ObserverClient(serverUrl, this);
+        this.gameClient = createGameClient(serverUrl, sessionToken);
+        this.observerClient = createObserverClient(serverUrl, sessionToken);
+
         this.gameState = LoopState.PRELOGIN;
-        this.serverFacade = ServerFacade.getInstance(serverUrl);
-        this.currentGameId = 0;
     }
 
     public enum LoopState {
@@ -31,6 +38,15 @@ public class Repl implements ServerMessageObserver{
         EXITING,
         OBSERVING
     }
+
+    private GameClient createGameClient(String serverUrl, String sessionToken) throws ResponseException {
+        return new GameClient(serverUrl, this, sessionToken, currentGameId);
+    }
+
+    private ObserverClient createObserverClient(String serverUrl, String sessionToken) throws ResponseException {
+        return new ObserverClient(serverUrl, this, sessionToken, currentGameId);
+    }
+
 
     public void run() {
         while (!gameState.equals(LoopState.EXITING)) {

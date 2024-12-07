@@ -12,9 +12,9 @@ public class ObserverClient {
     private final ServerFacade serverfacade;
     private final WebSocketFacade webSocketFacade;
 
-    public ObserverClient(String serverUrl, ServerMessageObserver serverMessageObserver) throws ResponseException {
+    public ObserverClient(String serverUrl, ServerMessageObserver serverMessageObserver, String auth, int gameId) throws ResponseException {
         this.serverfacade = ServerFacade.getInstance(serverUrl);
-        this.webSocketFacade = new WebSocketFacade(serverUrl, serverMessageObserver);
+        this.webSocketFacade = new WebSocketFacade(serverUrl, serverMessageObserver, auth, gameId);
     }
 
     public String eval(String inputLine) {
@@ -25,7 +25,6 @@ public class ObserverClient {
         try {
             var tokens = inputLine.toUpperCase().split(" ");
             var cmd = (tokens.length > 0) ? tokens[0] : "help";
-            var params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (cmd) {
                 case "EXIT" -> "Leaving Game";
                 case "DRAW" -> drawBoard();
