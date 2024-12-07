@@ -10,10 +10,15 @@ public class ObserverClient {
     private PrintBoard blackBoard;
 
     private final ServerFacade serverfacade;
-    private final WebSocketFacade webSocketFacade;
+    private WebSocketFacade webSocketFacade;
+    private final String serverUrl;
 
-    public ObserverClient(String serverUrl, ServerMessageObserver serverMessageObserver, String auth, int gameId) throws ResponseException {
+    public ObserverClient(String serverUrl) {
         this.serverfacade = ServerFacade.getInstance(serverUrl);
+        this.serverUrl = serverUrl;
+    }
+
+    public void connectToWebSocket(ServerMessageObserver serverMessageObserver, String auth, int gameId) throws ResponseException {
         this.webSocketFacade = new WebSocketFacade(serverUrl, serverMessageObserver, auth, gameId);
     }
 

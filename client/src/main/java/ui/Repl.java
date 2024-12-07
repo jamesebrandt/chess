@@ -15,9 +15,9 @@ public class Repl implements ServerMessageObserver{
     private int currentGameId;
     private SessionManager manager;
 
-    public Repl(String serverUrl) throws ResponseException {
+    public Repl(String serverUrl) {
 
-        this.serverFacade = ServerFacade.getInstance(serverUrl); // Singleton initialization
+        this.serverFacade = ServerFacade.getInstance(serverUrl);
         this.manager = new SessionManager();
 
         String sessionToken = manager.getSessionToken(serverFacade.getCurrentUsername());
@@ -25,8 +25,8 @@ public class Repl implements ServerMessageObserver{
 
         this.preLoginClient = new PreLoginClient(serverUrl);
         this.postLoginClient = new PostLoginClient(serverUrl);
-        this.gameClient = createGameClient(serverUrl, sessionToken);
-        this.observerClient = createObserverClient(serverUrl, sessionToken);
+        this.gameClient = new GameClient(serverUrl);
+        this.observerClient = new ObserverClient(serverUrl);
 
         this.gameState = LoopState.PRELOGIN;
     }
@@ -39,16 +39,8 @@ public class Repl implements ServerMessageObserver{
         OBSERVING
     }
 
-    private GameClient createGameClient(String serverUrl, String sessionToken) throws ResponseException {
-        return new GameClient(serverUrl, this, sessionToken, currentGameId);
-    }
 
-    private ObserverClient createObserverClient(String serverUrl, String sessionToken) throws ResponseException {
-        return new ObserverClient(serverUrl, this, sessionToken, currentGameId);
-    }
-
-
-    public void run() {
+    public void run() throws ResponseException {
         while (!gameState.equals(LoopState.EXITING)) {
             if (gameState.equals(LoopState.PRELOGIN)) {
                 preLogin();
@@ -134,7 +126,8 @@ public class Repl implements ServerMessageObserver{
         System.out.println();
     }
 
-    private void inGame() {
+    private void inGame() throws ResponseException {
+        gameClient.connectToWebSocket(this, serverFacade.getAuth(), currentGameId);
         System.out.println("In Game!");
         System.out.print(gameClient.help());
         Scanner scanner = new Scanner(System.in);
@@ -165,7 +158,10 @@ public class Repl implements ServerMessageObserver{
         }
     }
 
-    private void observing() {
+    private void observing() throws ResponseException {
+
+        observerClient.connectToWebSocket(this, serverFacade.getAuth(), currentGameId);
+
         System.out.println("Observing Game");
         System.out.print("""
                 - Draw
