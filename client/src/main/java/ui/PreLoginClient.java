@@ -7,7 +7,7 @@ import java.util.Arrays;
 public class PreLoginClient {
 
     private final ServerFacade serverFacade;
-    private SessionManager manager = new SessionManager();
+    private SessionManager manager = SessionManager.getInstance();
 
     public PreLoginClient(String serverUrl){
         this.serverFacade = ServerFacade.getInstance(serverUrl);

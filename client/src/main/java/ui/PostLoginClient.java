@@ -109,10 +109,9 @@ public class PostLoginClient {
 
         if (joinGameResponse.success()){
             sessionManager.setTeam(serverfacade.getCurrentUsername(), team);
-            sessionManager.setGameId(serverfacade.getCurrentUsername(), gameId);
+            sessionManager.setGameId(serverfacade.getCurrentUsername(), serverfacade.getGameId());
 
-            return serverfacade.getCurrentUsername() +
-                    " has been added to game #" + gameId + " on " + team + " team";
+            return " You have been added to game #" + gameId + " on " + team + " team";
         }
         else{
             return "This games spot is filled already";

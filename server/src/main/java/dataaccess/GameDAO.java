@@ -182,6 +182,24 @@ public class GameDAO {
         return gamesList;
     }
 
+    public Game getGame(int gameId)
+    {
+        String query = "SELECT gameID, gameName, whiteUserName, blackUserName, chess_board FROM chess_games";
+
+        try (var conn = DatabaseManager.getConnection();
+             var ps = conn.prepareStatement(query);
+             var rs = ps.executeQuery()) {
+
+            Game game = readGame(rs);
+            return game;
+
+        } catch (Exception e) {
+            throw new ResponseException(String.format("Unable to read data: %s", e.getMessage()));
+        }
+    }
+
+
+    }
     private Game readGame(ResultSet rs) throws SQLException {
         int gameId = rs.getInt("gameID");
         String gameName = rs.getString("gameName");

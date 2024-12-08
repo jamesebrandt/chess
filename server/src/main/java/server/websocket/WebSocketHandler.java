@@ -49,6 +49,8 @@ public class WebSocketHandler {
 
     private void makeMove(String username, UserGameCommand command, Session session){
         // get the board and make the move
+        int game = command.getGameID();
+
 
         // serialize the board and send it to each of the viewers
 

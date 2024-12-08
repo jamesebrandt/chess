@@ -18,9 +18,8 @@ public class Repl implements ServerMessageObserver{
     public Repl(String serverUrl) {
 
         this.serverFacade = ServerFacade.getInstance(serverUrl);
-        this.manager = new SessionManager();
+        this.manager = SessionManager.getInstance();
 
-        String sessionToken = manager.getSessionToken(serverFacade.getCurrentUsername());
         this.currentGameId = 0;
 
         this.preLoginClient = new PreLoginClient(serverUrl);
@@ -96,7 +95,7 @@ public class Repl implements ServerMessageObserver{
                 result = postLoginClient.eval(line);
                 String userName = serverFacade.getCurrentUsername();
 
-                if (result.equals("playing game")) {
+                if (result.startsWith(" You have been added to game")) {
                     gameState = LoopState.INGAME;
                     return;
                 } else if (result.equals("Quitting Client")) {

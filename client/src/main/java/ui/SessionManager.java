@@ -34,9 +34,7 @@ public class SessionManager {
 
     public void setGameId(String key, Integer gameId) {
         GameSession session = sessionTokens.get(key);
-        if (session != null) {
-            sessionTokens.put(key, session.withGameId(gameId));
-        }
+        sessionTokens.put(key, session.withGameId(gameId));
     }
 
     public String getTeam(String key) {

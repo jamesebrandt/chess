@@ -19,7 +19,7 @@ public class ServerFacade {
     private static ServerFacade instance;
     private String currentUsername;
     private final String serverUrl;
-    private SessionManager manager = new SessionManager();
+    private SessionManager manager;
     private final Map<Integer, Integer> gameIdHider = new HashMap<>();
     private int gameIdCount = 1;
     private int currentGameId = 0;
@@ -27,7 +27,7 @@ public class ServerFacade {
 
     public ServerFacade(String url){
         this.serverUrl = url;
-        this.manager = new SessionManager();
+        this.manager = SessionManager.getInstance();
     }
 
     public static synchronized ServerFacade getInstance(String serverUrl) {
