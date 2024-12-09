@@ -39,13 +39,54 @@ public class ServerMessage {
         return getServerMessageType() == that.getServerMessageType();
     }
 
-    @Override
-    public String toString() {
+    public String serialize() {
         return new Gson().toJson(this);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(getServerMessageType());
+    }
+
+    public static class LoadGameMessage extends ServerMessage {
+        private final Object game;
+
+        public LoadGameMessage(Object game) {
+            super(ServerMessageType.LOAD_GAME);
+            this.game = game;
+        }
+
+        public Object getGame() {
+            return game;
+        }
+    }
+
+    public static class ErrorMessage extends ServerMessage {
+        private final String errorMessage;
+
+        public ErrorMessage(String errorMessage) {
+            super(ServerMessageType.ERROR);
+            if (!errorMessage.contains("Error")) {
+                throw new IllegalArgumentException("ErrorMessage must contain the word 'Error'.");
+            }
+            this.errorMessage = errorMessage;
+        }
+
+        public String getErrorMessage() {
+            return errorMessage;
+        }
+    }
+
+    public static class NotificationMessage extends ServerMessage {
+        private final String message;
+
+        public NotificationMessage(String message) {
+            super(ServerMessageType.NOTIFICATION);
+            this.message = message;
+        }
+
+        public String getMessage() {
+            return message;
+        }
     }
 }

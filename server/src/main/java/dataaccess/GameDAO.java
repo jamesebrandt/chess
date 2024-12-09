@@ -52,12 +52,12 @@ public class GameDAO {
 
         String query = "SELECT COUNT(*) FROM chess_games WHERE gameName = ?";
 
-        try{
+        try {
             Connection conn = DatabaseManager.getConnection();
             PreparedStatement stmt = conn.prepareStatement(query);
             stmt.setString(1, tryGameName);
             ResultSet rs = stmt.executeQuery();
-            return rs.next() && rs.getInt(1)>0;
+            return rs.next() && rs.getInt(1) > 0;
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -99,12 +99,12 @@ public class GameDAO {
         }
         String query = "SELECT COUNT(*) FROM chess_games WHERE gameID = ?";
 
-        try{
+        try {
             Connection conn = DatabaseManager.getConnection();
             PreparedStatement stmt = conn.prepareStatement(query);
             stmt.setInt(1, gameID);
             ResultSet rs = stmt.executeQuery();
-            return rs.next() && rs.getInt(1)>0;
+            return rs.next() && rs.getInt(1) > 0;
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -182,8 +182,7 @@ public class GameDAO {
         return gamesList;
     }
 
-    public Game getGame(int gameId)
-    {
+    public Game getGame() {
         String query = "SELECT gameID, gameName, whiteUserName, blackUserName, chess_board FROM chess_games";
 
         try (var conn = DatabaseManager.getConnection();
@@ -198,8 +197,6 @@ public class GameDAO {
         }
     }
 
-
-    }
     private Game readGame(ResultSet rs) throws SQLException {
         int gameId = rs.getInt("gameID");
         String gameName = rs.getString("gameName");

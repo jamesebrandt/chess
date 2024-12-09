@@ -1,7 +1,7 @@
 package server.websocket;
 
 import org.eclipse.jetty.websocket.api.Session;
-import websocket.commands.UserGameCommand;
+import websocket.messages.ServerMessage;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -19,12 +19,12 @@ public class ConnectionManager {
         connections.remove(username);
     }
 
-    public void broadcast(String excludeUserName, UserGameCommand userGameCommand) throws IOException {
+    public void broadcast(String excludeUserName, ServerMessage serverMessage) throws IOException {
         var removeList = new ArrayList<Connection>();
         for (var c : connections.values()) {
             if (c.session.isOpen()) {
                 if (!c.username.equals(excludeUserName)) {
-                    c.send(userGameCommand.toString());
+                    c.send(ServerMessage.serialize());
                 }
             } else {
                 removeList.add(c);
