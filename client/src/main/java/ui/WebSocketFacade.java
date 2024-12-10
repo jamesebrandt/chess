@@ -37,7 +37,9 @@ public class WebSocketFacade extends Endpoint {
                         ServerMessage serverMessage = new Gson().fromJson(message, ServerMessage.class);
                         serverMessageObserver.notify(serverMessage);
                     }catch (Exception e){
-                        serverMessageObserver.notify(new ServerMessage(ServerMessage.ServerMessageType.ERROR));
+                        serverMessageObserver.notify(new ServerMessage(null,
+                                "ERROR: Failed to Receive Websocket connection in the Facade/Client",
+                                ServerMessage.ServerMessageType.ERROR));
                     }
                 }
             });
@@ -64,12 +66,13 @@ public class WebSocketFacade extends Endpoint {
         }
     }
 
-    public void leave(String auth, int gameID) throws ResponseException {
+    public boolean leave(String auth, int gameID) throws ResponseException {
         try {
-            var command = new UserGameCommand(UserGameCommand.CommandType.LEAVE, auth, gameID);
+            var command = new UserGameCommand(UserGameCommand.CommandType.LEAVE, auth, serverFacade.getGameIdHiderValue(gameID));
             this.session.getBasicRemote().sendText(new Gson().toJson(command));
-        } catch (IOException ex) {
-            throw new ResponseException(500, ex.getMessage());
+            return true;
+        } catch (Exception e) {
+            return false;
         }
     }
 

@@ -1,6 +1,7 @@
 package ui;
 import Exceptions.ResponseException;
 import model.JoinGameResponse;
+import websocket.commands.UserGameCommand;
 
 import java.util.Arrays;
 
@@ -49,18 +50,13 @@ public class GameClient{
         return "Move made to " + input[1];
     }
 
-    public String leaveGame() {
-
-        String team = manager.getTeam(serverfacade.getCurrentUsername());
-        int gameId = manager.getGameId(serverfacade.getCurrentUsername());
-
-        JoinGameResponse joinGameResponse = serverfacade.leaveGame(team, gameId);
-
-        if (joinGameResponse.success()){
-            return "You have left game: " + gameId;
+    public String leaveGame() throws ResponseException {
+        boolean success = webSocketFacade.leave(serverfacade.getAuth(), manager.getGameId(serverfacade.getCurrentUsername()));
+        if (success){
+            return "Left the Game";
         }
-        else{
-            return "Failed to leave Game";
+        else {
+            return "ERROR: leaving the game failed";
         }
     }
 

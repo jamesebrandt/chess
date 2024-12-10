@@ -140,7 +140,7 @@ public class Repl implements ServerMessageObserver{
             String line = scanner.nextLine();
             try {
                 result = gameClient.eval(line);
-                if (result.startsWith("You have left game: ")) {
+                if (result.startsWith("Left the Game")) {
                     System.out.println(result);
                     gameState = LoopState.LOGGEDIN;
                     return;
@@ -206,7 +206,8 @@ public class Repl implements ServerMessageObserver{
     }
 
     private void displayNotification(ServerMessage message){
-        System.out.print("Notification: " + message.toString());
+        System.out.println();
+        System.out.println("Notification: " + message.serialize());
     }
 
     private void loadGame(ServerMessage message){

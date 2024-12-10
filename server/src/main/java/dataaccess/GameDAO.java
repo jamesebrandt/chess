@@ -162,6 +162,55 @@ public class GameDAO {
         }
     }
 
+    public void removeUser(JoinGameRequest req) {
+        String query;
+        if (req.playerColor().equals("WHITE")) {
+            query = "UPDATE chess_games SET whiteUserName = NULL WHERE gameID = ?";
+        } else {
+            query = "UPDATE chess_games SET blackUserName = NULL WHERE gameID = ?";
+        }
+        try {
+            Connection conn = DatabaseManager.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(query);
+            stmt.setString(1, String.valueOf(req.gameID()));
+            stmt.executeUpdate();
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public String getTeamColor(String username) {
+        String query = "SELECT CASE " +
+                "WHEN whiteUserName = ? THEN 'WHITE' " +
+                "WHEN blackUserName = ? THEN 'BLACK' " +
+                "ELSE NULL END AS teamColor " +
+                "FROM chess_games " +
+                "WHERE whiteUserName = ? OR blackUserName = ?";
+
+        try (Connection conn = DatabaseManager.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            // Set the username parameter for all placeholders
+            stmt.setString(1, username);
+            stmt.setString(2, username);
+            stmt.setString(3, username);
+            stmt.setString(4, username);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("teamColor");
+                }
+            }
+        } catch (SQLException | DataAccessException e) {
+            throw new RuntimeException("Failed to get team color for username: " + username, e);
+        }
+
+        return null;
+    }
+
+
 
     public ArrayList<Game> listGames() {
 

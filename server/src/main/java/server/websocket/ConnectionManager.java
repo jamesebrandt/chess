@@ -24,7 +24,7 @@ public class ConnectionManager {
         for (var c : connections.values()) {
             if (c.session.isOpen()) {
                 if (!c.username.equals(excludeUserName)) {
-                    c.send(ServerMessage.serialize());
+                    c.send(serverMessage.serialize());
                 }
             } else {
                 removeList.add(c);

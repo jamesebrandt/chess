@@ -64,12 +64,6 @@ public class Server {
            return joinGameHandler.handle(req, res);
         });
 
-        //leave game
-        put("/game", (req, res) -> {
-            LeaveGameHandler leaveGameHandler = new LeaveGameHandler();
-            return leaveGameHandler.handle(req, res);
-        });
-
         Spark.awaitInitialization();
         return Spark.port();
     }

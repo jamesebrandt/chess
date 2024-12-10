@@ -2,6 +2,8 @@ package server.websocket;
 
 import com.google.gson.Gson;
 import dataaccess.AuthDAO;
+import dataaccess.GameDAO;
+import model.JoinGameRequest;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
@@ -16,6 +18,7 @@ public class WebSocketHandler {
     private final ConnectionManager connections = new ConnectionManager();
     Gson gson = new Gson();
     AuthDAO authDAO = AuthDAO.getInstance();
+    GameDAO gameDAO = GameDAO.getInstance();
 
     @OnWebSocketMessage
     public void onMessage(Session session, String msg) {
@@ -39,7 +42,9 @@ public class WebSocketHandler {
             //connect to game
             connections.add(username, command.getAuthToken(), command.getGameID(), session);
             //notify all others in the game that they joined
-            ServerMessage message = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
+            ServerMessage message = new ServerMessage(null,
+                    "Connecting to Game: "+ command.getGameID(),
+                    ServerMessage.ServerMessageType.NOTIFICATION);
             connections.broadcast(username, message);
             //send error messages if invalid inputs
         }
@@ -60,6 +65,11 @@ public class WebSocketHandler {
     }
 
     private void leaveGame(String username, UserGameCommand command, Session session){
+        int gameId = command.getGameID();
+        String user = authDAO.getUser(command.getAuthToken());
+
+        gameDAO.removeUser(new JoinGameRequest(gameDAO.getTeamColor(user), gameId));
+
     }
 
     private void resign(String username, UserGameCommand command, Session session){
