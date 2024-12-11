@@ -35,14 +35,23 @@ public class WebSocketHandler {
     @OnWebSocketMessage
     public void onMessage(Session session, String msg) {
         try {
-            UserGameCommand command = gson.fromJson(msg, UserGameCommand.class);
-            String username = authDAO.getUser(command.getAuthToken());
+            UserGameCommand genericCommand = gson.fromJson(msg, UserGameCommand.class);
+            String username = authDAO.getUser(genericCommand.getAuthToken());
 
-            switch (command.getCommandType()) {
-                case CONNECT -> connect(username, command, session);
-                case MAKE_MOVE -> makeMove((MakeMoveCommand) command, session);
-                case LEAVE -> leaveGame(username, (LeaveCommand) command, session);
-                case RESIGN -> resign(username, (ResignCommand) command, session);
+            switch (genericCommand.getCommandType()) {
+                case CONNECT -> connect(username, genericCommand, session);
+                case MAKE_MOVE -> {
+                    MakeMoveCommand makeMoveCommand = gson.fromJson(msg, MakeMoveCommand.class);
+                    makeMove(makeMoveCommand, session);
+                }
+                case LEAVE -> {
+                    LeaveCommand leaveCommand = gson.fromJson(msg, LeaveCommand.class);
+                    leaveGame(leaveCommand);
+                }
+                case RESIGN -> {
+                    ResignCommand resignCommand = gson.fromJson(msg, ResignCommand.class);
+                    resign(username, resignCommand, session);
+                }
             }
 
             } catch (IllegalArgumentException e) {
@@ -146,14 +155,14 @@ public class WebSocketHandler {
     }
 
 
-    private void leaveGame(String username, UserGameCommand command, Session session){
+    private void leaveGame(LeaveCommand command){
         int gameId = command.getGameID();
         String user = authDAO.getUser(command.getAuthToken());
         gameDAO.removeUser(new JoinGameRequest(gameDAO.getTeamColor(user), gameId));
     }
 
 
-    private void resign(String username, UserGameCommand command, Session session) {
+    private void resign(String username, ResignCommand command, Session session) {
         try {
             // Retrieve the game record from the database
             Game gameRecord = gameDAO.getGame(command.getGameID());
