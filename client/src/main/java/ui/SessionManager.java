@@ -48,4 +48,10 @@ public class SessionManager {
             sessionTokens.put(key, session.withTeam(team));
         }
     }
+
+    //Change your session manager to like a game cash object that just holds all the data for each game.
+    // Then use the singleton pattern to deliver it to each object.
+    // just have each of the data points be variables in the data cache and use getters and setters to change them
+
+
 }

@@ -8,8 +8,6 @@ public class PrintBoard {
 
     public PrintBoard(Boolean isWhitePerspective){
         board = new String[10][10];
-        initializeBoard(isWhitePerspective);
-
     }
 
     private void initializeBoard(Boolean isWhitePerspective){
@@ -100,6 +98,14 @@ public class PrintBoard {
 
         for (int i = 1; i < 9; i++){
             board[7][i] = EscapeSequences.WHITE_PAWN;
+        }
+    }
+
+    public void setBoard(String[][] customBoard) {
+        if (customBoard.length == 10 && customBoard[0].length == 10) {
+            this.board = customBoard;
+        } else {
+            throw new IllegalArgumentException("Custom board must be 10x10.");
         }
     }
 

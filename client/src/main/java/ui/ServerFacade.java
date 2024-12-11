@@ -25,7 +25,7 @@ public class ServerFacade {
     private int currentGameId = 0;
 
 
-    public ServerFacade(String url){
+    private ServerFacade(String url){
         this.serverUrl = url;
         this.manager = SessionManager.getInstance();
     }
