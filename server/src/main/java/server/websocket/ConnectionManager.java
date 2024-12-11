@@ -1,6 +1,7 @@
 package server.websocket;
 
 import org.eclipse.jetty.websocket.api.Session;
+import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
 
 import java.io.IOException;
@@ -19,21 +20,23 @@ public class ConnectionManager {
         connections.remove(username);
     }
 
-    public void broadcast(String excludeUserName, ServerMessage serverMessage) throws IOException {
+    public void broadcast(String excludeUserName, NotificationMessage notificationMessage) throws IOException {
         var removeList = new ArrayList<Connection>();
         for (var c : connections.values()) {
             if (c.session.isOpen()) {
                 if (!c.username.equals(excludeUserName)) {
-                    c.send(serverMessage.serialize());
+                    System.out.println("Sending message: " + notificationMessage.toJson());
+                    c.send(notificationMessage.toJson());
                 }
             } else {
                 removeList.add(c);
             }
         }
-
-        // Clean up any connections that were left open.
-        for (var c : removeList) {
-            connections.remove(c.username);
-        }
+        connections.values().removeAll(removeList);
     }
+//        // Clean up any connections that were left open.
+//        for (var c : removeList) {
+//            connections.remove(c.username);
+//        }
+//    }
 }

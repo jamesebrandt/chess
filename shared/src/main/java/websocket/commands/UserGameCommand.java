@@ -1,5 +1,6 @@
 package websocket.commands;
 
+import chess.ChessMove;
 import com.google.gson.Gson;
 
 import java.util.Objects;
@@ -18,9 +19,9 @@ import java.util.Objects;
 
         private final Integer gameID;
 
-        private final String move;
+        private final ChessMove move;
 
-        public UserGameCommand(websocket.commands.UserGameCommand.CommandType commandType, String authToken, Integer gameID, String move) {
+        public UserGameCommand(websocket.commands.UserGameCommand.CommandType commandType, String authToken, Integer gameID, ChessMove move) {
             this.commandType = commandType;
             this.authToken = authToken;
             this.gameID = gameID;

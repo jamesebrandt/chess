@@ -1,15 +1,21 @@
 package server.websocket;
 
+import chess.ChessGame;
 import com.google.gson.Gson;
 import dataaccess.AuthDAO;
 import dataaccess.GameDAO;
+import model.Game;
 import model.JoinGameRequest;
 import org.eclipse.jetty.websocket.api.Session;
+import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketError;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import websocket.commands.UserGameCommand;
+import websocket.messages.LoadGameMessage;
+import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
+import websocket.messages.ServerMessageError;
 
 import java.io.IOException;
 
@@ -17,9 +23,9 @@ import java.io.IOException;
 public class WebSocketHandler {
 
     private final ConnectionManager connections = new ConnectionManager();
-    Gson gson = new Gson();
-    AuthDAO authDAO = AuthDAO.getInstance();
-    GameDAO gameDAO = GameDAO.getInstance();
+    private final Gson gson = new Gson();
+    private final AuthDAO authDAO = AuthDAO.getInstance();
+    private final GameDAO gameDAO = GameDAO.getInstance();
 
     @OnWebSocketMessage
     public void onMessage(Session session, String msg) {
@@ -45,70 +51,70 @@ public class WebSocketHandler {
 
     private void sendErrorMessage(Session session, String errorMsg) {
         try {
-            ServerMessage errorMessage = new ServerMessage(
-                    null,
-                    errorMsg,
-                    ServerMessage.ServerMessageType.ERROR
-            );
-            session.getRemote().sendString(gson.toJson(errorMessage));
+            ServerMessageError serverMessageError = new ServerMessageError("ERROR: In WebSocketHandler");
+            session.getRemote().sendString(gson.toJson(serverMessageError));
         } catch (IOException e) {
             System.err.println("Failed to send error message: " + errorMsg);
             e.printStackTrace();
         }
     }
 
-    @OnWebSocketError
-    public void onError(Session session, Throwable throwable) {
-        System.err.println("WebSocket error for session: " + session.getRemoteAddress());
-        throwable.printStackTrace();
-        try {
-            if (session != null && session.isOpen()) {
-                ServerMessage errorMessage = new ServerMessage(
-                        null,
-                        "An error occurred: " + throwable.getMessage(),
-                        ServerMessage.ServerMessageType.ERROR
-                );
-                session.getRemote().sendString(gson.toJson(errorMessage));
-            }
-        } catch (IOException e) {
-            System.err.println("Failed to send error message to client.");
-            e.printStackTrace();
-        }
+    @OnWebSocketClose
+    public void onClose(Session session, int statusCode, String reason) {
+        System.out.println("WebSocket closed: " + reason + " (code " + statusCode + ")");
     }
-
 
     private void connect(String username, UserGameCommand command, Session session) throws IOException {
         try {
 
             // Validate auth token
-            if (!authDAO.isValidToken(username)) {
-                ServerMessage errorMessage = new ServerMessage(null, "invalid Auth", ServerMessage.ServerMessageType.ERROR);
+            if (!authDAO.isValidToken(command.getAuthToken())) {
+                ServerMessageError serverMessageError = new ServerMessageError("Invalid Auth Token");
+                session.getRemote().sendString(serverMessageError.toJson());
             }
-
             // Validate game ID
-            if (!gameDAO.isValidGameID(command.getGameID())) {
-                throw new IllegalArgumentException("Invalid game ID: " + command.getGameID());
+            else if (!gameDAO.isValidGameID(command.getGameID())) {
+                ServerMessageError serverMessageError = new ServerMessageError("Invalid Game Id");
+                session.getRemote().sendString(serverMessageError.toJson());
             }
+            else {
+                //connect to game
+                connections.add(username, command.getAuthToken(), command.getGameID(), session);
+                Game game = gameDAO.getGame(command.getGameID());
 
-            //connect to game
-            connections.add(username, command.getAuthToken(), command.getGameID(), session);
-            //notify all others in the game that they joined
-            ServerMessage message = new ServerMessage(null,
-                    "Connecting to Game: "+ command.getGameID(),
-                    ServerMessage.ServerMessageType.NOTIFICATION);
-            connections.broadcast(username, message);
+                //notify all others in the game that they joined
+                NotificationMessage notificationMessage = new NotificationMessage(username + " Has Joined game " + game.gameName());
+                connections.broadcast(username, notificationMessage);
+
+                // send load game message
+                LoadGameMessage loadGameMessage = new LoadGameMessage(game);
+                session.getRemote().sendString(loadGameMessage.toJson()); // Send load game message to the connecting player
+            }
             //send error messages if invalid inputs
-        }
-        catch (IOException e){
+        } catch (IOException e) {
             throw new IOException(e);
+        } catch (IllegalArgumentException e) {
+            ServerMessageError serverMessageError = new ServerMessageError(e.getMessage());
+            session.getRemote().sendString(serverMessageError.toJson());
         }
     }
 
-    private void makeMove(String username, UserGameCommand command, Session session){
+    private void makeMove(String username, UserGameCommand command, Session session) throws IOException {
         // get the board and make the move
+
+        ChessGame theGame = gson.fromJson(gameDAO.getGame(command.getGameID()));
+
+        Game currentGame = gameDAO.getGame(command.getGameID());
+        //Game afterMove = currentGame.game().makeMove();
 
 
         // serialize the board and send it to each of the viewers
+
+//        ServerMessage message = new ServerMessage(afterMove,
+//                username +" has made a move " + command.getGameID(),
+//                ServerMessage.ServerMessageType.LOAD_GAME);
+//        connections.broadcast(username, message);
+
 
         // save the board in the database
 
@@ -117,11 +123,16 @@ public class WebSocketHandler {
     private void leaveGame(String username, UserGameCommand command, Session session){
         int gameId = command.getGameID();
         String user = authDAO.getUser(command.getAuthToken());
-
         gameDAO.removeUser(new JoinGameRequest(gameDAO.getTeamColor(user), gameId));
-
     }
 
     private void resign(String username, UserGameCommand command, Session session){
+        //notify the winner/ loser/ observer
+
+
+        // end the game
+
+
+        //gameDAO.
     }
 }

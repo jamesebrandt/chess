@@ -14,9 +14,7 @@ import java.util.Objects;
  * methods.
  */
 public class ServerMessage {
-    ServerMessageType serverMessageType;
-    Game chessGame;
-    String serverMessage;
+    private final ServerMessageType serverMessageType;
 
     public enum ServerMessageType {
         LOAD_GAME,
@@ -24,21 +22,15 @@ public class ServerMessage {
         NOTIFICATION
     }
 
-    public ServerMessage(Game game, String message, ServerMessageType type) {
-        this.chessGame = game;
-        this.serverMessage = message;
+    public ServerMessage(ServerMessageType type) {
+
         this.serverMessageType = type;
     }
 
     public ServerMessageType getServerMessageType() {
         return this.serverMessageType;
     }
-    public Game getServerMessageGame() {
-        return this.chessGame;
-    }
-    public String getServerMessage() {
-        return serverMessage;
-    }
+
 
 
     @Override
@@ -53,10 +45,13 @@ public class ServerMessage {
         return getServerMessageType() == that.getServerMessageType();
     }
 
-    public String serialize() {
+    public String toJson() {
         return new Gson().toJson(this);
     }
 
+    public static NotificationMessage fromJson(String json) {
+        return new Gson().fromJson(json, NotificationMessage.class);
+    }
     @Override
     public int hashCode() {
         return Objects.hash(getServerMessageType());

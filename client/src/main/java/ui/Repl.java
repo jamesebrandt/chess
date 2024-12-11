@@ -2,7 +2,11 @@ package ui;
 
 import Exceptions.ResponseException;
 import model.Game;
+import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
+import websocket.messages.LoadGameMessage;
+import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
+import websocket.messages.ServerMessageError;
 
 import java.util.Scanner;
 
@@ -200,30 +204,67 @@ public class Repl implements ServerMessageObserver{
     }
 
     private void printPrompt() {
-        System.out.print("\n>>> ");
+        System.out.print("\n---> ");
     }
 
     @Override
     public void notify(ServerMessage message) {
-        switch (message.getServerMessageType()){
-            case NOTIFICATION -> displayNotification(message);
-            case LOAD_GAME -> loadGame(message);
-            case ERROR -> displayError(message);
+        if (message == null) {
+            System.err.println("Received null message.");
+            return;
+        }
+        System.out.println("Received message: " + message.toJson());
+        switch (message.getServerMessageType()) {
+            case NOTIFICATION -> {
+                if (message instanceof NotificationMessage notificationMessage) {
+                    displayNotification(notificationMessage);
+                } else {
+                    System.err.println("Message type mismatch for NOTIFICATION");
+                }
+            }
+            case LOAD_GAME -> {
+                if (message instanceof LoadGameMessage loadGameMessage) {
+                    loadGame(loadGameMessage);
+                } else {
+                    System.err.println("Message type mismatch for LOAD_GAME");
+                }
+            }
+            case ERROR -> {
+                if (message instanceof ServerMessageError errorMessage) {
+                    displayError(errorMessage);
+                } else {
+                    System.err.println("Message type mismatch for ERROR");
+                }
+            }
         }
     }
 
-    private void displayNotification(ServerMessage message) {
-        System.out.println("\n[" + message.getServerMessageType() + "] " + message.getServerMessage());
+    private void displayNotification(NotificationMessage message) {
+        System.out.println("\n[" + message.getServerMessageType() + "] " + message.getMessage());
         printBoard.drawBoard();
     }
 
-    private void loadGame(ServerMessage message){
-        Game updatedGame = message.getServerMessageGame();
+    private void loadGame(LoadGameMessage message){
+        Game updatedGame = message.getGame();
+
+        if (updatedGame == null || updatedGame.game().getBoard() == null) {
+            System.err.println("Invalid game data in LoadGameMessage.");
+            return;
+        }
+        printBoard.setBoard(updatedGame.game().getBoard());
+        printBoard.drawBoard();
+
         printBoard.setBoard(updatedGame.game().getBoard());
         printBoard.drawBoard();
     }
 
-    private void displayError(ServerMessage message){
-        System.out.print("ERROR: " + message.toString());
+    private void displayError(ServerMessageError message) {
+        System.err.println("ERROR: " + message.toString());
     }
+
+    @OnWebSocketClose
+    public void onClose(int statusCode, String reason) {
+        System.out.println("WebSocket closed: " + reason + " (code " + statusCode + ")");
+    }
+
 }

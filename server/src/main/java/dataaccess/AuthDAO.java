@@ -12,7 +12,6 @@ import java.sql.SQLException;
 public class AuthDAO {
 
     private final Map<String, String> authTokens = new HashMap<>();
-
     private static AuthDAO instance = null;
 
     private AuthDAO() {}
@@ -26,6 +25,7 @@ public class AuthDAO {
     public boolean isValidToken(String token){
         String query = "SELECT COUNT(*) FROM auth_tokens WHERE token = ?";
         try{
+
             Connection conn = DatabaseManager.getConnection();
             PreparedStatement stmt = conn.prepareStatement(query);
             stmt.setString(1, token);
@@ -74,12 +74,6 @@ public class AuthDAO {
             throw new RuntimeException(e);
         }
         return token;
-    }
-
-
-
-    public int getAuthListSize(){
-        return authTokens.size();
     }
 
 

@@ -1,6 +1,10 @@
 package ui;
 
 import Exceptions.ResponseException;
+import chess.ChessGame;
+import chess.ChessMove;
+import chess.ChessPosition;
+import chess.InvalidMoveException;
 import com.google.gson.Gson;
 import model.Game;
 import websocket.commands.UserGameCommand;
@@ -18,6 +22,7 @@ public class WebSocketFacade extends Endpoint {
     ServerMessageObserver serverMessageObserver;
     ServerFacade serverFacade;
     Game updatedGame;
+    ChessGame chessGame;
 
 
     // create the websocket connection in the constructor
@@ -31,6 +36,8 @@ public class WebSocketFacade extends Endpoint {
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
             this.session = container.connectToServer(this, socketURI);
 
+            this.chessGame = new ChessGame();
+
             this.session.addMessageHandler(new MessageHandler.Whole<String>() {
                 @Override
                 public void onMessage(String message) {
@@ -39,9 +46,7 @@ public class WebSocketFacade extends Endpoint {
                         serverMessageObserver.notify(serverMessage);
 
                     }catch (Exception e){
-                        serverMessageObserver.notify(new ServerMessage(null,
-                                "ERROR: Failed to Receive Websocket connection in the Facade/Client",
-                                ServerMessage.ServerMessageType.ERROR));
+                        serverMessageObserver.notify(new ServerMessage(ServerMessage.ServerMessageType.ERROR));
                     }
                 }
             });
@@ -59,14 +64,27 @@ public class WebSocketFacade extends Endpoint {
 
     public void makeMove(String move) throws ResponseException {
         try {
+            // read the input string and translate to ChessMove
+            int startRow = move.charAt(0);
+            int startCol = move.charAt(1);
+
+            ChessPosition startPosition = new ChessPosition(startRow, startCol);
+
+            int endRow = move.charAt(2);
+            int endCol = move.charAt(3);
+
+            ChessPosition endPosition = new ChessPosition(startRow, startCol);
+            ChessMove chessMove = new ChessMove(startPosition, endPosition, null);
+
             // test if the move is valid locally before making the request
-
-
-
-            var command = new UserGameCommand(UserGameCommand.CommandType.MAKE_MOVE, serverFacade.getAuth(), serverFacade.getGameId(), move);
+            chessGame.makeMove(chessMove);
+            //
+            var command = new UserGameCommand(UserGameCommand.CommandType.MAKE_MOVE, serverFacade.getAuth(), serverFacade.getGameId());
             this.session.getBasicRemote().sendText(new Gson().toJson(command));
         } catch (IOException ex) {
             throw new ResponseException(500, ex.getMessage());
+        } catch (InvalidMoveException e) {
+            throw new RuntimeException(e);
         }
     }
 

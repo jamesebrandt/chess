@@ -15,7 +15,6 @@ import java.sql.SQLException;
 public class GameDAO {
 
     private static GameDAO instance = null;
-
     private final AuthDAO authDAO = AuthDAO.getInstance();
 
     private GameDAO() {
@@ -231,20 +230,29 @@ public class GameDAO {
         return gamesList;
     }
 
-    public Game getGame() {
-        String query = "SELECT gameID, gameName, whiteUserName, blackUserName, chess_board FROM chess_games";
+    public Game getGame(int gameID) {
+        String query = "SELECT gameID, gameName, whiteUserName, blackUserName, chess_board FROM chess_games WHERE gameID = ?";
 
         try (var conn = DatabaseManager.getConnection();
-             var ps = conn.prepareStatement(query);
-             var rs = ps.executeQuery()) {
+             var ps = conn.prepareStatement(query)) {
 
-            Game game = readGame(rs);
-            return game;
+            // Set the gameID parameter
+            ps.setInt(1, gameID);
+
+            try (var rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    // Call a helper method to map the result set to a Game object
+                    return readGame(rs);
+                } else {
+                    throw new ResponseException(String.format("Game with ID %d not found.", gameID));
+                }
+            }
 
         } catch (Exception e) {
             throw new ResponseException(String.format("Unable to read data: %s", e.getMessage()));
         }
     }
+
 
     private Game readGame(ResultSet rs) throws SQLException {
         int gameId = rs.getInt("gameID");
@@ -263,4 +271,6 @@ public class GameDAO {
         Integer randomNumber = 10000000 + random.nextInt(90000000); // Range: 10,000,000 to 99,999,999
         return randomNumber;
     }
+
+
 }

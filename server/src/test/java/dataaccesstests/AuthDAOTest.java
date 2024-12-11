@@ -19,7 +19,7 @@ class AuthDAOTest {
 
     @BeforeEach
     public void setUp() {
-        deleteAll();
+        authDAO.deleteAll();
     }
 
     @Test
@@ -31,14 +31,6 @@ class AuthDAOTest {
         assertTrue(authDAO.isValidToken(token));
     }
 
-    @Test
-    void deleteAll() {
-        authDAO.generateToken("TestUser1");
-        authDAO.generateToken("TestUser2");
-        authDAO.generateToken("TestUser3");
-        authDAO.deleteAll();
-        Assertions.assertEquals(0, authDAO.getAuthListSize());
-    }
 
     @Test
     void generateToken() {
@@ -113,7 +105,6 @@ class AuthDAOTest {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        deleteAll();
     }
 
 
