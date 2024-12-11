@@ -2,7 +2,6 @@ package ui;
 
 import Exceptions.ResponseException;
 import model.Game;
-import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
 import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
