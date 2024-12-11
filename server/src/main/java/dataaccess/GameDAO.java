@@ -259,7 +259,6 @@ public class GameDAO {
         String gameName = rs.getString("gameName");
         String whiteUserName = rs.getString("whiteUserName");
         String blackUserName = rs.getString("blackUserName");
-
         String chessBoardJson = rs.getString("chess_board");
         ChessGame chessBoard = new Gson().fromJson(chessBoardJson, ChessGame.class);
 

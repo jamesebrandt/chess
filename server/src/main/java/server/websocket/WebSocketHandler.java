@@ -1,6 +1,7 @@
 package server.websocket;
 
 import chess.ChessGame;
+import chess.ChessMove;
 import com.google.gson.Gson;
 import dataaccess.AuthDAO;
 import dataaccess.GameDAO;
@@ -102,9 +103,10 @@ public class WebSocketHandler {
     private void makeMove(String username, UserGameCommand command, Session session) throws IOException {
         // get the board and make the move
 
-        ChessGame theGame = gson.fromJson(gameDAO.getGame(command.getGameID()));
+        Game chessGame = gameDAO.getGame(command.getGameID());
 
-        Game currentGame = gameDAO.getGame(command.getGameID());
+        chessGame.game().makeMove(new ChessMove());
+
         //Game afterMove = currentGame.game().makeMove();
 
 

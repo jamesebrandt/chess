@@ -34,9 +34,4 @@ public class ConnectionManager {
         }
         connections.values().removeAll(removeList);
     }
-//        // Clean up any connections that were left open.
-//        for (var c : removeList) {
-//            connections.remove(c.username);
-//        }
-//    }
 }
