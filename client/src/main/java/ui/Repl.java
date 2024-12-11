@@ -1,6 +1,7 @@
 package ui;
 
 import Exceptions.ResponseException;
+import model.Game;
 import websocket.messages.ServerMessage;
 
 import java.util.Scanner;
@@ -14,11 +15,13 @@ public class Repl implements ServerMessageObserver{
     private ServerFacade serverFacade;
     private int currentGameId;
     private SessionManager manager;
+    private PrintBoard printBoard;
 
     public Repl(String serverUrl) {
 
         this.serverFacade = ServerFacade.getInstance(serverUrl);
         this.manager = SessionManager.getInstance();
+        this.printBoard = new PrintBoard(serverFacade.getCurrentUsername());
 
         this.currentGameId = 0;
 
@@ -211,7 +214,9 @@ public class Repl implements ServerMessageObserver{
     }
 
     private void loadGame(ServerMessage message){
-
+        Game updatedGame = message.getServerMessageGame();
+        printBoard.setBoard(updatedGame.game().getBoard());
+        printBoard.drawBoard();
     }
 
     private void displayError(ServerMessage message){

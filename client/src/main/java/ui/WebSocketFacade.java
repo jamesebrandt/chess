@@ -1,8 +1,10 @@
 package ui;
 
 import Exceptions.ResponseException;
+import chess.ChessBoard;
 import com.google.gson.Gson;
 import com.sun.nio.sctp.NotificationHandler;
+import model.Game;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ServerMessage;
 
@@ -17,6 +19,7 @@ public class WebSocketFacade extends Endpoint {
     Session session;
     ServerMessageObserver serverMessageObserver;
     ServerFacade serverFacade;
+    Game updatedGame;
 
 
     // create the websocket connection in the constructor
@@ -36,6 +39,7 @@ public class WebSocketFacade extends Endpoint {
                     try {
                         ServerMessage serverMessage = new Gson().fromJson(message, ServerMessage.class);
                         serverMessageObserver.notify(serverMessage);
+
                     }catch (Exception e){
                         serverMessageObserver.notify(new ServerMessage(null,
                                 "ERROR: Failed to Receive Websocket connection in the Facade/Client",

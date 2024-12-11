@@ -1,14 +1,12 @@
 package ui;
 import Exceptions.ResponseException;
-import model.JoinGameResponse;
-import websocket.commands.UserGameCommand;
+import chess.ChessBoard;
 
 import java.util.Arrays;
 
 public class GameClient{
 
-    private PrintBoard whiteBoard;
-    private PrintBoard blackBoard;
+    private PrintBoard board;
 
     private final ServerFacade serverfacade;
     private WebSocketFacade webSocketFacade;
@@ -26,8 +24,7 @@ public class GameClient{
 
     public String eval(String inputLine) {
 
-        whiteBoard = new PrintBoard(true);
-        blackBoard = new PrintBoard(false);
+        board = new PrintBoard(serverfacade.getCurrentUsername());
 
         try {
             var tokens = inputLine.toUpperCase().split(" ");
@@ -62,12 +59,9 @@ public class GameClient{
 
     //save the board as we go so if the server closes or the game is over then we keep the board
 
-    public String drawBoard(String... input){
-        whiteBoard.drawBoard();
-        System.out.println();
-        blackBoard.drawBoard();
-
-        return "Both Boards Drawn";
+    public String drawBoard(){
+        board.drawBoard();
+        return "Chess Board";
     }
 
     public String help() {

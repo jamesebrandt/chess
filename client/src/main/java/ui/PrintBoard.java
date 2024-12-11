@@ -1,180 +1,90 @@
 package ui;
 
-import java.util.Objects;
+import chess.ChessBoard;
+import chess.ChessGame;
+import chess.ChessPiece;
+import chess.ChessPosition;
 
 public class PrintBoard {
 
-    private String[][] board;
+    private ChessBoard board;
+    private boolean isWhitePerspective;
+    private SessionManager manager;
 
-    public PrintBoard(Boolean isWhitePerspective){
-        board = new String[10][10];
+    public PrintBoard(String userName) {
+        this.board = new ChessBoard();
+        this.manager = SessionManager.getInstance();
+        this.board.resetBoard(); // Initialize the default starting position
+
+        this.isWhitePerspective = manager.getTeam(userName).equals("WHITE");
     }
 
-    private void initializeBoard(Boolean isWhitePerspective){
-        if (isWhitePerspective){
-            initializeWhiteBoard();
-        }
-        else{
-            initializeBlackBoard();
-        }
-    }
+    public void PrintBoardForObserver(){
 
-
-    private void initializeWhiteBoard(){
-
-        for (int i = 1; i < 9; i++) {
-            board[0][i] = " " + (char)('H' - i + 1) + " ";
-            board[9][i] = " " + (char)('H' - i + 1) + " ";
-        }
-
-        for (int i = 1; i < 9; i++) {
-            int numb = 9-i;
-            board[i][0] = " " + numb + " ";
-            board[i][9] = " " + numb + " ";
-        }
-
-        board[1][1] = EscapeSequences.WHITE_ROOK;
-        board[1][2] = EscapeSequences.WHITE_KNIGHT;
-        board[1][3] = EscapeSequences.WHITE_BISHOP;
-        board[1][4] = EscapeSequences.WHITE_QUEEN;
-        board[1][5] = EscapeSequences.WHITE_KING;
-        board[1][6] = EscapeSequences.WHITE_BISHOP;
-        board[1][7] = EscapeSequences.WHITE_KNIGHT;
-        board[1][8] = EscapeSequences.WHITE_ROOK;
-
-        for (int i = 1; i < 9; i++){
-            board[2][i] = EscapeSequences.WHITE_PAWN;
-        }
-
-        board[8][1] = EscapeSequences.BLACK_ROOK;
-        board[8][2] = EscapeSequences.BLACK_KNIGHT;
-        board[8][3] = EscapeSequences.BLACK_BISHOP;
-        board[8][4] = EscapeSequences.BLACK_QUEEN;
-        board[8][5] = EscapeSequences.BLACK_KING;
-        board[8][6] = EscapeSequences.BLACK_BISHOP;
-        board[8][7] = EscapeSequences.BLACK_KNIGHT;
-        board[8][8] = EscapeSequences.BLACK_ROOK;
-
-        for (int i = 1; i < 9; i++){
-            board[7][i] = EscapeSequences.BLACK_PAWN;
-        }
     }
 
 
-    private void initializeBlackBoard(){
-
-        for (int i = 1; i < 9; i++) {
-            board[0][i] = " " + (char)('H' - i + 1) + " ";
-            board[9][i] = " " + (char)('H' - i + 1) + " ";
-        }
-
-        for (int i = 8; i > 0; i--){
-            board[i][0] = " " + i + " ";
-            board[i][9] = " " + i + " ";
-        }
-
-        board[1][1] = EscapeSequences.BLACK_ROOK;
-        board[1][2] = EscapeSequences.BLACK_KNIGHT;
-        board[1][3] = EscapeSequences.BLACK_BISHOP;
-        board[1][4] = EscapeSequences.BLACK_KING;
-        board[1][5] = EscapeSequences.BLACK_QUEEN;
-        board[1][6] = EscapeSequences.BLACK_BISHOP;
-        board[1][7] = EscapeSequences.BLACK_KNIGHT;
-        board[1][8] = EscapeSequences.BLACK_ROOK;
-
-        for (int i = 1; i <= 8; i++) {
-            board[2][i] = EscapeSequences.BLACK_PAWN;
-        }
-
-        board[8][1] = EscapeSequences.WHITE_ROOK;
-        board[8][2] = EscapeSequences.WHITE_KNIGHT;
-        board[8][3] = EscapeSequences.WHITE_BISHOP;
-        board[8][4] = EscapeSequences.WHITE_KING;
-        board[8][5] = EscapeSequences.WHITE_QUEEN;
-        board[8][6] = EscapeSequences.WHITE_BISHOP;
-        board[8][7] = EscapeSequences.WHITE_KNIGHT;
-        board[8][8] = EscapeSequences.WHITE_ROOK;
-
-
-        for (int i = 1; i < 9; i++){
-            board[7][i] = EscapeSequences.WHITE_PAWN;
-        }
-    }
-
-    public void setBoard(String[][] customBoard) {
-        if (customBoard.length == 10 && customBoard[0].length == 10) {
-            this.board = customBoard;
-        } else {
-            throw new IllegalArgumentException("Custom board must be 10x10.");
-        }
+    public void setBoard(ChessBoard customBoard) {
+        this.board = customBoard;
     }
 
     public void drawBoard() {
-        for (int row = 0; row < 10; row++) {
-            for (int col = 0; col < 10; col++) {
+        int startRow = isWhitePerspective ? 8 : 1;
+        int endRow = isWhitePerspective ? 1 : 8;
+        int stepRow = isWhitePerspective ? -1 : 1;
 
-                if (isBorder(row, col)) {
-                    System.out.print(EscapeSequences.SET_BG_COLOR_BLACK);
-                    System.out.print(EscapeSequences.SET_TEXT_COLOR_WHITE);
-                    System.out.print(board[row][col] == null ? EscapeSequences.EMPTY : board[row][col]);
+        int startCol = 1;
+        int endCol = 8;
+        int stepCol = 1;
+
+        for (int row = startRow; isWhitePerspective ? row >= endRow : row <= endRow; row += stepRow) {
+            System.out.print(row + " ");
+
+            for (int col = startCol; col <= endCol; col += stepCol) {
+                ChessPiece piece = board.getPiece(new ChessPosition(row, col));
+
+                // Set background colors for the board squares
+                if ((row + col) % 2 == 0) {
+                    System.out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY);
                 } else {
-                    // Set background colors for the board squares
-                    if ((row + col) % 2 == 0) {
-                        System.out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY);
-                    } else {
-                        System.out.print(EscapeSequences.SET_BG_COLOR_DARK_GREY);
-                    }
-
-                    // Logic to determine the color of the text for the pieces
-                    String piece = board[row][col];
-                    if (piece != null && isBlackPiece(piece)) {
-                        System.out.print(EscapeSequences.SET_TEXT_COLOR_BLACK);
-                        System.out.print(getWhitePieceEquivalent(piece));
-                    } else {
-                        System.out.print(EscapeSequences.SET_TEXT_COLOR_BLACK);
-                        System.out.print(piece == null ? EscapeSequences.EMPTY : piece);
-                    }
-                    System.out.print(EscapeSequences.RESET_BG_COLOR);
+                    System.out.print(EscapeSequences.SET_BG_COLOR_DARK_GREY);
                 }
+
+                // Determine the text color and display the piece
+                if (piece != null) {
+                    if (piece.getTeamColor() == ChessGame.TeamColor.BLACK) {
+                        System.out.print(EscapeSequences.SET_TEXT_COLOR_BLACK);
+                    } else {
+                        System.out.print(EscapeSequences.SET_TEXT_COLOR_WHITE);
+                    }
+                    System.out.print(getPieceSymbol(piece));
+                } else {
+                    System.out.print(EscapeSequences.EMPTY);
+                }
+
                 System.out.print(EscapeSequences.RESET_BG_COLOR);
             }
             System.out.println();
         }
-    }
 
-    /**
-     * Determines if the piece is a black piece.
-     */
-    private boolean isBlackPiece(String piece) {
-        return Objects.equals(piece, EscapeSequences.BLACK_ROOK) ||
-                Objects.equals(piece, EscapeSequences.BLACK_KNIGHT) ||
-                Objects.equals(piece, EscapeSequences.BLACK_BISHOP) ||
-                Objects.equals(piece, EscapeSequences.BLACK_QUEEN) ||
-                Objects.equals(piece, EscapeSequences.BLACK_KING) ||
-                Objects.equals(piece, EscapeSequences.BLACK_PAWN);
-    }
-
-    /**
-     * Maps black pieces to their corresponding white equivalents.
-     */
-    private String getWhitePieceEquivalent(String blackPiece) {
-        if (Objects.equals(blackPiece, EscapeSequences.BLACK_ROOK)) {
-            return EscapeSequences.WHITE_ROOK;
-        } else if (Objects.equals(blackPiece, EscapeSequences.BLACK_KNIGHT)) {
-            return EscapeSequences.WHITE_KNIGHT;
-        } else if (Objects.equals(blackPiece, EscapeSequences.BLACK_BISHOP)) {
-            return EscapeSequences.WHITE_BISHOP;
-        } else if (Objects.equals(blackPiece, EscapeSequences.BLACK_QUEEN)) {
-            return EscapeSequences.WHITE_QUEEN;
-        } else if (Objects.equals(blackPiece, EscapeSequences.BLACK_KING)) {
-            return EscapeSequences.WHITE_KING;
-        } else if (Objects.equals(blackPiece, EscapeSequences.BLACK_PAWN)) {
-            return EscapeSequences.WHITE_PAWN;
+        // Print column labels
+        System.out.print("  ");
+        for (int col = startCol; col <= endCol; col++) {
+            char columnLabel = (char) ('A' + (col - 1));
+            System.out.print(" " + columnLabel + " ");
         }
-        return blackPiece; // Default to the original if not a known black piece
+        System.out.println();
     }
 
-    private boolean isBorder(int row, int col) {
-        return row == 0 || row == 9 || col == 0 || col == 9;
+    private char getPieceSymbol(ChessPiece piece) {
+        return switch (piece.getPieceType()) {
+            case PAWN -> 'P';
+            case ROOK -> 'R';
+            case KNIGHT -> 'N';
+            case BISHOP -> 'B';
+            case QUEEN -> 'Q';
+            case KING -> 'K';
+            default -> '?';
+        };
     }
 }

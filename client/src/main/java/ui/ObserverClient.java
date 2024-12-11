@@ -6,8 +6,7 @@ import java.util.Arrays;
 
 public class ObserverClient {
 
-    private PrintBoard whiteBoard;
-    private PrintBoard blackBoard;
+    private PrintBoard board;
 
     private final ServerFacade serverfacade;
     private WebSocketFacade webSocketFacade;
@@ -24,8 +23,7 @@ public class ObserverClient {
 
     public String eval(String inputLine) {
 
-        whiteBoard = new PrintBoard(true);
-        blackBoard = new PrintBoard(false);
+        board = new PrintBoard(serverfacade.getCurrentUsername());
 
         try {
             var tokens = inputLine.toUpperCase().split(" ");
@@ -42,9 +40,8 @@ public class ObserverClient {
     }
 
     public String drawBoard(String... input){
-        whiteBoard.drawBoard();
+        board.drawBoard();
         System.out.println();
-        blackBoard.drawBoard();
 
         return "Both Boards Drawn";
     }
