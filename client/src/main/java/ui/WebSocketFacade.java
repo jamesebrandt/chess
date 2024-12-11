@@ -1,9 +1,7 @@
 package ui;
 
 import Exceptions.ResponseException;
-import chess.ChessBoard;
 import com.google.gson.Gson;
-import com.sun.nio.sctp.NotificationHandler;
 import model.Game;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ServerMessage;

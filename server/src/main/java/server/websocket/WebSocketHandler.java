@@ -5,6 +5,7 @@ import dataaccess.AuthDAO;
 import dataaccess.GameDAO;
 import model.JoinGameRequest;
 import org.eclipse.jetty.websocket.api.Session;
+import org.eclipse.jetty.websocket.api.annotations.OnWebSocketError;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import websocket.commands.UserGameCommand;
@@ -32,13 +33,63 @@ public class WebSocketHandler {
                 case LEAVE -> leaveGame(username, command, session);
                 case RESIGN -> resign(username, command, session);
             }
-        }catch (Exception e){
-            throw new RuntimeException("Error in onMessage in websocket handler");
+        } catch (IllegalArgumentException e) {
+            sendErrorMessage(session, "Invalid input: " + e.getMessage());
+        } catch (IOException e) {
+            sendErrorMessage(session, "I/O error: " + e.getMessage());
+        } catch (Exception e) {
+            sendErrorMessage(session, "Unexpected error: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
+    private void sendErrorMessage(Session session, String errorMsg) {
+        try {
+            ServerMessage errorMessage = new ServerMessage(
+                    null,
+                    errorMsg,
+                    ServerMessage.ServerMessageType.ERROR
+            );
+            session.getRemote().sendString(gson.toJson(errorMessage));
+        } catch (IOException e) {
+            System.err.println("Failed to send error message: " + errorMsg);
+            e.printStackTrace();
+        }
+    }
+
+    @OnWebSocketError
+    public void onError(Session session, Throwable throwable) {
+        System.err.println("WebSocket error for session: " + session.getRemoteAddress());
+        throwable.printStackTrace();
+        try {
+            if (session != null && session.isOpen()) {
+                ServerMessage errorMessage = new ServerMessage(
+                        null,
+                        "An error occurred: " + throwable.getMessage(),
+                        ServerMessage.ServerMessageType.ERROR
+                );
+                session.getRemote().sendString(gson.toJson(errorMessage));
+            }
+        } catch (IOException e) {
+            System.err.println("Failed to send error message to client.");
+            e.printStackTrace();
+        }
+    }
+
+
     private void connect(String username, UserGameCommand command, Session session) throws IOException {
         try {
+
+            // Validate auth token
+            if (!authDAO.isValidToken(username)) {
+                ServerMessage errorMessage = new ServerMessage(null, "invalid Auth", ServerMessage.ServerMessageType.ERROR);
+            }
+
+            // Validate game ID
+            if (!gameDAO.isValidGameID(command.getGameID())) {
+                throw new IllegalArgumentException("Invalid game ID: " + command.getGameID());
+            }
+
             //connect to game
             connections.add(username, command.getAuthToken(), command.getGameID(), session);
             //notify all others in the game that they joined

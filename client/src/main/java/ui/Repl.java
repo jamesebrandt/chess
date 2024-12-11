@@ -133,6 +133,8 @@ public class Repl implements ServerMessageObserver{
         gameClient.connectToWebSocket(this, serverFacade.getAuth(), currentGameId);
 
         System.out.println("In Game!");
+        printBoard.drawBoard();
+
         System.out.print(gameClient.help());
         Scanner scanner = new Scanner(System.in);
         var result = "";
@@ -165,6 +167,8 @@ public class Repl implements ServerMessageObserver{
     private void observing() throws ResponseException {
 
         observerClient.connectToWebSocket(this, serverFacade.getAuth(), currentGameId);
+
+        printBoard.PrintBoardForObserver();
 
         System.out.println("Observing Game");
         System.out.print("""
@@ -210,6 +214,7 @@ public class Repl implements ServerMessageObserver{
 
     private void displayNotification(ServerMessage message) {
         System.out.println("\n[" + message.getServerMessageType() + "] " + message.getServerMessage());
+        printBoard.drawBoard();
     }
 
     private void loadGame(ServerMessage message){
