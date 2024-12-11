@@ -63,6 +63,8 @@ public class WebSocketFacade extends Endpoint {
         try {
             // test if the move is valid locally before making the request
 
+
+
             var command = new UserGameCommand(UserGameCommand.CommandType.MAKE_MOVE, serverFacade.getAuth(), serverFacade.getGameId(), move);
             this.session.getBasicRemote().sendText(new Gson().toJson(command));
         } catch (IOException ex) {

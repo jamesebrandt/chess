@@ -208,9 +208,8 @@ public class Repl implements ServerMessageObserver{
         }
     }
 
-    private void displayNotification(ServerMessage message){
-        System.out.println();
-        System.out.println("Notification: " + message.serialize());
+    private void displayNotification(ServerMessage message) {
+        System.out.println("\n[" + message.getServerMessageType() + "] " + message.getServerMessage());
     }
 
     private void loadGame(ServerMessage message){
