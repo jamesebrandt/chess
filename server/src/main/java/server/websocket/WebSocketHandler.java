@@ -9,8 +9,6 @@ import dataaccess.GameDAO;
 import model.Game;
 import model.JoinGameRequest;
 import org.eclipse.jetty.websocket.api.Session;
-import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
-import org.eclipse.jetty.websocket.api.annotations.OnWebSocketError;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import websocket.commands.LeaveCommand;
@@ -72,11 +70,6 @@ public class WebSocketHandler {
             System.err.println("Failed to send error message: " + errorMsg);
             e.printStackTrace();
         }
-    }
-
-    @OnWebSocketClose
-    public void onClose(Session session, int statusCode, String reason) {
-        System.out.println("WebSocket closed: " + reason + " (code " + statusCode + ")");
     }
 
     private void connect(String username, UserGameCommand command, Session session) throws IOException {

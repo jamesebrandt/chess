@@ -261,10 +261,4 @@ public class Repl implements ServerMessageObserver{
     private void displayError(ServerMessageError message) {
         System.err.println("ERROR: " + message.toString());
     }
-
-    @OnWebSocketClose
-    public void onClose(int statusCode, String reason) {
-        System.out.println("WebSocket closed: " + reason + " (code " + statusCode + ")");
-    }
-
 }
