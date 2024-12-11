@@ -91,6 +91,10 @@ public class GameDAO {
         return id;
     }
 
+    public void saveGame(){
+
+    }
+
 
     public boolean isValidGameID(Integer gameID) {
         if (gameID == null) {

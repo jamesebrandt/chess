@@ -2,6 +2,7 @@ package server.websocket;
 
 import chess.ChessGame;
 import chess.ChessMove;
+import chess.InvalidMoveException;
 import com.google.gson.Gson;
 import dataaccess.AuthDAO;
 import dataaccess.GameDAO;
@@ -12,6 +13,9 @@ import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketError;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
+import websocket.commands.LeaveCommand;
+import websocket.commands.MakeMoveCommand;
+import websocket.commands.ResignCommand;
 import websocket.commands.UserGameCommand;
 import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
@@ -36,11 +40,12 @@ public class WebSocketHandler {
 
             switch (command.getCommandType()) {
                 case CONNECT -> connect(username, command, session);
-                case MAKE_MOVE -> makeMove(username, command, session);
-                case LEAVE -> leaveGame(username, command, session);
-                case RESIGN -> resign(username, command, session);
+                case MAKE_MOVE -> makeMove(username, (MakeMoveCommand) command, session);
+                case LEAVE -> leaveGame(username, (LeaveCommand) command, session);
+                case RESIGN -> resign(username, (ResignCommand) command, session);
             }
-        } catch (IllegalArgumentException e) {
+
+            } catch (IllegalArgumentException e) {
             sendErrorMessage(session, "Invalid input: " + e.getMessage());
         } catch (IOException e) {
             sendErrorMessage(session, "I/O error: " + e.getMessage());
@@ -91,7 +96,6 @@ public class WebSocketHandler {
                 LoadGameMessage loadGameMessage = new LoadGameMessage(game);
                 session.getRemote().sendString(loadGameMessage.toJson()); // Send load game message to the connecting player
             }
-            //send error messages if invalid inputs
         } catch (IOException e) {
             throw new IOException(e);
         } catch (IllegalArgumentException e) {
@@ -101,26 +105,46 @@ public class WebSocketHandler {
     }
 
     private void makeMove(String username, UserGameCommand command, Session session) throws IOException {
-        // get the board and make the move
+        try {
+            // Retrieve the game record from the database
+            Game gameRecord = gameDAO.getGame(command.getGameID());
+            ChessGame chessGame = gameRecord.game();
 
-        Game chessGame = gameDAO.getGame(command.getGameID());
+            // Deserialize the move from the command
+            ChessMove move = command.getMove();
 
-        chessGame.game().makeMove(new ChessMove());
+            // Validate and execute the move
+            if (chessGame.isMoveValid(move)) {
+                chessGame.makeMove(move);
 
-        //Game afterMove = currentGame.game().makeMove();
+                // Update the game record with the modified game state
+                Game updatedGameRecord = new Game(
+                        gameRecord.gameID(),
+                        gameRecord.gameName(),
+                        gameRecord.whiteUsername(),
+                        gameRecord.blackUsername(),
+                        chessGame
+                );
 
+                // Notify all players about the move
+                LoadGameMessage loadGameMessage = new LoadGameMessage(updatedGameRecord);
+                session.getRemote().sendString(loadGameMessage.toJson());
 
-        // serialize the board and send it to each of the viewers
+                // Save the updated game state in the database
+                gameDAO.saveGame(updatedGameRecord);
 
-//        ServerMessage message = new ServerMessage(afterMove,
-//                username +" has made a move " + command.getGameID(),
-//                ServerMessage.ServerMessageType.LOAD_GAME);
-//        connections.broadcast(username, message);
-
-
-        // save the board in the database
-
+            } else {
+                sendErrorMessage(session, "ERROR: Invalid move");
+            }
+        } catch (IllegalArgumentException e) {
+            sendErrorMessage(session, "ERROR: Invalid move: " + e.getMessage());
+        } catch (IOException e) {
+            sendErrorMessage(session, "Error processing move: " + e.getMessage());
+        } catch (InvalidMoveException e) {
+            sendErrorMessage(session, "ERROR: Invalid move: " + e.getMessage());
+        }
     }
+
 
     private void leaveGame(String username, UserGameCommand command, Session session){
         int gameId = command.getGameID();

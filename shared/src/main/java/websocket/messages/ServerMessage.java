@@ -23,7 +23,6 @@ public class ServerMessage {
     }
 
     public ServerMessage(ServerMessageType type) {
-
         this.serverMessageType = type;
     }
 

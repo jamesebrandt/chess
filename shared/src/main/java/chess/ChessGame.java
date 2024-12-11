@@ -27,6 +27,10 @@ public class ChessGame {
         this.turn = team;
     }
 
+    public boolean isMoveValid(ChessMove move) {
+        return validMoves(move.getStartPosition()).contains(move);
+    }
+
     public enum TeamColor {
         WHITE,
         BLACK
