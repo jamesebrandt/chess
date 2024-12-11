@@ -91,9 +91,23 @@ public class GameDAO {
         return id;
     }
 
-    public void saveGame(){
+    public void saveGame(Game game) {
+        String query = "UPDATE chess_games SET whiteUserName = ?, blackUserName = ?, chess_board = ? WHERE gameID = ?";
 
+        try (Connection conn = DatabaseManager.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setString(1, game.whiteUsername()); // Update white player username
+            stmt.setString(2, game.blackUsername()); // Update black player username
+            stmt.setString(3, gson.toJson(game.game())); // Serialize the ChessGame object
+            stmt.setInt(4, game.gameID()); // Identify the game by its ID
+
+            stmt.executeUpdate();
+        } catch (SQLException | DataAccessException e) {
+            throw new RuntimeException("Error saving game to database: " + e.getMessage(), e);
+        }
     }
+
 
 
     public boolean isValidGameID(Integer gameID) {
