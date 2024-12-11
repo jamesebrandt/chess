@@ -3,6 +3,7 @@ import Exceptions.ResponseException;
 import chess.ChessBoard;
 
 import java.util.Arrays;
+import java.util.Scanner;
 
 public class GameClient{
 
@@ -57,15 +58,23 @@ public class GameClient{
     }
 
     public String resign() throws ResponseException {
+        Scanner scanner = new Scanner(System.in);
 
-        // prompt are you sure?
+        System.out.println("Are you sure you want to resign? (yes/no)");
+        String response = scanner.nextLine().trim().toLowerCase();
 
-
-        boolean success = webSocketFacade.resign(serverfacade.getAuth(), serverfacade.getGameId());
-        if (success){
-            return "success";
-        }else{
-            return "failed";
+        if ("yes".equals(response)) {
+            boolean success = webSocketFacade.resign(serverfacade.getAuth(), serverfacade.getGameId());
+            if (success) {
+                System.out.println("You have resigned the game.");
+                return "success";
+            } else {
+                System.out.println("Failed to resign the game.");
+                return "failed";
+            }
+        } else {
+            System.out.println("Resignation canceled.");
+            return "canceled";
         }
     }
 
