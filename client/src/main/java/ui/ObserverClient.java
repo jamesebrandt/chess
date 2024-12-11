@@ -40,7 +40,7 @@ public class ObserverClient {
     }
 
     public String drawBoard(String... input){
-        board.drawBoard();
+        board.PrintBoardForObserver();
         System.out.println();
 
         return "Both Boards Drawn";
