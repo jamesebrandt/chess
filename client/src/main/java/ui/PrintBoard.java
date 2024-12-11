@@ -118,27 +118,21 @@ public class PrintBoard {
                     System.out.print(EscapeSequences.SET_TEXT_COLOR_WHITE);
                     System.out.print(board[row][col] == null ? EscapeSequences.EMPTY : board[row][col]);
                 } else {
-
+                    // Set background colors for the board squares
                     if ((row + col) % 2 == 0) {
                         System.out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY);
                     } else {
                         System.out.print(EscapeSequences.SET_BG_COLOR_DARK_GREY);
                     }
 
-                    if (Objects.equals(board[row][col], EscapeSequences.BLACK_ROOK)||
-                            Objects.equals(board[row][col], EscapeSequences.BLACK_BISHOP)||
-                            Objects.equals(board[row][col], EscapeSequences.BLACK_KNIGHT)||
-                            Objects.equals(board[row][col], EscapeSequences.BLACK_KING)||
-                            Objects.equals(board[row][col], EscapeSequences.BLACK_PAWN)||
-                            Objects.equals(board[row][col], EscapeSequences.BLACK_QUEEN)||
-                            Objects.equals(board[row][col], null)
-                                    ){
-                        System.out.print(EscapeSequences.SET_TEXT_COLOR_WHITE);
-                        System.out.print(board[row][col] == null ? EscapeSequences.EMPTY : board[row][col]);
-                    }
-                    else {
+                    // Logic to determine the color of the text for the pieces
+                    String piece = board[row][col];
+                    if (piece != null && isBlackPiece(piece)) {
                         System.out.print(EscapeSequences.SET_TEXT_COLOR_BLACK);
-                        System.out.print(board[row][col] == null ? EscapeSequences.EMPTY : board[row][col]);
+                        System.out.print(getWhitePieceEquivalent(piece));
+                    } else {
+                        System.out.print(EscapeSequences.SET_TEXT_COLOR_BLACK);
+                        System.out.print(piece == null ? EscapeSequences.EMPTY : piece);
                     }
                     System.out.print(EscapeSequences.RESET_BG_COLOR);
                 }
@@ -146,6 +140,38 @@ public class PrintBoard {
             }
             System.out.println();
         }
+    }
+
+    /**
+     * Determines if the piece is a black piece.
+     */
+    private boolean isBlackPiece(String piece) {
+        return Objects.equals(piece, EscapeSequences.BLACK_ROOK) ||
+                Objects.equals(piece, EscapeSequences.BLACK_KNIGHT) ||
+                Objects.equals(piece, EscapeSequences.BLACK_BISHOP) ||
+                Objects.equals(piece, EscapeSequences.BLACK_QUEEN) ||
+                Objects.equals(piece, EscapeSequences.BLACK_KING) ||
+                Objects.equals(piece, EscapeSequences.BLACK_PAWN);
+    }
+
+    /**
+     * Maps black pieces to their corresponding white equivalents.
+     */
+    private String getWhitePieceEquivalent(String blackPiece) {
+        if (Objects.equals(blackPiece, EscapeSequences.BLACK_ROOK)) {
+            return EscapeSequences.WHITE_ROOK;
+        } else if (Objects.equals(blackPiece, EscapeSequences.BLACK_KNIGHT)) {
+            return EscapeSequences.WHITE_KNIGHT;
+        } else if (Objects.equals(blackPiece, EscapeSequences.BLACK_BISHOP)) {
+            return EscapeSequences.WHITE_BISHOP;
+        } else if (Objects.equals(blackPiece, EscapeSequences.BLACK_QUEEN)) {
+            return EscapeSequences.WHITE_QUEEN;
+        } else if (Objects.equals(blackPiece, EscapeSequences.BLACK_KING)) {
+            return EscapeSequences.WHITE_KING;
+        } else if (Objects.equals(blackPiece, EscapeSequences.BLACK_PAWN)) {
+            return EscapeSequences.WHITE_PAWN;
+        }
+        return blackPiece; // Default to the original if not a known black piece
     }
 
     private boolean isBorder(int row, int col) {
