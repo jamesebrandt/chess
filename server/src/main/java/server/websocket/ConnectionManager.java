@@ -20,7 +20,7 @@ public class ConnectionManager {
         connections.remove(username);
     }
 
-    public void broadcast(String excludeUserName, NotificationMessage notificationMessage) throws IOException {
+    public void broadcast(String excludeUserName, ServerMessage notificationMessage) throws IOException {
         var removeList = new ArrayList<Connection>();
         for (var c : connections.values()) {
             if (c.session.isOpen()) {

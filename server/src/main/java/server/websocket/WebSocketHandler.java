@@ -42,7 +42,7 @@ public class WebSocketHandler {
                 case CONNECT -> connect(username, genericCommand, session);
                 case MAKE_MOVE -> {
                     MakeMoveCommand makeMoveCommand = gson.fromJson(msg, MakeMoveCommand.class);
-                    makeMove(makeMoveCommand, session);
+                    makeMove(username, makeMoveCommand, session);
                 }
                 case LEAVE -> {
                     LeaveCommand leaveCommand = gson.fromJson(msg, LeaveCommand.class);
@@ -82,18 +82,15 @@ public class WebSocketHandler {
     private void connect(String username, UserGameCommand command, Session session) throws IOException {
         try {
 
-            // Validate auth token
             if (!authDAO.isValidToken(command.getAuthToken())) {
                 ServerMessageError serverMessageError = new ServerMessageError("Invalid Auth Token");
                 session.getRemote().sendString(serverMessageError.toJson());
             }
-            // Validate game ID
             else if (!gameDAO.isValidGameID(command.getGameID())) {
                 ServerMessageError serverMessageError = new ServerMessageError("Invalid Game Id");
                 session.getRemote().sendString(serverMessageError.toJson());
             }
             else {
-                //connect to game
                 connections.add(username, command.getAuthToken(), command.getGameID(), session);
                 Game game = gameDAO.getGame(command.getGameID());
 
@@ -113,20 +110,31 @@ public class WebSocketHandler {
         }
     }
 
-    private void makeMove(MakeMoveCommand command, Session session) throws IOException {
+    private void makeMove(String username, MakeMoveCommand command, Session session) throws IOException {
         try {
-            // Retrieve the game record from the database
             Game gameRecord = gameDAO.getGame(command.getGameID());
             ChessGame chessGame = gameRecord.game();
+
+            if (chessGame.getIsGameOver()) {
+                LoadGameMessage loadGameMessage = new LoadGameMessage(gameRecord);
+                session.getRemote().sendString(loadGameMessage.toJson());
+                return;
+            }
+
+            if ((chessGame.getTeamTurn() == ChessGame.TeamColor.WHITE && !username.equals(gameRecord.whiteUsername())) ||
+                    (chessGame.getTeamTurn() == ChessGame.TeamColor.BLACK && !username.equals(gameRecord.blackUsername()))) {
+                sendErrorMessage(session, "ERROR: It's not your turn!");
+                return;
+            }
 
             // Deserialize the move from the command
             ChessMove move = command.getMove();
 
-            // Validate and execute the move
             if (chessGame.isMoveValid(move)) {
                 chessGame.makeMove(move);
 
-                // Update the game record with the modified game state
+                chessGame.setTeamTurn(chessGame.getTeamTurn() == ChessGame.TeamColor.WHITE ? ChessGame.TeamColor.BLACK : ChessGame.TeamColor.WHITE);
+
                 Game updatedGameRecord = new Game(
                         gameRecord.gameID(),
                         gameRecord.gameName(),
@@ -135,11 +143,10 @@ public class WebSocketHandler {
                         chessGame
                 );
 
-                // Notify all players about the move
                 LoadGameMessage loadGameMessage = new LoadGameMessage(updatedGameRecord);
-                session.getRemote().sendString(loadGameMessage.toJson());
+                connections.broadcast(username, new NotificationMessage(username + "made a move: "));
+                connections.broadcast(null, loadGameMessage);
 
-                // Save the updated game state in the database
                 gameDAO.saveGame(updatedGameRecord);
 
             } else {
@@ -164,17 +171,14 @@ public class WebSocketHandler {
 
     private void resign(String username, ResignCommand command, Session session) {
         try {
-            // Retrieve the game record from the database
             Game gameRecord = gameDAO.getGame(command.getGameID());
             ChessGame chessGame = gameRecord.game();
 
-            // Check if the game is already over
             if (chessGame.getIsGameOver()) {
                 sendErrorMessage(session, "ERROR: Game is already over.");
                 return;
             }
 
-            // Determine the resigning player's team color
             String whitePlayer = gameRecord.whiteUsername();
             String blackPlayer = gameRecord.blackUsername();
             String winningPlayer;
@@ -188,7 +192,6 @@ public class WebSocketHandler {
                 return;
             }
 
-            // Mark the game as over and notify all players
             chessGame.setIsGameOver(true);
 
             String message = username + " has resigned. " +
@@ -196,7 +199,6 @@ public class WebSocketHandler {
             NotificationMessage notificationMessage = new NotificationMessage(message);
             connections.broadcast(username, notificationMessage);
 
-            // Save the updated game state in the database
             Game updatedGameRecord = new Game(
                     gameRecord.gameID(),
                     gameRecord.gameName(),

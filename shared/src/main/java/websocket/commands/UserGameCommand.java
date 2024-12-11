@@ -16,7 +16,6 @@ public class UserGameCommand {
     private final CommandType commandType;
     private final String authToken;
     private final Integer gameID;
-    private final ChessMove move;
 
     /**
      * Constructor for commands that include a move (e.g., MAKE_MOVE).
@@ -25,7 +24,6 @@ public class UserGameCommand {
         this.commandType = commandType;
         this.authToken = authToken;
         this.gameID = gameID;
-        this.move = move;
     }
 
     /**
@@ -47,10 +45,6 @@ public class UserGameCommand {
         return gameID;
     }
 
-    public ChessMove getMove() {
-        return move;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -62,8 +56,7 @@ public class UserGameCommand {
         UserGameCommand that = (UserGameCommand) o;
         return getCommandType() == that.getCommandType() &&
                 Objects.equals(getAuthToken(), that.getAuthToken()) &&
-                Objects.equals(getGameID(), that.getGameID()) &&
-                Objects.equals(getMove(), that.getMove());
+                Objects.equals(getGameID(), that.getGameID());
     }
 
     @Override
@@ -73,7 +66,7 @@ public class UserGameCommand {
 
     @Override
     public int hashCode() {
-        return Objects.hash(getCommandType(), getAuthToken(), getGameID(), getMove());
+        return Objects.hash(getCommandType(), getAuthToken(), getGameID());
     }
 
     /**

@@ -19,7 +19,7 @@ public class GameClient{
     }
 
     public void connectToWebSocket(ServerMessageObserver serverMessageObserver, String auth, int gameId) throws ResponseException {
-        this.webSocketFacade = new WebSocketFacade(serverUrl, serverMessageObserver, auth, gameId);
+        this.webSocketFacade = new WebSocketFacade(serverUrl, serverMessageObserver, auth, serverfacade.getGameIdHiderValue(gameId));
     }
 
     public String eval(String inputLine) {
@@ -34,6 +34,7 @@ public class GameClient{
                 case "EXIT" -> leaveGame();
                 case "MOVE" -> move(params);
                 case "DRAW" -> drawBoard();
+                case "RESIGN" -> resign();
                 default -> help();
 
             };
@@ -52,6 +53,19 @@ public class GameClient{
             return "Move made: " + move;
         } catch (ResponseException e) {
             throw new ResponseException(e.StatusCode(), "Failed to make move: " + e.getMessage());
+        }
+    }
+
+    public String resign() throws ResponseException {
+
+        // prompt are you sure?
+
+
+        boolean success = webSocketFacade.resign(serverfacade.getAuth(), serverfacade.getGameId());
+        if (success){
+            return "success";
+        }else{
+            return "failed";
         }
     }
 

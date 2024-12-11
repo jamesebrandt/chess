@@ -64,27 +64,38 @@ public class WebSocketFacade extends Endpoint {
 
     public void makeMove(String move) throws ResponseException {
         try {
-            // read the input string and translate to ChessMove
-            int startRow = move.charAt(0);
-            int startCol = move.charAt(1);
+            String[] parts = move.split(" to ");
+            if (parts.length != 2) {
+                throw new IllegalArgumentException("Move must be in the format 'A8 to B7'.");
+            }
+
+            String start = parts[0].toUpperCase();
+            int startRow = 8 - Character.getNumericValue(start.charAt(1));
+            int startCol = start.charAt(0) - 'A';
 
             ChessPosition startPosition = new ChessPosition(startRow, startCol);
 
-            int endRow = move.charAt(2);
-            int endCol = move.charAt(3);
+            String end = parts[1].toUpperCase();
+            int endRow = 8 - Character.getNumericValue(end.charAt(1));
+            int endCol = end.charAt(0) - 'A';
 
-            ChessPosition endPosition = new ChessPosition(startRow, startCol);
+            ChessPosition endPosition = new ChessPosition(endRow, endCol);
+
             ChessMove chessMove = new ChessMove(startPosition, endPosition, null);
-
-            // test if the move is valid locally before making the request
             chessGame.makeMove(chessMove);
-            //
-            var command = new UserGameCommand(UserGameCommand.CommandType.MAKE_MOVE, serverFacade.getAuth(), serverFacade.getGameId());
+
+            var command = new UserGameCommand(
+                    UserGameCommand.CommandType.MAKE_MOVE,
+                    serverFacade.getAuth(),
+                    serverFacade.getGameId()
+            );
             this.session.getBasicRemote().sendText(new Gson().toJson(command));
         } catch (IOException ex) {
             throw new ResponseException(500, ex.getMessage());
         } catch (InvalidMoveException e) {
             throw new RuntimeException(e);
+        } catch (IllegalArgumentException e) {
+            throw new ResponseException(400, e.getMessage());
         }
     }
 
@@ -98,10 +109,11 @@ public class WebSocketFacade extends Endpoint {
         }
     }
 
-    public void resign(String auth, int gameID) throws ResponseException {
+    public boolean resign(String auth, int gameID) throws ResponseException {
         try {
             var command = new UserGameCommand(UserGameCommand.CommandType.RESIGN, auth, gameID);
             this.session.getBasicRemote().sendText(new Gson().toJson(command));
+            return true;
         } catch (IOException ex) {
             throw new ResponseException(500, ex.getMessage());
         }
