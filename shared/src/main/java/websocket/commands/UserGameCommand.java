@@ -84,7 +84,5 @@ public class UserGameCommand {
         MAKE_MOVE,
         LEAVE,
         RESIGN,
-        HIGHLIGHT_LEGAL_MOVES,
-        REDRAW_CHESS_BOARD
     }
 }

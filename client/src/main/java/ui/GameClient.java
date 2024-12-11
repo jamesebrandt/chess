@@ -43,9 +43,18 @@ public class GameClient{
     }
 
     public String move(String... input) throws ResponseException {
-        webSocketFacade.makeMove(input[0]);
-        return "Move made to " + input[1];
+        if (input.length < 1) {
+            throw new ResponseException(400, "Move input is required.");
+        }
+        String move = input[0];
+        try {
+            webSocketFacade.makeMove(move);
+            return "Move made: " + move;
+        } catch (ResponseException e) {
+            throw new ResponseException(e.StatusCode(), "Failed to make move: " + e.getMessage());
+        }
     }
+
 
     public String leaveGame() throws ResponseException {
         boolean success = webSocketFacade.leave(serverfacade.getAuth(), manager.getGameId(serverfacade.getCurrentUsername()));

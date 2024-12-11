@@ -40,7 +40,7 @@ public class WebSocketHandler {
 
             switch (command.getCommandType()) {
                 case CONNECT -> connect(username, command, session);
-                case MAKE_MOVE -> makeMove(username, (MakeMoveCommand) command, session);
+                case MAKE_MOVE -> makeMove((MakeMoveCommand) command, session);
                 case LEAVE -> leaveGame(username, (LeaveCommand) command, session);
                 case RESIGN -> resign(username, (ResignCommand) command, session);
             }
@@ -104,7 +104,7 @@ public class WebSocketHandler {
         }
     }
 
-    private void makeMove(String username, UserGameCommand command, Session session) throws IOException {
+    private void makeMove(MakeMoveCommand command, Session session) throws IOException {
         try {
             // Retrieve the game record from the database
             Game gameRecord = gameDAO.getGame(command.getGameID());
@@ -152,13 +152,56 @@ public class WebSocketHandler {
         gameDAO.removeUser(new JoinGameRequest(gameDAO.getTeamColor(user), gameId));
     }
 
-    private void resign(String username, UserGameCommand command, Session session){
-        //notify the winner/ loser/ observer
 
+    private void resign(String username, UserGameCommand command, Session session) {
+        try {
+            // Retrieve the game record from the database
+            Game gameRecord = gameDAO.getGame(command.getGameID());
+            ChessGame chessGame = gameRecord.game();
 
-        // end the game
+            // Check if the game is already over
+            if (chessGame.getIsGameOver()) {
+                sendErrorMessage(session, "ERROR: Game is already over.");
+                return;
+            }
 
+            // Determine the resigning player's team color
+            String whitePlayer = gameRecord.whiteUsername();
+            String blackPlayer = gameRecord.blackUsername();
+            String winningPlayer;
 
-        //gameDAO.
+            if (username.equals(whitePlayer)) {
+                winningPlayer = blackPlayer != null ? blackPlayer : "No opponent";
+            } else if (username.equals(blackPlayer)) {
+                winningPlayer = whitePlayer != null ? whitePlayer : "No opponent";
+            } else {
+                sendErrorMessage(session, "ERROR: User not part of this game.");
+                return;
+            }
+
+            // Mark the game as over and notify all players
+            chessGame.setIsGameOver(true);
+
+            String message = username + " has resigned. " +
+                    (winningPlayer.equals("No opponent") ? "No winner." : winningPlayer + " wins!");
+            NotificationMessage notificationMessage = new NotificationMessage(message);
+            connections.broadcast(username, notificationMessage);
+
+            // Save the updated game state in the database
+            Game updatedGameRecord = new Game(
+                    gameRecord.gameID(),
+                    gameRecord.gameName(),
+                    gameRecord.whiteUsername(),
+                    gameRecord.blackUsername(),
+                    chessGame
+            );
+            gameDAO.saveGame(updatedGameRecord);
+
+        } catch (IOException e) {
+            sendErrorMessage(session, "Error handling resignation: " + e.getMessage());
+        } catch (Exception e) {
+            sendErrorMessage(session, "Unexpected error during resignation: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 }
