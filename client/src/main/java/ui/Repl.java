@@ -133,7 +133,7 @@ public class Repl implements ServerMessageObserver{
     }
 
     private void inGame() throws ResponseException {
-        gameClient.connectToWebSocket(this, serverFacade.getAuth(), currentGameId);
+        gameClient.connectToWebSocket(this, serverFacade.getAuth(), serverFacade.getGameId());
 
         System.out.println("In Game!");
         printBoard.drawBoard();

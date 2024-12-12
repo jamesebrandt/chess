@@ -64,7 +64,7 @@ public class WebSocketHandler {
 
     private void sendErrorMessage(Session session, String errorMsg) {
         try {
-            ServerMessageError serverMessageError = new ServerMessageError("ERROR: In WebSocketHandler");
+            ServerMessageError serverMessageError = new ServerMessageError(errorMsg);
             session.getRemote().sendString(gson.toJson(serverMessageError));
         } catch (IOException e) {
             System.err.println("Failed to send error message: " + errorMsg);
@@ -109,8 +109,8 @@ public class WebSocketHandler {
             ChessGame chessGame = gameRecord.game();
 
             if (chessGame.getIsGameOver()) {
-                LoadGameMessage loadGameMessage = new LoadGameMessage(gameRecord);
-                session.getRemote().sendString(loadGameMessage.toJson());
+                ServerMessageError serverMessageError = new ServerMessageError("ERROR: Cannot move after the game is over");
+                session.getRemote().sendString(serverMessageError.toJson());
                 return;
             }
 
@@ -125,8 +125,6 @@ public class WebSocketHandler {
 
             if (chessGame.isMoveValid(move)) {
                 chessGame.makeMove(move);
-
-                chessGame.setTeamTurn(chessGame.getTeamTurn() == ChessGame.TeamColor.WHITE ? ChessGame.TeamColor.BLACK : ChessGame.TeamColor.WHITE);
 
                 Game updatedGameRecord = new Game(
                         gameRecord.gameID(),
@@ -190,7 +188,7 @@ public class WebSocketHandler {
             String message = username + " has resigned. " +
                     (winningPlayer.equals("No opponent") ? "No winner." : winningPlayer + " wins!");
             NotificationMessage notificationMessage = new NotificationMessage(message);
-            connections.broadcast(username, notificationMessage);
+            connections.broadcast(null, notificationMessage);
 
             Game updatedGameRecord = new Game(
                     gameRecord.gameID(),

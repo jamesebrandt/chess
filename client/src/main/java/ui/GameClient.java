@@ -48,10 +48,11 @@ public class GameClient{
         if (input.length < 1) {
             throw new ResponseException(400, "Move input is required.");
         }
-        String move = input[0];
+        String moveFrom = input[0];
+        String moveTo = input[2];
         try {
-            webSocketFacade.makeMove(move);
-            return "Move made: " + move;
+            webSocketFacade.makeMove(moveFrom, moveTo);
+            return "Move made: " + moveFrom +" to "+ moveTo;
         } catch (ResponseException e) {
             throw new ResponseException(e.StatusCode(), "Failed to make move: " + e.getMessage());
         }
@@ -60,11 +61,11 @@ public class GameClient{
     public String resign() throws ResponseException {
         Scanner scanner = new Scanner(System.in);
 
-        System.out.println("Are you sure you want to resign? (yes/no)");
+        System.out.println("Are you sure you want to resign? (yes/no)" + "/n--->");
         String response = scanner.nextLine().trim().toLowerCase();
 
-        if ("yes".equals(response)) {
-            boolean success = webSocketFacade.resign(serverfacade.getAuth(), serverfacade.getGameId());
+        if ("yes".equalsIgnoreCase(response)) {
+            boolean success = webSocketFacade.resign(serverfacade.getAuth(), serverfacade.getGameIdHiderValue(serverfacade.getGameId()));
             if (success) {
                 System.out.println("You have resigned the game.");
                 return "success";

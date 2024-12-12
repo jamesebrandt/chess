@@ -227,8 +227,6 @@ public class GameDAO {
         return null;
     }
 
-
-
     public ArrayList<Game> listGames() {
 
         ArrayList<Game> gamesList = new ArrayList<>();

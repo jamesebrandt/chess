@@ -62,20 +62,17 @@ public class WebSocketFacade extends Endpoint {
         }
     }
 
-    public void makeMove(String move) throws ResponseException {
+    public void makeMove(String moveFrom, String moveTo) throws ResponseException {
         try {
-            String[] parts = move.split(" to ");
-            if (parts.length != 2) {
-                throw new IllegalArgumentException("Move must be in the format 'A8 to B7'.");
-            }
 
-            String start = parts[0].toUpperCase();
+
+            String start = moveFrom.toUpperCase();
             int startRow = 8 - Character.getNumericValue(start.charAt(1));
             int startCol = start.charAt(0) - 'A';
 
             ChessPosition startPosition = new ChessPosition(startRow, startCol);
 
-            String end = parts[1].toUpperCase();
+            String end = moveTo.toUpperCase();
             int endRow = 8 - Character.getNumericValue(end.charAt(1));
             int endCol = end.charAt(0) - 'A';
 
