@@ -1,6 +1,6 @@
 package ui;
 
-import Exceptions.ResponseException;
+import exceptions.ResponseException;
 import chess.ChessGame;
 import chess.ChessMove;
 import chess.ChessPosition;

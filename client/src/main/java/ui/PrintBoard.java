@@ -19,7 +19,7 @@ public class PrintBoard {
         this.serverFacade = ServerFacade.getInstance(url);
     }
 
-    public void PrintBoardForObserver(){
+    public void printBoardForObserver(){
         drawBoard();
         System.out.println();
         drawBoard();

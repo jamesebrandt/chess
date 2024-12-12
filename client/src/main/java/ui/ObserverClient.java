@@ -1,8 +1,6 @@
 package ui;
 
-import Exceptions.ResponseException;
-
-import java.util.Arrays;
+import exceptions.ResponseException;
 
 public class ObserverClient {
 
@@ -40,7 +38,7 @@ public class ObserverClient {
     }
 
     public String drawBoard(String... input){
-        board.PrintBoardForObserver();
+        board.printBoardForObserver();
         System.out.println();
 
         return "Both Boards Drawn";

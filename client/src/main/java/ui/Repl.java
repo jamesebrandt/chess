@@ -1,6 +1,6 @@
 package ui;
 
-import Exceptions.ResponseException;
+import exceptions.ResponseException;
 import model.Game;
 import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;

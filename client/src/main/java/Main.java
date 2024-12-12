@@ -1,8 +1,5 @@
-import Exceptions.ResponseException;
-import chess.*;
+import exceptions.ResponseException;
 import ui.Repl;
-
-import javax.swing.plaf.synth.SynthDesktopIconUI;
 
 public class Main {
     public static void main(String[] args) throws ResponseException {

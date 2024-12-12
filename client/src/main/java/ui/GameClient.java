@@ -1,6 +1,5 @@
 package ui;
-import Exceptions.ResponseException;
-import chess.ChessBoard;
+import exceptions.ResponseException;
 
 import java.util.Arrays;
 import java.util.Scanner;
@@ -54,7 +53,7 @@ public class GameClient{
             webSocketFacade.makeMove(moveFrom, moveTo);
             return "Move made: " + moveFrom +" to "+ moveTo;
         } catch (ResponseException e) {
-            throw new ResponseException(e.StatusCode(), "Failed to make move: " + e.getMessage());
+            throw new ResponseException(e.statusCode(), "Failed to make move: " + e.getMessage());
         }
     }
 
