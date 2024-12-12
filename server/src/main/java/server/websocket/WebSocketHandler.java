@@ -17,7 +17,6 @@ import websocket.commands.ResignCommand;
 import websocket.commands.UserGameCommand;
 import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
-import websocket.messages.ServerMessage;
 import websocket.messages.ServerMessageError;
 
 import java.io.IOException;
@@ -134,8 +133,10 @@ public class WebSocketHandler {
                         chessGame
                 );
 
+
+
                 LoadGameMessage loadGameMessage = new LoadGameMessage(updatedGameRecord);
-                connections.broadcast(username, new NotificationMessage(username + "made a move: "));
+                connections.broadcast(username, new NotificationMessage(username + "made a move: " +move.toString()));
                 connections.broadcast(null, loadGameMessage);
 
                 gameDAO.saveGame(updatedGameRecord);
@@ -153,10 +154,12 @@ public class WebSocketHandler {
     }
 
 
-    private void leaveGame(LeaveCommand command){
+    private void leaveGame(LeaveCommand command) throws IOException {
         int gameId = command.getGameID();
-        String user = authDAO.getUser(command.getAuthToken());
-        gameDAO.removeUser(new JoinGameRequest(gameDAO.getTeamColor(user), gameId));
+        String username = authDAO.getUser(command.getAuthToken());
+        String teamColor = gameDAO.getTeamColor(username);
+        gameDAO.removeUser(new JoinGameRequest(teamColor, gameId));
+        connections.broadcast(username, new NotificationMessage(username + " has left the game"));
     }
 
 
