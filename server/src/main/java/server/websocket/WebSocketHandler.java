@@ -88,7 +88,7 @@ public class WebSocketHandler {
 
                 //notify all others in the game that they joined
                 NotificationMessage notificationMessage = new NotificationMessage(username + " Has Joined game " + game.gameName());
-                connections.broadcast(username, notificationMessage);
+                connections.broadcast(username, game.gameID(), notificationMessage);
 
                 // send load game message
                 LoadGameMessage loadGameMessage = new LoadGameMessage(game);
@@ -136,8 +136,8 @@ public class WebSocketHandler {
 
 
                 LoadGameMessage loadGameMessage = new LoadGameMessage(updatedGameRecord);
-                connections.broadcast(username, new NotificationMessage(username + "made a move: " +move.toString()));
-                connections.broadcast(null, loadGameMessage);
+                connections.broadcast(username, gameRecord.gameID(), new NotificationMessage(username + "made a move: " +move.toString()));
+                connections.broadcast(null, gameRecord.gameID(), loadGameMessage);
 
                 gameDAO.saveGame(updatedGameRecord);
 
@@ -149,7 +149,7 @@ public class WebSocketHandler {
         } catch (IOException e) {
             sendErrorMessage(session, "Error processing move: " + e.getMessage());
         } catch (InvalidMoveException e) {
-            sendErrorMessage(session, "ERROR: Invalid move: " + e.getMessage());
+            throw new RuntimeException(e);
         }
     }
 
@@ -158,8 +158,11 @@ public class WebSocketHandler {
         int gameId = command.getGameID();
         String username = authDAO.getUser(command.getAuthToken());
         String teamColor = gameDAO.getTeamColor(username);
-        gameDAO.removeUser(new JoinGameRequest(teamColor, gameId));
-        connections.broadcast(username, new NotificationMessage(username + " has left the game"));
+        if (!(teamColor == null)) {
+            gameDAO.removeUser(new JoinGameRequest(teamColor, gameId));
+        }
+        connections.broadcast(username, gameId, new NotificationMessage(username + " has left the game"));
+        connections.remove(username);
     }
 
 
@@ -191,7 +194,7 @@ public class WebSocketHandler {
             String message = username + " has resigned. " +
                     (winningPlayer.equals("No opponent") ? "No winner." : winningPlayer + " wins!");
             NotificationMessage notificationMessage = new NotificationMessage(message);
-            connections.broadcast(null, notificationMessage);
+            connections.broadcast(null, gameRecord.gameID(), notificationMessage);
 
             Game updatedGameRecord = new Game(
                     gameRecord.gameID(),

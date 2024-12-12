@@ -20,14 +20,16 @@ public class ConnectionManager {
         connections.remove(username);
     }
 
-    public void broadcast(String excludeUserName, ServerMessage notificationMessage) throws IOException {
+    public void broadcast(String excludeUserName, int gameId, ServerMessage message) throws IOException {
         var removeList = new ArrayList<Connection>();
         for (var c : connections.values()) {
             if (c.session.isOpen()) {
-                if (!c.username.equals(excludeUserName)) {
-                    System.out.println("Sending message: " + notificationMessage.toJson());
-                    c.send(notificationMessage.toJson());
+
+                 if (c.gameId == gameId && !c.username.equals(excludeUserName)) {
+                    System.out.println("Sending message: " + message.toJson());
+                    c.send(message.toJson());
                 }
+
             } else {
                 removeList.add(c);
             }
