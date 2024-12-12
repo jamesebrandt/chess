@@ -171,7 +171,7 @@ public class Repl implements ServerMessageObserver{
 
         observerClient.connectToWebSocket(this, serverFacade.getAuth(), currentGameId);
 
-        printBoard.PrintBoardForObserver();
+        printBoard.printBoardForObserver();
 
         System.out.println("Observing Game");
         System.out.print("""
